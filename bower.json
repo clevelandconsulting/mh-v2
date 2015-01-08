@@ -1,0 +1,31 @@
+{
+  "name": "mh-v2",
+  "version": "0.0.1",
+  "homepage": "none",
+  "authors": [
+    "Kevin Vile <kevin@clevelandconsulting.com>"
+  ],
+  "description": "version 2 for mcgraw hill",
+  "license": "none",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "/vendor/bower",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-bootstrap": "~0.12.0",
+    "angular": "~1.2.27",
+    "angular-resource": "~1.2.27",
+    "angular-route": "~1.2.27",
+    "angular-local-storage": "~0.1.5",
+    "bootstrap-sass-official": "~3.3.1",
+    "autofill-event": "~1.0.0",
+    "angular-ui-sortable": "~0.13.1",
+    "toastr": "~2.1.0",
+    "js-base64": "~2.1.5"
+  }
+}

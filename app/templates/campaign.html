@@ -1,0 +1,12 @@
+ <div class='row'>
+	 <div class='col-md-12'>
+  <h2>Campaigns!</h2>
+  <div class='list-group'>
+	  <div class='list-group-item' ng-repeat='(i, item) in campaign.campaigns.items'>
+		  <h4 class="list-group-item-heading">{{item.data.title}}</h4>
+    <p class="list-group-item-text"><button class='btn btn-info' popover='{{item.data}}' popover-placement='right'>View Raw Data</button></p>
+    
+		  
+	  </div>
+	 </div>
+ </div>
