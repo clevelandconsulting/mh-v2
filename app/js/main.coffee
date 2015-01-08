@@ -1,1 +1,1 @@
-angular.module('app',['ngRoute', 'ui.bootstrap', 'LocalStorageModule'])
+angular.module('app',['ngRoute', 'mm.foundation', 'LocalStorageModule'])

@@ -45,7 +45,7 @@ class api
   
   get:(path) ->
    path = @prepCall path
-   console.log 'getting', @url(path)
+   #console.log 'getting', @url(path)
    @http({method: 'GET', url:@url(path)})
    
   checkCredentials: (credentials) ->

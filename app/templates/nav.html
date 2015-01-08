@@ -8,21 +8,21 @@
 				        <span class="icon-bar"></span>
 				        <span class="icon-bar"></span>
 				      </button>
-			      <a class="navbar-brand" href="#">McGraw Hill Marketing Projects</a>
+			      <a class="navbar-brand" href="#">McGraw Hill Marketing Plans</a>
 			    </div>
 			    
 			    
 			    <!-- Collect the nav links, forms, and other content for toggling -->
 			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" collapse="navbarCollapsed">
 			      <ul class="nav navbar-nav" ng-show='nav.isLoggedIn()'>
-			       <li class='{{nav.$location.path().substring(1,4)==="job"?"active":""}}'>
+			       <!--<li class='{{nav.$location.path().substring(1,4)==="job"?"active":""}}'>
 			        <a ng-click='nav.$location.path("job").search("s",null)'>
 				        <span class='glyphicon glyphicon-file'></span>&nbsp;Jobs
 				       </a>
-				      </li>
-				      <li class='{{nav.$location.path().substring(1,9)==="campaign"?"active":""}}'>
+				      </li>-->
+				      <li class='{{nav.$location.path().substring(1,9)==="plan"?"active":""}}'>
 			        <a ng-click='nav.$location.path("campaign").search("s",null)'>
-				        <span class='glyphicon glyphicon-briefcase'></span>&nbsp;Campaigns
+				        <span class='glyphicon glyphicon-briefcase'></span>&nbsp;Plans
 				       </a>
 				      </li>
 			      </ul>

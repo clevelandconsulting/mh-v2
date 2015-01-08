@@ -5,19 +5,27 @@ class fmRestRepository
   @pageKey: 'RFMmax'
   
   constructor: (@$q, @api, @model, @modelList, @path, @modelName) ->
-   
+    
   getAll: (path) ->
+  
    if !path?
     path = @path
-    
+   	     
    d = @$q.defer()
    
    successFn = (response) =>
     results = new @modelList response.data, @model
     d.resolve results
-   
-   @api.get(path).then successFn, (response) => 
-    d.reject response
+
+   @api.get(path).then successFn, (response) =>
+    if response.data?
+     fmcode = parseInt(response.data.info['X-RESTfm-FM-Status'])
+     if fmcode == 401
+      #nothing found
+      d.resolve null
+     else
+      console.log fmcode, response
+      d.reject response
    
    d.promise
   
