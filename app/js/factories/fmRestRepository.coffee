@@ -14,6 +14,7 @@ class fmRestRepository
    d = @$q.defer()
    
    successFn = (response) =>
+    #console.log 'making new ', @modelList, 'with', @model
     results = new @modelList response.data, @model
     d.resolve results
 

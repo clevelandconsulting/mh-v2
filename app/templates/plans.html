@@ -1,12 +1,55 @@
  <div class='row'>
-	 <div class='col-md-12'>
-  <h2>Plans!</h2>
-  <div class='list-group'>
-	  <div class='list-group-item' ng-repeat='(i, item) in plans.plans.items'>
-		  <h4 class="list-group-item-heading">{{item.data.campaign_title}}</h4>
-    <p class="list-group-item-text"><button class='btn btn-info' popover='{{item.data}}' popover-placement='right'>View Raw Data</button></p>
-    
-		  
+	 <div class='small-12 columns'>
+	  <h2>Plans!</h2>
+	  
+	  <!--<plan ng-repeat='(i, item) in plans.plans.items' plan='item'></plan>-->
+	  
+	  
+		  <div class='row' ng-repeat='_plans in plans.plan_groups'>
+			   <div class='small-12 large-{{plans.foundationCols}} medium-{{plans.foundationCols}} columns' ng-repeat='item in _plans'>
+				   
+				    <div class='plan'>
+					    
+					     
+   						  <h5 class='text-center'>{{item.data.campaign_title}}</h5>
+   						  
+   						  <div class='plan-details'>
+				   			  <div><span>{{item.data.staff_full_name_c}}</span></div>
+				   			  <div><span>{{item.data.product}}</span></div>
+				   			  <div><span>{{item.data.portfolio}}</span></div>
+				   			  <div>{{item.data.campaign_number}}</div>
+										  <div>{{item.data.begin_date}}<span ng-show='item.data.begin_date !== "" && item.data.end_date !== ""'> - </span>{{item.data.end_date}}</div>
+   						  </div>
+				      
+							    <div class='text-center plan-status' ng-class='"plan-" + item.status().toLowerCase()'>{{item.status()}}</div>
+				   </div>
+				   
+			   </div>
+		  </div>
+	  
+	  
+	  <!--
+		  <div class='row plan [radius round]' ng-repeat='(i, item) in plans.plans.items'>
+				  <div class='small-8 columns'>
+					  <div class='row'><div class='small-12 columns'><b>{{item.data.campaign_title}}</b></div></div>
+					  <div class='row'><div class='small-12 columns'>{{item.data.staff_full_name_c}}</div></div>
+				  </div>
+				  <div class='small-4 columns'>
+		     <p class="list-group-item-text"><button class='btn btn-info' popover='{{item.data}}' popover-placement='right'>View Raw Data</button></p>
+				  </div>
+		  </div>
+	  -->
+	  
+	  <div ng-show='plans.plans.hasPaging()'>
+	    <tr>
+	     <td colspan='6'>
+	      <span ng-show='plans.plans.hasPrevious()' class='left start'><a ng-click='plans.getPlans(plans.plans.start())'>First</a></span>
+	      <span ng-show='plans.plans.hasPrevious()' class='left previous'>&nbsp;|&nbsp;<a ng-click='plans.getPlans(plans.plans.previous())'>Previous</a></span>
+	      <span ng-show='plans.plans.hasNext()' class='right start'><a ng-click='plans.getPlans(plans.plans.end())'>Last</a></span>
+	      <span ng-show='plans.plans.hasNext()' class='right next'><a ng-click='plans.getPlans(plans.plans.next())'>Next</a>&nbsp;|&nbsp;</span>
+	     </td>
+	    </tr>
 	  </div>
+	  
 	 </div>
  </div>

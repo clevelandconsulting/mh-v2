@@ -24,6 +24,8 @@
     "angular-local-storage": "~0.1.5",
     "autofill-event": "~1.0.0",
     "angular-ui-sortable": "~0.13.1",
+    "foundation": "~5.4.7",
+    "foundation-icon-fonts": "*",
     "toastr": "~2.1.0",
     "js-base64": "~2.1.5"
   }

@@ -18,7 +18,8 @@ module.exports = function(lineman) {
 	  
 	  webfonts: {
       files: {
-        "vendor/bower/bootstrap-sass-official/assets/fonts/": "vendor/bower/bootstrap-sass-official/assets/fonts/**/*.*"
+        "vendor/bower/bootstrap-sass-official/assets/fonts/": "vendor/bower/bootstrap-sass-official/assets/fonts/**/*.*",
+        "vendor/bower/foundation-icon-fonts/" : ["vendor/bower/foundation-icon-fonts/**/*.eot", "vendor/bower/foundation-icon-fonts/**/*.svg", "vendor/bower/foundation-icon-fonts/**/*.ttf", "vendor/bower/foundation-icon-fonts/**/*.woff"]
       }
      },
     
@@ -31,12 +32,12 @@ module.exports = function(lineman) {
 			     	"vendor/css",
 			     	"vendor/bower/bootstrap-sass-official/assets/stylesheets",
 			     	"vendor/bower/foundation/scss",
+			     	"vendor/bower/foundation-icon-fonts",
 			     	"app/css"
 			     ]
 		     }
 	     }
      },
-     
      concat_sourcemap: {
       js: {
        src: [

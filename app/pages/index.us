@@ -7,7 +7,6 @@
   </head>
   <body>
 	   <div  ng-include='"nav.html"'>
-		   
 		  </div>
 	   <div ng-view class='container'>
 	   </div>  

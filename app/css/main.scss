@@ -1,4 +1,16 @@
-@import 'bootstrap';
+@import 'foundation';
+@import 'foundation-icons';
+
+@font-face {
+  font-family: "foundation-icons";
+  src: url("../fonts/foundation-icons.eot");
+  src: url("../fonts/foundation-icons.eot?#iefix") format("embedded-opentype"), url("../fonts/foundation-icons.woff") format("woff"), url("../fonts/foundation-icons.ttf") format("truetype"), url("../fonts/foundation-icons.svg#fontcustom") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+.container {
+	margin: 5px;
+}
 
 .login-form .row.login-username {
 	margin-top: 10px;
@@ -7,4 +19,41 @@
 
 .login-form .row.login-password {
 	margin-bottom: 25px;
+}
+
+.plan {
+	border: 1px solid $smoke;
+	margin: $column-gutter 0px 0px 0px; 
+	height: 200px;
+	position: relative;
+	@include radius();
+	@include block-glowing-effect('hover','300ms',fade-out( $charcoal, .25));
+}
+
+.plan-details {
+	font-size: 85%;
+	color: $charcoal;
+	padding: 8px 8px 8px 8px;
+}
+
+.plan-status {
+	padding: 4px 8px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.plan-status.plan-draft {
+	background-color: $smoke;
+	color: darken( $smoke , 30% );
+}
+
+.plan-status.plan-submitted {
+	background-color: $info-color;
+	color: darken( $info-color, 30% );
+}
+
+.plan-status.plan-approved {
+	background-color: $success-color;
+	color: $white;
 }

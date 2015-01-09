@@ -1,29 +1,35 @@
-angular.module('app').controller 'LoginController', [ 'AuthorizationService', 'NotificationService', '$location', 'UsersService',
+angular.module('app').controller 'LoginController', [ 'AuthorizationService', 'NotificationService', '$location', 'UsersService', '$timeout', 
  class LoginController 
-  constructor: (@auth, @notifications, @location, @userService) ->
+  constructor: (@auth, @notifications, @location, @userService, @timeout) ->
    @username=''
    @password=''
   
   login: ->
-   @loginToastr = @notifications.info 'Logging In...'
+   logging_in = () => @notifications.info 'Logging In...'
+   promise = @timeout logging_in, 300
+   
    success = (response) => 
     #console.log 'login success', response
-    @notifications.clear(@loginToastr)
-    @notifications.success 'Welcome ' + @username + '!'
-    
+
     repoSuccess = (data) =>
      #console.log 'username retrieved success', data
      @userService.saveCurrentUserId(data.recordID)
      @location.path('/project')
+     @timeout.cancel(promise)
+     @notifications.clear()
+     @notifications.success 'Welcome ' + @username + '!'
+    
     repoFailure = (data) =>
-     #console.log 'username retrieved problem', data
+     @timeout.cancel(promise)
+     @notifications.clear()
      @notifications.error 'Problem getting your username...' + data
     
     @userService.getUserByUsername(@username).then repoSuccess, repoFailure  
     
     
-   failure = (response) => 
-    @notifications.clear(@loginToastr)
+   failure = (response) =>
+    @timeout.cancel(promise)
+    @notifications.clear()
     if @auth.lastError == 500
      @notifications.error "Oops, something went wrong! It's our fault not yours. Shoot us an email if this keeps happening!"
     else

@@ -1,38 +1,26 @@
-     <nav ng-controller='NavController as nav' class='navbar navbar-inverse navbar-static-top navbar-top' role='navigation'>
-			   <div class="container-fluid">
-			    <!-- Brand and toggle get grouped for better mobile display -->
-			    <div class="navbar-header" >
-				      <button type="button" class="navbar-toggle" ng-click="navbarCollapsed = !navbarCollapsed" ng-show='nav.isLoggedIn()' >
-				        <span class="sr-only">Toggle navigation</span>
-				        <span class="icon-bar"></span>
-				        <span class="icon-bar"></span>
-				        <span class="icon-bar"></span>
-				      </button>
-			      <a class="navbar-brand" href="#">McGraw Hill Marketing Plans</a>
-			    </div>
-			    
-			    
-			    <!-- Collect the nav links, forms, and other content for toggling -->
-			    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" collapse="navbarCollapsed">
-			      <ul class="nav navbar-nav" ng-show='nav.isLoggedIn()'>
-			       <!--<li class='{{nav.$location.path().substring(1,4)==="job"?"active":""}}'>
-			        <a ng-click='nav.$location.path("job").search("s",null)'>
-				        <span class='glyphicon glyphicon-file'></span>&nbsp;Jobs
-				       </a>
-				      </li>-->
-				      <li class='{{nav.$location.path().substring(1,9)==="plan"?"active":""}}'>
-			        <a ng-click='nav.$location.path("campaign").search("s",null)'>
-				        <span class='glyphicon glyphicon-briefcase'></span>&nbsp;Plans
+     <div ng-controller='NavController as nav'>
+     <top-bar role='navigation'>
+		    <ul class="title-area">
+		      <li class="name">
+		        <h1><a href="#">McGraw Hill Marketing Plans</a></h1>
+		      </li>
+		      <li toggle-top-bar class="menu-icon"><a href="">Menu<span></span></a></li>
+		    </ul>
+		
+		    <top-bar-section>
+		      <!-- Left Nav Section -->
+		      <ul class="left" ng-show='nav.isLoggedIn()'>
+		        <li class='{{nav.$location.path().substring(1,9)==="plan"?"active":""}}'>
+			        <a ng-click='nav.$location.path("myplans").search("s",null)'>
+				        <span class='fi-page-multiple'></span>&nbsp;My Plans
 				       </a>
 				      </li>
-			      </ul>
-			      <ul class="nav navbar-nav navbar-right" ng-show='nav.isLoggedIn()'>
-				       <li><a href=''>{{nav.username}}</a></li>
-											<li><a href='' ng-click='nav.logout()'><span class='glyphicon glyphicon-log-out'></span>&nbsp;Logout</a></li>
-			      </ul>
-			      
-			    </div><!-- /.navbar-collapse -->
-			    
-			   
-			   </div><!-- /.container-fluid -->
-		   </nav>
+		      </ul>
+		      <!-- Right Nav Section -->
+		      <ul class="right" ng-show='nav.isLoggedIn()'>
+		        <li><a href=''><span class='fi-torso'></span>&nbsp;{{nav.username}}</a></li>
+										<li><a href='' ng-click='nav.logout()'><span class='fi-power'></span>&nbsp;Logout</a></li>
+		      </ul>
+		    </top-bar-section>
+		   </top-bar>
+     </div>
