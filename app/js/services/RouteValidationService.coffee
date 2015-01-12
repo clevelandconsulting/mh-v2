@@ -15,9 +15,11 @@ angular.module('app').service 'RouteValidation', [ '$rootScope','$location','Aut
     true 
 
   validateRoute: (event, next, current) =>
+   #console.log 'validating route'
    notvalid = @routeRequiresValidation(@location.url()) && !@authorization.checkIfLoggedIn()
    #console.log 'validating route', @location.url(), notvalid
    if notvalid
     @location.path('/login');
+   #console.log 'done'
 
 ]

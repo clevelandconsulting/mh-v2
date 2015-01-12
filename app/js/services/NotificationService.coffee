@@ -2,14 +2,14 @@ angular.module('app').service 'NotificationService', ['ToastrService',
  class notifications
   constructor: (@toastrService) ->
    
-  error: (msg) -> 
-   @toastrService.error msg
+  error: (msg, title) -> 
+   @toastrService.error msg, title
   
-  success: (msg) -> 
-   @toastrService.success msg
+  success: (msg, title) -> 
+   @toastrService.success msg, title
    
-  info: (msg) ->
-   @toastrService.info msg
+  info: (msg, title) ->
+   @toastrService.info msg, title
    
   clear: (optional) ->
    @toastrService.clear(optional)

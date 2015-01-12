@@ -37,7 +37,18 @@
     items.push item
    @save items
   
-  current: () -> @name + ".current"
+  getName: (key) ->
+   if key?
+    return @name + "." + key
+   else
+    return @name
+  
+     
+  saveById: (id, item) -> @storage.store(@getName(id),item)
+  getById: (id) -> @storage.get(@getName(id))
+  clearById: (id) -> @storage.store(@getName(id))
+  
+  current: () -> @getName("current")
   getCurrent: () -> @storage.get(@current())
   saveCurrent: (current) -> @storage.store(@current(), current)
   clearCurrent: -> @saveCurrent()

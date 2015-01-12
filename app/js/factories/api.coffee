@@ -46,7 +46,9 @@ class api
   get:(path) ->
    path = @prepCall path
    #console.log 'getting', @url(path)
-   @http({method: 'GET', url:@url(path)})
+   @http({method: 'GET', url:@url(path)}).then (response) =>
+    #console.log 'finished getting', @url(path)
+    return response
    
   checkCredentials: (credentials) ->
    @setHeader('Authorization', 'Basic ' + credentials.auth)

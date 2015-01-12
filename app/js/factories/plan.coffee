@@ -4,6 +4,7 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    super(data,href,recordID)
    @lastAccessed = Date.now()
   
+  
   status: () ->
    if @data.status == null || @data.status == ''
     return 'Draft'

@@ -5,28 +5,53 @@ class fmRestRepository
   @pageKey: 'RFMmax'
   
   constructor: (@$q, @api, @model, @modelList, @path, @modelName) ->
-    
+  
+  getByRecordId: (id) ->
+   path = @path + '/' + id + '.json'
+   return @getAll(path).then (data) =>
+    console.log data.items[0]
+    valid = @validate(data.items[0].data)
+    if valid
+     return data.items[0]
+    else
+     return null
+  
+  validate: (data) ->
+   console.log 'validating...', data
+   if !data.__guid? || data.__guid == ''
+    return false
+   
+   true 
+  
   getAll: (path) ->
   
    if !path?
     path = @path
-   	     
+    
+   #console.log 'creating fmRestRepository.getAll() promise'
    d = @$q.defer()
    
    successFn = (response) =>
     #console.log 'making new ', @modelList, 'with', @model
     results = new @modelList response.data, @model
+    #console.log 'resolving fmRestRepository.getAll() promise'
     d.resolve results
 
    @api.get(path).then successFn, (response) =>
     if response.data?
      fmcode = parseInt(response.data.info['X-RESTfm-FM-Status'])
+     reason = response.data.info['X-RESTfm-FM-Reason']
      if fmcode == 401
       #nothing found
+      #console.log 'resolving fmRestRepository.getAll() promise'
       d.resolve null
      else
-      console.log fmcode, response
-      d.reject response
+      #console.log fmcode, response
+      #console.log 'rejecting fmRestRepository.getAll() promise'
+      d.reject {code: fmcode, reason: reason, status: response.status}
+    else
+     console.log 'rejecting fmRestRepository.getAll() promise'
+     d.reject response
    
    d.promise
   

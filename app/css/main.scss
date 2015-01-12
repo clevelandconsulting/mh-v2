@@ -4,7 +4,7 @@
 @font-face {
   font-family: "foundation-icons";
   src: url("../fonts/foundation-icons.eot");
-  src: url("../fonts/foundation-icons.eot?#iefix") format("embedded-opentype"), url("../fonts/foundation-icons.woff") format("woff"), url("../fonts/foundation-icons.ttf") format("truetype"), url("../fonts/foundation-icons.svg#fontcustom") format("svg");
+  src: url("../fonts/foundation-icons.eot"), url("../fonts/foundation-icons.ttf"), url("../fonts/foundation-icons.eot?#iefix") format("embedded-opentype"), url("../fonts/foundation-icons.woff") format("woff"), url("../fonts/foundation-icons.ttf") format("truetype"), url("../fonts/foundation-icons.svg#fontcustom") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -43,6 +43,16 @@
 	width: 100%;
 }
 
+.plan.plan-submitted {
+	border-color: darken( $info-color, 5% );
+	@include block-glowing-effect('hover','300ms',fade-out( $info-color, .25));
+}
+
+.plan.plan-approved {
+	border-color: darken( $success-color, 5% );
+	@include block-glowing-effect('hover','300ms',fade-out( $success-color, .25));
+}
+
 .plan-status.plan-draft {
 	background-color: $smoke;
 	color: darken( $smoke , 30% );
@@ -56,4 +66,9 @@
 .plan-status.plan-approved {
 	background-color: $success-color;
 	color: $white;
+}
+
+.plan-details .callout {
+	padding: 8px;
+	font-size: 80%;
 }
