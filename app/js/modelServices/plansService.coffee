@@ -1,7 +1,8 @@
 angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStorageService', 
  class PlansService
   constructor: (@q, @PlanRepository, @PlanStorageService) ->
-   
+   @blocked = {}
+   @requirements_on = true
   getSelected: () ->
    @selectedPlan
    
@@ -11,7 +12,7 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
    
    stored = @PlanStorageService.getById(id)
    if stored == null
-    console.log 'Retrieving Via Repository'
+    #console.log 'Retrieving Via Repository', id
     @PlanRepository.getByRecordId(id)
     .then (data) =>
      if data == null
@@ -32,12 +33,27 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
      #console.log 'rejecting PlansService.getOne() promise', id
      deferred.reject message
    else
-    console.log 'Retrieving Via Storage'
+    #console.log 'Retrieving Via Storage', id
     #console.log 'resolving PlansService.getOne() promise', id
     deferred.resolve stored
      
    deferred.promise
+  
+  allow_requirements: (allow) ->
+   @requirements_on = allow
    
+  block_requirement: (name) ->
+   @blocked[name] = true
+  
+  unblock_requirement: (name) ->
+   @blocked[name] = false 
+     
+  requirements: (name) ->
+   if @blocked[name] || !@requirements_on
+    return false
+   else
+    @PlanRepository.model.submission_requirements[name]
+  
   getAll: (pagesize) ->
    @PlanRepository.getPlans(pagesize)
    
@@ -47,8 +63,17 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
   select: (plan) ->
    @selectedPlan = plan
    @PlanStorageService.saveById(plan.recordID, plan)
-   
+  
+  add: () ->
+   @PlanRepository.add({})
+  
+  delete: (plan) ->
+   @PlanRepository.delete(plan.href).then (response) =>
+    @PlanStorageService.clearById(plan.recordID)
+    return response
+  
   save: (plan) ->
+   #console.log plan
    #href = plan.href.replace('Api-Plan', 'Api-Plan.Put')
    @PlanRepository.save(plan).then (data) =>
     @PlanStorageService.saveById(plan.recordID, plan)

@@ -3,8 +3,8 @@ angular.module('app').service 'UserStorageService', [ 'StorageService', 'ModelSt
   constructor : -> 
    super(StorageService, 'users', 86400000 * 30)   
 
-  getById: (userid) ->
-   @getItemBy('recordId',userid,@intCompare)
+  getByRecordId: (userid) ->
+   @getItemBy('recordID',userid,@intCompare)
 
   getByUsername: (username) ->
    @getItemBy('username',username,@textCompare)

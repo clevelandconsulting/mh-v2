@@ -1,4 +1,8 @@
-<form>
+<ul class="breadcrumbs">
+  <li><a href="#/plan">Plans</a></li>
+  <li class="current"><a href=''>{{plan.plan.data.campaign_title}}</a></li>
+</ul>
+<form name='planForm' ng-show='plan.plan !== undefined && plan.plan !== null'>
 	<div class='row'><div class='columns small-12'><h2>Plan {{plan.plan.data.campaign_title}}</h2></div></div>
 	<div class='row'>
 		 
@@ -14,20 +18,20 @@
 			</div>
 			
 			<div class='row'>
-				<div class='columns small-12 medium-12 large-6'>
-					<label>Product: <input type='text' ng-model='plan.plan.data.product'></label>
-				</div>
-				<div class='columns small-12 medium-12 large-6'>
-					<label>Portfolio: <input type='text' ng-model='plan.plan.data.portfolio'></label>
+				<div class='columns small-12 medium-12 large-12'>
+					<label>Product: <select type='text' name='product' ng-required='plan.required("product")' x-ng-model='plan.plan.product' x-ng-options='product as product.name group by product.discipline for product in plan.productList.items | orderBy:["discipline","name"]' ><option value=''>Select Product</option></select>
+					
+					
+					</label>
 				</div>
 			</div>
 			
 			<div class='row'>
 				<div class='columns small-12 medium-6 large-3'>
-					<label>Begin: <input type='text' ng-model='plan.plan.data.begin'></label>
+					<label>Begin: <select type='text' name='begin' ng-required='plan.required("begin")' x-ng-model='plan.plan.data.begin' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
 				</div>
 				<div class='columns small-12 medium-6 large-3'>
-					<label>End: <input type='text' ng-model='plan.plan.data.end'></label>
+					<label>End: <select type='text' name='begin' ng-required='plan.required("end")' x-ng-model='plan.plan.data.end' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
 				</div>
 				<div class='columns small-12 medium-6 large-3'>
 					<label>Budget: <input type='text' ng-model='plan.plan.data.budget'></label>
@@ -64,7 +68,7 @@
 		<div class='columns small-12'>
 			<h5>{{detail.name}}</h5>
 			<div class='panel callout radius' ng-show='detail.message !== ""'>{{detail.message}}</div>
-			<textarea ng-model='plan.plan.data[detail.property]'></textarea>
+			<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]'></textarea>
 		</div>
 	</div>
 	
@@ -77,12 +81,6 @@
 		</div>
 		<div class='columns small-6 medium-4 text-center'>
 			<button class='button expand success' ng-click='plan.submit(plan.plan)'>Submit</button>
-		</div>
-	</div>
-	
-	<div class='row'>
-		<div class='columns small-12'>
-			<div class='panel'><pre>{{ plan.pretty() }}</pre></div>
 		</div>
 	</div>
 </form>

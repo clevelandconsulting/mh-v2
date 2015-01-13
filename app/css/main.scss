@@ -8,6 +8,10 @@
   font-weight: normal;
   font-style: normal; }
 
+input.error, textarea.error , select.error {
+ border-color: red;
+}
+
 .container {
 	margin: 5px;
 }
@@ -21,7 +25,7 @@
 	margin-bottom: 25px;
 }
 
-.plan {
+.plan-card {
 	border: 1px solid $smoke;
 	margin: $column-gutter 0px 0px 0px; 
 	height: 200px;
@@ -30,40 +34,40 @@
 	@include block-glowing-effect('hover','300ms',fade-out( $charcoal, .25));
 }
 
-.plan-details {
+.plan-card-details {
 	font-size: 85%;
 	color: $charcoal;
 	padding: 8px 8px 8px 8px;
 }
 
-.plan-status {
+.plan-card-status {
 	padding: 4px 8px;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 }
 
-.plan.plan-submitted {
+.plan-card.plan-submitted {
 	border-color: darken( $info-color, 5% );
 	@include block-glowing-effect('hover','300ms',fade-out( $info-color, .25));
 }
 
-.plan.plan-approved {
+.plan-card.plan-approved {
 	border-color: darken( $success-color, 5% );
 	@include block-glowing-effect('hover','300ms',fade-out( $success-color, .25));
 }
 
-.plan-status.plan-draft {
+.plan-card-status.plan-draft {
 	background-color: $smoke;
 	color: darken( $smoke , 30% );
 }
 
-.plan-status.plan-submitted {
+.plan-card-status.plan-submitted {
 	background-color: $info-color;
 	color: darken( $info-color, 30% );
 }
 
-.plan-status.plan-approved {
+.plan-card-status.plan-approved {
 	background-color: $success-color;
 	color: $white;
 }
@@ -71,4 +75,26 @@
 .plan-details .callout {
 	padding: 8px;
 	font-size: 80%;
+}
+
+ul.scrollable {
+    height: 10em;
+    line-height: 2em;
+    border: 1px solid #ccc;
+    padding: 0;
+    margin-left: 0;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+ul.scrollable li {
+  padding-left: 0.3em;
+}
+
+ul.scrollable li.selected {
+ background-color: $primary-color;
+}
+
+ul.scrollable li.selected a {
+ color: white
 }

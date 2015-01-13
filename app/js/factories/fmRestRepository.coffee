@@ -9,7 +9,7 @@ class fmRestRepository
   getByRecordId: (id) ->
    path = @path + '/' + id + '.json'
    return @getAll(path).then (data) =>
-    console.log data.items[0]
+    #console.log data.items[0]
     valid = @validate(data.items[0].data)
     if valid
      return data.items[0]
@@ -17,14 +17,13 @@ class fmRestRepository
      return null
   
   validate: (data) ->
-   console.log 'validating...', data
+   #console.log 'validating...', data
    if !data.__guid? || data.__guid == ''
     return false
    
    true 
   
   getAll: (path) ->
-  
    if !path?
     path = @path
     
@@ -93,7 +92,7 @@ class fmRestRepository
    
    msg
   
-  add: (data) ->
+  add: (data, preScript) ->
    
    d = @$q.defer()
    
@@ -105,8 +104,12 @@ class fmRestRepository
     msg = "There was a problem adding your " + @modelName + ". "
     msg = msg + @getFailureReason(response.data.info) #response.data.info['X-RESTfm-Reason']
     d.reject msg
+   
+   path = @path+'.json'
+   if preScript?
+    path =  path + '?RFMpreScript='+preScript
     
-   @api.post(@path+'.json', {data: [data]}).then successFn, errorFn
+   @api.post(path, {data: [data]}).then successFn, errorFn
    
    d.promise
    

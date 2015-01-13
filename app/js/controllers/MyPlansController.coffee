@@ -2,7 +2,11 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
  class MyPlansController 
   constructor: (@scope, @location, @plansService, @notifications, @planStorage) ->
    @cols = 3
-   @foundationCols = 12/@cols
+   
+   @foundationColsSm = 12
+   @foundationColsLg = 12/@cols
+   @foundationColsMd = 12/@cols
+   
    @pagesize = @cols * 2
    @plansService.getAll(@pagesize).then @load_success, @load_error
    #console.log 'loading MyPlansController'
@@ -10,6 +14,8 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    
   load_success: (data) =>
    @plans = data
+   @recordDisplay = 'Displaying plans ' + (@plans.skip + 1).toString() + ' through ' + (@plans.skip+@plans.fetchCount).toString() + ' of ' + @plans.foundSetCount.toString()
+   console.log @plans
    
    j = 0
    @plan_groups = []
@@ -32,8 +38,13 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    @plansService.getByHref(href,@pagesize).then @load_success, @load_error
    
   clickPlan: (plan) ->
-   #console.log plan
    @plansService.select(plan)
    @location.path('plan/'+plan.recordID)
-   #@plansService.getOne(href)
+  
+  addNew: () ->
+   @plansService.add()
+   .then (response) =>
+    @plansService.select(response.data)
+    @location.path('plan/'+response.data.recordID)
+
 ]

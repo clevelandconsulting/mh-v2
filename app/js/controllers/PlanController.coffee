@@ -1,8 +1,7 @@
-angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', 'PlansService', 'NotificationService', 'PlanStorageService',
+angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', 'PlansService', 'NotificationService','listManager',
  class PlanController 
-  constructor: (@scope, @routeParams, @location, @plansService, @notifications, @planStorage) ->
-   #console.log 'loading PlanController'
-   
+  constructor: (@scope, @routeParams, @location, @modal, @timeout, @plansService, @notifications, @listManager) ->
+   @submitted = false
    @details = [
     {
      'name':'Focus', 
@@ -37,23 +36,96 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     
    ]
    
-   @plan = @plansService.getSelected()
-   if !@plan?
-    @plansService.getOne(@routeParams.id)
-    .then (data) =>
-     @plan = data
-     console.log @plan, @plan.status()
-    .catch (error) =>
-     @notifications.error error, "Could Not Retrieve Plan"
-     #@location.path('plan')
+   #console.log @listManager
+   
+   findProduct = (items,product) ->
+    found = product
+    for item in items
+     if product.name == item.name && product.portfolio == item.portfolio
+      #console.log 'found product', item
+      found = item
+      break
+    found
+
+   
+   @monthList = @listManager.months
+   @productList = @listManager.productList
+   
+   @productList.loaded.then () =>
+	   @plan = @plansService.getSelected()
+	   if !@plan?
+	    @plansService.getOne(@routeParams.id)
+	    .then (data) =>
+	     @plan = data
+	     @plan.product = findProduct(@productList.items,@plan.product)
+	    .catch (error) =>
+	     @notifications.error error, "Could Not Retrieve Plan"
+      #@location.path('plan')
+    else 
+     @plan.product = findProduct(@productList.items,@plan.product)
   
+  invalidClass: (property) -> 
+   if @scope.planForm[property].$invalid && (!@scope.planForm[property].$pristine || @submitted)
+    return "error"
+   else
+    return ""
+   
+  required: (name) ->
+   #console.log 'checking requirements', name
+   required = @plansService.requirements(name)
+   #console.log required
+   required
+  
+  submit: (plan) ->
+   @submitted = true
+   if @scope.planForm.$valid
+    console.log 'submitting'
+   else
+    console.log 'can\'t submit'
+    
+    
   save: (plan) ->
+   @plansService.allow_requirements(false)
    @plansService.save(plan)
    .then (data) =>
+    @plansService.allow_requirements(true)
     @notifications.success data, 'Updated!'
    .catch (error) =>
+    @plansService.allow_requirements(true)
     @notifications.error error, 'Not Updated!'
-    
+  
+  remove: (plan) ->
+  
+   @plansService.allow_requirements(false)
+   modalInstance = @modal.open {
+    templateUrl: 'modals/modalRemove.html',
+    controller: 'ModalInstanceController',
+    resolve: {
+      item: () => {name:'plan',object:plan}
+    }
+   }
+   
+   modalInstance.result
+   .then (item) =>
+    #console.log item.object
+    @plansService.allow_requirements(true)
+    @plansService.delete(item.object)
+	   .then (data) =>
+	    @timeout( 
+	     ()=>
+	      @notifications.success data, "Plan Removed"
+	      @location.path('plan')
+	      
+	    ,
+	     400
+	    )
+	   .catch (error) =>
+	    @notifications.error error, "Plan NOT Removed"
+   .catch (message) =>
+    @plansService.allow_requirements(true)
+    #console.log 'Modal dismissed at: ' + new Date()
+   
+  
   pretty: () ->
    JSON.stringify(@plan, undefined, 2)
 

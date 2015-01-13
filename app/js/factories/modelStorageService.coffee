@@ -17,8 +17,10 @@
   getItemBy: (attribute,value,comparisonFn) ->
    found = null
    items = @get()
+   #console.log items
    if items? and items != ''
     for item in items
+     #console.log 'comparing', item, attribute, item[attribute], value
      comparison = comparisonFn(item[attribute],value)
      if comparison
 	     found = item

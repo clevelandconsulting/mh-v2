@@ -11,6 +11,19 @@ class fmRestList
     #assume we have just a nav object
      @loadNav(object)
    
+   if object.info?
+    if object.info['fetchCount']?
+     @fetchCount = parseInt(object.info['fetchCount'])
+     
+    if object.info['foundSetCount']?
+     @foundSetCount = parseInt(object.info['foundSetCount'])
+    
+    if object.info['tableRecordCount']?
+     @tableRecordCount = parseInt(object.info['tableRecordCount'])
+     
+    if object.info['skip']?
+     @skip = parseInt(object.info['skip'])
+    
    if object.data? and object.meta? and model?
      @loadItems(object.data,object.meta,model)
  

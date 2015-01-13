@@ -26,8 +26,8 @@ angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageSer
   getUserById: (userid) ->
    deferred = @q.defer()
    
-   user = @UserStorage.getById(userid)
-   
+   user = @UserStorage.getByRecordId(userid)
+   #console.log 'userbyid', userid, user
    if user == null
     @UserRepository.getUserById(userid)
     .then (user) =>
@@ -37,7 +37,7 @@ angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageSer
      else
       deferred.reject 'failed to store: ' + e.message
    else
-    deferred.resolve User
+    deferred.resolve user
 
    deferred.promise
       
