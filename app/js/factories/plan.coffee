@@ -7,8 +7,19 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
 	   goals: true,
 	   target: true,
 	   message: true,
-	   key_indicators: true
-  } 
+	   key_indicators: true,
+	   begin: true,
+	   end: true
+  }
+  
+  @locked_after_submission = {
+	  product: true,
+   focus: true,
+   goals: true,
+   target: true,
+   message: true,
+   key_indicators: true
+  }
  
   constructor: (data,href,recordID) ->
    super(data,href,recordID)

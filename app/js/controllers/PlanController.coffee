@@ -64,6 +64,9 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     else 
      @plan.product = findProduct(@productList.items,@plan.product)
   
+  disabled: (property) ->
+	  ( @plan.status() != "Draft" && @plansService.disabled(property) )
+  
   invalidClass: (property) -> 
    if @scope.planForm[property].$invalid && (!@scope.planForm[property].$pristine || @submitted)
     return "error"

@@ -3,6 +3,8 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
   constructor: (@q, @PlanRepository, @PlanStorageService) ->
    @blocked = {}
    @requirements_on = true
+   @filter = ''
+   
   getSelected: () ->
    @selectedPlan
    
@@ -47,12 +49,18 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
   
   unblock_requirement: (name) ->
    @blocked[name] = false 
-     
+  
+  disabled: (name) ->
+   @PlanRepository.model.locked_after_submission[name]
+   
   requirements: (name) ->
    if @blocked[name] || !@requirements_on
     return false
    else
     @PlanRepository.model.submission_requirements[name]
+  
+  getByStatus: (status, pagesize) ->
+   @PlanRepository.getByStatus(status,pagesize)
   
   getAll: (pagesize) ->
    @PlanRepository.getPlans(pagesize)
@@ -65,7 +73,7 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'PlanStor
    @PlanStorageService.saveById(plan.recordID, plan)
   
   add: () ->
-   @PlanRepository.add({})
+   @PlanRepository.add({campaign_title: 'Untitled'})
   
   delete: (plan) ->
    @PlanRepository.delete(plan.href).then (response) =>

@@ -68,7 +68,7 @@
 		<div class='columns small-12'>
 			<h5>{{detail.name}}</h5>
 			<div class='panel callout radius' ng-show='detail.message !== ""'>{{detail.message}}</div>
-			<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]'></textarea>
+			<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
 		</div>
 	</div>
 	

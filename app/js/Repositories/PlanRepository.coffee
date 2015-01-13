@@ -3,6 +3,9 @@ angular.module('app').service 'PlanRepository', ['$q', 'plan', 'fmRestList', 'fm
   constructor : -> 
    super($q, ApiService, plan, fmRestList, 'layout/Api-Plan', 'plan')
 
+  getByStatus: (status, pagesize) ->
+   @getAllByKey('status', status, 'Plan.Api.Filter',pagesize)
+
   getPlans: (pagesize) ->
    @getAllWithScript('','Plan.Api.Filter',pagesize)
   
