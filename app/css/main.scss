@@ -8,8 +8,15 @@
   font-weight: normal;
   font-style: normal; }
 
+$base_border_color: $smoke;
+$base_background_color: #f4f8fc;
+
 input.error, textarea.error , select.error {
  border-color: red;
+}
+
+body {
+	background-color: $base_background_color;
 }
 
 .container {
@@ -26,10 +33,11 @@ input.error, textarea.error , select.error {
 }
 
 .plan-card {
-	border: 1px solid $smoke;
+	border: 1px solid darken($base_border_color,10%);
 	margin: $column-gutter 0px 0px 0px; 
 	height: 200px;
 	position: relative;
+	background-color: white;
 	@include radius();
 	@include block-glowing-effect('hover','300ms',fade-out( $charcoal, .25));
 }
@@ -58,8 +66,8 @@ input.error, textarea.error , select.error {
 }
 
 .plan-card-status.plan-draft {
-	background-color: $smoke;
-	color: darken( $smoke , 30% );
+	background-color: $base_border_color;
+	color: darken( $base_border_color, 30% );
 }
 
 .plan-card-status.plan-submitted {
@@ -78,17 +86,14 @@ input.error, textarea.error , select.error {
 }
 
 ul.scrollable {
-    height: 10em;
+    max-height: 20em;
     line-height: 2em;
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
+    border-bottom: 1px solid $smoke;
     padding: 0;
     margin-left: 0;
     overflow: scroll;
     overflow-x: hidden;
-}
-
-ul.scrollable li {
-  padding-left: 0.3em;
 }
 
 ul.scrollable li.selected {
@@ -97,4 +102,87 @@ ul.scrollable li.selected {
 
 ul.scrollable li.selected a {
  color: white
+}
+
+
+#tactics > .tabs dd {
+	border-right: 1px solid $aluminum;
+}
+
+#tactics > .tabs dd.active {
+	border: 1px solid $aluminum;
+	border-right: 1px solid white;
+}
+
+#plan > .tabs {
+	margin-top: 16px;
+}
+
+#plan > .tabs dd {
+	border: 1px solid $base_border_color;
+	margin-right: 5px;
+}
+
+#plan > .tabs dd a {
+		color: $aluminum;
+}
+
+#plan > .tabs dd.active a {
+	color: black;
+}
+
+#plan > .tabs-content {
+	margin-top: 5px;
+	
+	border: 1px solid $base_border_color;
+}
+
+#plan > .tabs-content, #plan > .tabs-content .content {
+	padding: 0;
+}
+
+#plan-details {
+	padding: 0px 20px;
+}
+
+#tactics {
+	padding: 0;
+}
+
+#tactics ul.side-nav {
+	padding: 0;
+}
+
+#tactics ul.side-nav li {
+	margin: 0;
+}
+
+
+
+.accordion .content {
+	border: 1px solid $base_border_color;
+}
+
+dl.accordion dd {
+	margin-bottom: 5px !important;
+}
+
+dl.accordion dd a {
+	padding: 0;
+}
+.accordion .heading button {
+	margin-bottom: 0;
+}
+
+.accordion .heading, .accordion div.title, .accordion div.remove, .accordion .heading button {
+	height: 50px;
+}
+
+.accordion .heading div.title {
+	padding: 10px 10px 10px 20px;
+	color: $aluminum;
+}
+
+.accordion .active div.title {
+	color: black;
 }

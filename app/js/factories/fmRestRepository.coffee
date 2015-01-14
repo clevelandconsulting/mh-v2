@@ -92,6 +92,12 @@ class fmRestRepository
    
    msg
   
+  save: (model) ->
+   data = model.getUpdateData()
+   href = model.href
+   
+   @update(data,href)
+  
   add: (data, preScript) ->
    
    d = @$q.defer()
@@ -112,7 +118,7 @@ class fmRestRepository
    @api.post(path, {data: [data]}).then successFn, errorFn
    
    d.promise
-   
+  
   update: (data,href) ->
    dataToSend = {data: [data]}
 

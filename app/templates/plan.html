@@ -1,11 +1,16 @@
-<ul class="breadcrumbs">
-  <li><a href="#/plan">Plans</a></li>
-  <li class="current"><a href=''>{{plan.plan.data.campaign_title}}</a></li>
-</ul>
 <form name='planForm' ng-show='plan.plan !== undefined && plan.plan !== null'>
-	<div class='row'><div class='columns small-12'><h2>Plan {{plan.plan.data.campaign_title}}</h2></div></div>
 	<div class='row'>
-		 
+		<div class='columns small-12'>
+		 <ul class="breadcrumbs">
+		  <li><a href="#/plan">Plans</a></li>
+		  <li class="current"><a href=''>{{plan.plan.data.campaign_title}}</a></li>
+		</ul>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='columns small-12'><h2>Plan {{plan.plan.data.campaign_title}}</h2><a href='' class='button' ng-click='plan.refresh(plan.plan)'>Refresh</a></div>
+	</div>
+	<div class='row'>		
 		<div class='columns small-12 medium-6 large-8'>
 			
 			<div class='row'>	
@@ -63,24 +68,162 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class='row plan-details' ng-repeat='detail in plan.details'>
-		<div class='columns small-12'>
-			<h5>{{detail.name}}</h5>
-			<div class='panel callout radius' ng-show='detail.message !== ""'>{{detail.message}}</div>
-			<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
+	<div class='row'>
+		<div class='small-12 columns'>
+			<hr/>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='small-12 columns'>
+			<tabset id='plan'>
+		  <tab heading="Plan Details">
+		   <div id='plan-details'>
+			   <div class='row' ng-repeat='detail in plan.details'>
+							<div class='columns small-12'>
+								<div class='plan-details'>
+									<h5>{{detail.name}}</h5>
+									<div class='panel callout radius' ng-show='detail.message !== ""'>{{detail.message}}</div>
+									<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
+								</div>
+							</div>
+						</div>
+		   </div>
+		  </tab>
+		  <tab heading='Tactics'>
+		   <div id='tactics'>
+			   <div class='row medium-collapse large-collapse'>
+				   <div class='medium-4 large-3 columns'>
+					   <ul class="side-nav scrollable">
+						   <li ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}'>
+          <a href='' ng-class='plan.selected==i?"active":""' ng-click='plan.selected=i'>{{strategy.title(20)}}</a>
+         </li>
+							  
+							</ul>
+							<ul class='side-nav'>
+								<li><a href=''><span class='fi-plus'></span>&nbsp;New Strategy</a></li>
+				   </div>
+				   <div class='medium-8 large-9 columns'>
+					   <div ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}' ng-show='plan.selected == i'>
+						   <label>Description: <textarea ng-model='strategy.data.description'></textarea></label>
+					    <accordion>
+					     <accordion-group ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}'>
+					      <accordion-heading>
+					       <div class='row heading'>
+						       <div class='small-10 large-11 columns title'>#{{(j+1)}}. {{tactic.title(20)}}</div>
+						       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='tactic.removed=true'><span class='fi-x'></span></button></div>
+					       </div>
+					      </accordion-heading>
+							    <div class='row tactic'>
+								    <div class='small-6 large-3 columns'>
+									    <label>Medium: <input type='text' ng-model='tactic.data.medium'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Budget: <input type='text' ng-model='tactic.data.budget'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Starts: <input type='date' ng-model='tactic.begin_date'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Ends: <input type='date' ng-model='tactic.end_date'></textarea></label>
+								    </div>
+							    </div>
+							   </accordion-group> 
+					    </accordion>
+					   </div>
+				   </div>
+			   </div>
+		   </div>
+		   <!--
+		   <tabset vertical="true" type="navType" id='tactics'>
+		    <tab heading="Vertical 1">Vertical content 1</tab>
+		    <tab heading="Vertical 2">Vertical content 2</tab>
+		    <tab>
+		     <tab-heading>
+		     <span class='fi-plus'></span>&nbsp;New Strategy
+		     </tab-heading>
+		     <textarea ng-model='plan.newstrategy'></textarea>
+		     <button class='button'>Add</button>
+     </tab>
+		  </tabset>
+		  -->
+		   <!--
+		   
+		   -->
+		   <!--
+		   <div class='row'>
+			   <div class='small-12 medium-8 large-10 columns'>
+				   <p>Add all the strategies and their tactics for this plan.</p>
+			   </div>
+			   <div class='small-12 medium-4 large-2 columns'><button class='button expand'>Add Strategy</button></div>
+		   </div>
+		   <div class='row'>
+			   <div class='columns small-12'>
+				   <accordion>
+				    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}'>
+				     <accordion-heading>
+				      <div class='row heading'>
+				       <div class='small-10 large-11 columns title'>Strategy {{(i+1)}}: {{strategy.title(20)}}</div>
+				       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='strategy.removed=true'><span class='fi-x'></span></button></div>
+			       </div>
+				     </accordion-heading>
+			      <label>Description: <textarea ng-model='strategy.data.description'></textarea></label>
+			      <div class='row'>
+				      <div class='columns small-8 large-9'>
+					      <h5>Tactics</h5>
+			       </div>
+			       <div class='columns small-4 large-3'>
+					      <button class='button expand'>Add Tactic</button>
+			       </div>
+			      </div>
+					    <accordion>
+					     <accordion-group ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}'>
+					      <accordion-heading>
+					       <div class='row heading'>
+						       <div class='small-10 large-11 columns title'>#{{(j+1)}}. {{tactic.title(20)}}</div>
+						       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='tactic.removed=true'><span class='fi-x'></span></button></div>
+					       </div>
+					      </accordion-heading>
+							    <div class='row tactic'>
+								    <div class='small-6 large-3 columns'>
+									    <label>Medium: <input type='text' ng-model='tactic.data.medium'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Budget: <input type='text' ng-model='tactic.data.budget'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Starts: <input type='date' ng-model='tactic.begin_date'></textarea></label>
+								    </div>
+								    <div class='small-6 large-3 columns'>
+									    <label>Ends: <input type='date' ng-model='tactic.end_date'></textarea></label>
+								    </div>
+							    </div>
+							   </accordion-group> 
+					    </accordion>
+					    
+				    </accordion-group>
+				  </accordion>
+				  
+			   </div>
+		   </div>
+		   -->
+		   
+		   
+		  </tab>
+		 </tabset>
 		</div>
 	</div>
 	
+	
+	
 	<div class='row'>
 		<div class='columns small-12 medium-4 text-center'>
-			<button class='button expand' ng-click='plan.save(plan.plan)'>Save</button>
+			<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
 		</div>
 		<div class='columns small-6 medium-4 text-center'>
 			<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
 		</div>
 		<div class='columns small-6 medium-4 text-center'>
-			<button class='button expand success' ng-click='plan.submit(plan.plan)'>Submit</button>
+			<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
 		</div>
-	</div>
+ </div>
 </form>

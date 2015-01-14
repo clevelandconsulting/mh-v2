@@ -22,10 +22,11 @@ angular.module('app').service 'PlanRepository', ['$q', 'plan', 'fmRestList', 'fm
    plan.data.product = plan.product.value
    
    #get modifiable data
-   data = plan.getUpdateData()
-   href = plan.href
+   super(plan)
+   #data = plan.getUpdateData()
+   #href = plan.href
    
-   @update(data,href)
+   #@update(data,href)
   
   add: (data) ->
    super(data,'RestFM.Login')

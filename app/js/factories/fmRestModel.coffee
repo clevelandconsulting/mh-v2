@@ -9,6 +9,15 @@ class fmRestModel
   if (!Date.now) 
     Date.now = -> new Date().getTime()
  
+ formatFMDateForJS: (date) ->
+  new Date(date)
+ 
+ formatDateForFM: (date) ->
+   sep = "/"
+   appendZero = (number) ->
+    ("0" + number.toString()).slice(-2)
+   appendZero(date.getMonth()+1) + sep + appendZero(date.getDate()) + sep + date.getFullYear() 
+ 
  getUpdateData: () ->
   copy = {}
   for attr of @data

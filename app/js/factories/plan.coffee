@@ -21,7 +21,7 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    key_indicators: true
   }
  
-  constructor: (data,href,recordID) ->
+  constructor: (data,href,recordID,strategies) ->
    super(data,href,recordID)
    @lastAccessed = Date.now()
    @non_modifiable_properties = [
@@ -33,7 +33,37 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
 	   portfolio: @data.portfolio
 	   discipline: @data.discipline
    }
+   if !strategies?
+    @strategies = []
+   else
+    @strategies = strategies
+  
+  addStrategy: (strategy) ->
+   @strategies.push(strategy)
    
+  removeStrategy: (strategy) ->
+   index = @strategies.indexOf(strategy)
+   if index > -1
+    @strategies.splice(index,1)
+  
+  isDisabled: (property) ->
+   if @status() == 'Draft'
+    return false
+   else
+    d = plan.locked_after_submission[property]
+    return (d? && d)
+    
+  
+  readyForSubmission: () ->
+   ready = true
+   for k, v of plan.submission_requirements
+    #console.log k, v
+    if v
+     if !@data[k]? || @data[k]==''
+      ready = false
+      break;
+   ready
+  
   status: () ->
    if @data.status == null || @data.status == ''
     return 'Draft'

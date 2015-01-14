@@ -2,6 +2,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
  class PlanController 
   constructor: (@scope, @routeParams, @location, @modal, @timeout, @plansService, @notifications, @listManager) ->
    @submitted = false
+   @selected = 1
    @details = [
     {
      'name':'Focus', 
@@ -65,8 +66,11 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
      @plan.product = findProduct(@productList.items,@plan.product)
   
   disabled: (property) ->
-	  ( @plan.status() != "Draft" && @plansService.disabled(property) )
-  
+   if @plan?
+    @plan.isDisabled(property)
+   else
+    true
+      
   invalidClass: (property) -> 
    if @scope.planForm[property].$invalid && (!@scope.planForm[property].$pristine || @submitted)
     return "error"
@@ -80,17 +84,26 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    required
   
   submit: (plan) ->
+   console.log @scope.planForm
    @submitted = true
    if @scope.planForm.$valid
     console.log 'submitting'
    else
     console.log 'can\'t submit'
-    
-    
+  
+  refresh: (plan) ->
+   @plansService.getFromServer(plan.recordID)
+   .then (data) =>
+    @plan = data
+    @notifications.success 'Your data has been refreshed.'
+   .catch (error) =>
+    @notifications.error error, 'Unable To Refresh'  
+  
   save: (plan) ->
    @plansService.allow_requirements(false)
    @plansService.save(plan)
    .then (data) =>
+    @scope.planForm.$setPristine(true)
     @plansService.allow_requirements(true)
     @notifications.success data, 'Updated!'
    .catch (error) =>
@@ -129,7 +142,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     #console.log 'Modal dismissed at: ' + new Date()
    
   
-  pretty: () ->
-   JSON.stringify(@plan, undefined, 2)
+  pretty: (object) ->
+   JSON.stringify(object, undefined, 2)
 
 ]
