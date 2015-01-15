@@ -1,0 +1,12 @@
+<div class='plan-card' ng-class='"plan-" + plan.status().toLowerCase()'>
+  <h5 class='text-center'>{{plan.data.campaign_title}}</h5>
+  
+  <div class='plan-card-details'>
+	  <div><span>{{plan.data.staff_full_name_c}} ({{plan.recordID}})</span></div>
+	  <div><span>{{plan.data.product}}</span></div>
+	  <div><span>{{plan.data.portfolio}}</span></div>
+	  <div>{{plan.data.begin}}<span ng-show='plan.data.begin !== "" && plan.data.end !== ""'> - </span>{{plan.data.end}}</div>
+  </div>
+ 
+  <div class='text-center plan-card-status' ng-class='"plan-" + plan.status().toLowerCase()'>{{plan.status()}}</div>
+</div>
