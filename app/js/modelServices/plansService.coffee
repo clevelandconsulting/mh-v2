@@ -124,38 +124,90 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    @PlanRepository.delete(plan.href).then (response) =>
     @PlanStorageService.clearById(plan.recordID)
     return response
+    
+  saveTactic: (tactic) ->
+   if tactic.removed
+    promise = @TacticRepository.delete(tactic.href)
+    .then (data) =>
+     return {msg: data, obj: null}
+   else
+    promise = @TacticRepository.save(tactic)
+    .then (data) =>
+     return data
+        
+   promise
+
+  
+  saveStrategy: (plan, strategy) ->
+   console.log 'saving', plan, strategy
+   if strategy.removed
+    promise = @StrategyRepository.delete(strategy.href)
+    .then (data) =>
+     return { msg: data, obj: null}
+   else
+    deferred = @q.defer()
+    promise = deferred.promise
+    
+    @StrategyRepository.save(strategy)
+    .then (data) =>
+     s = data.obj
+     num_of_tactics = s.tactics.length
+     
+     if num_of_tactics > 0
+      new_tactics = []
+      tactics_saved = 0
+      for tactic in s.tactics
+       @saveTactic(tactic)
+       .then (tacticData) =>
+        if tacticData.obj != null
+         new_tactics.push(tacticData.obj)
+         
+        tactics_saved = tactics_saved + 1
+        if tactics_saved == num_of_tactics
+         s.tactics = new_tactics
+         deferred.resolve {msg: data.msg, obj:s}
+       .catch (error) =>
+        deferred.reject error
+     else
+      deferred.resolve data
+    .catch (error) =>
+     deferred.reject error
+     
+   promise
   
   save: (plan) ->
    deferred = @q.defer()
    
-   #console.log plan
-   #href = plan.href.replace('Api-Plan', 'Api-Plan.Put')
-   @PlanRepository.save(plan).then (planResponse) =>
-   
-    savedStrategies = 0
-    strategies = plan.strategies.length
-   
-    for strategy in plan.strategies
-     @StrategyRepository.save(strategy)
-     .then (data) =>
-      savedTactics = 0
-      tactics = strategy.tactics.length
+   @PlanRepository.save(plan)
+    .then (data) =>
+     num_of_strategies = plan.strategies.length
+     
+     if num_of_strategies > 0
+      strategies_saved = 0
+      new_strategies = []
       
-      for tactic in strategy.tactics
-	      @TacticRepository.save(tactic)
-	      .then (data) =>
-	       savedTactics = savedTactics + 1
-	       if savedTactics == tactics
-	        savedStrategies = savedStrategies + 1
-         if savedStrategies == strategies
-          deferred.resolve planResponse
-	      .catch (error) =>
-	       deferred.reject error
-     .catch (error) =>
-      deferred.reject error
-      
-    @PlanStorageService.saveById(plan.recordID, plan)
+      for strategy in plan.strategies
+       @saveStrategy(plan,strategy)
+       .then (strategyData) =>
+        if strategyData.obj != null
+         new_strategies.push(strategyData.obj)
+        #plan.strategies[strategies_saved] = strategyData.obj
+        strategies_saved = strategies_saved + 1
+        if strategies_saved == num_of_strategies
+         plan.strategies = new_strategies
+         deferred.resolve {msg: data, obj:plan}
+       .catch (error) =>
+        deferred.reject error
+     else
+      data.obj = plan
+      deferred.resolve data
+    .catch (error) =>
+     deferred.reject error
+   
+   deferred.promise.then (data) =>
+    @PlanStorageService.saveById(data.obj.recordID, data.obj)
+    return data.msg
     
-   
+    
    deferred.promise
 ]

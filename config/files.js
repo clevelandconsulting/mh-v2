@@ -41,6 +41,7 @@ module.exports = function(lineman) {
          "vendor/bower/angular/angular.js",
          "vendor/bower/angular-resource/angular-resource.js",
          "vendor/bower/angular-route/angular-route.js",
+         "vendor/bower/angular-animate/angular-animate.js",
          "vendor/bower/angular-sanitize/angular-sanitize.js",
          "vendor/bower/autofill-event/src/autofill-event.js",
          "vendor/bower/angular-foundation/mm-foundation.js",

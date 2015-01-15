@@ -2,7 +2,12 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
  class PlanController 
   constructor: (@scope, @routeParams, @location, @modal, @timeout, @plansService, @notifications, @listManager) ->
    @submitted = false
-   @selected = 1
+   
+   @tabs = [
+	   {active: true},
+	   {active: false}
+   ]
+   
    @details = [
     {
      'name':'Focus', 
@@ -65,6 +70,10 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     else 
      @plan.product = findProduct(@productList.items,@plan.product)
   
+  removeObject: (obj) ->
+   obj.removed = true
+   @scope.planForm.$setDirty()
+  
   disabled: (property) ->
    if @plan?
     @plan.isDisabled(property)
@@ -95,6 +104,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    @plansService.getFromServer(plan.recordID)
    .then (data) =>
     @plan = data
+    @scope.planForm.$setPristine()
     @notifications.success 'Your data has been refreshed.'
    .catch (error) =>
     @notifications.error error, 'Unable To Refresh'  
@@ -103,7 +113,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    @plansService.allow_requirements(false)
    @plansService.save(plan)
    .then (data) =>
-    @scope.planForm.$setPristine(true)
+    @scope.planForm.$setPristine()
     @plansService.allow_requirements(true)
     @notifications.success data, 'Updated!'
    .catch (error) =>

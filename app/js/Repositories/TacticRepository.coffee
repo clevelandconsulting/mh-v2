@@ -9,7 +9,8 @@ angular.module('app').service 'TacticRepository', [ '$q', 'tactic', 'fmRestModel
   save: (tactic) ->
    tactic.handleDates()
 	  
-	  super(tactic)
+	  super(tactic).then (data) =>
+	   return {msg: data, obj: tactic }
   
  
  new TacticRepository()

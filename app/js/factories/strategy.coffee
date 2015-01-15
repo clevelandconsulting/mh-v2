@@ -18,6 +18,14 @@ angular.module('app').factory 'strategy', [ 'fmRestModel', (fmRestModel) ->
    else
     return '' 
   
+  activeTactics: () ->
+   count = 0
+   for tactic in @tactics
+    if !tactic.removed
+     count = count + 1
+   
+   count
+  
   addTactic: (tactic) ->
    @tactics.push(tactic)
    

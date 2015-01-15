@@ -1,6 +1,7 @@
 <div class='plan-card' ng-class='"plan-" + plan.status().toLowerCase()'>
-  <h5 class='text-center'>{{plan.data.campaign_title}}</h5>
-  
+  <div class='plan-card-header'>
+	  <h5 class='text-center'>{{plan.data.campaign_title}}</h5>
+  </div>
   <div class='plan-card-details'>
 	  <div><span>{{plan.data.staff_full_name_c}} ({{plan.recordID}})</span></div>
 	  <div><span>{{plan.data.product}}</span></div>

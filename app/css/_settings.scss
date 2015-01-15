@@ -96,7 +96,7 @@ $column-gutter: rem-calc(15);
 // $font-weight-normal: normal !default;
 // $font-weight-bold: bold !default;
 
-// $white       : #FFFFFF;
+$white       : #FFFFFF;
 // $ghost       : #FAFAFA;
 // $snow        : #F9F9F9;
 // $vapor       : #F6F6F6;
@@ -1302,6 +1302,10 @@ $body-bg: #f4f8fc;
 // $table-display: table-cell;
 // $table-margin-bottom: rem-calc(20);
 
+$table-head-bg: $white;
+$table-bg: $body-bg;
+$table-even-row-bg: $body-bg;
+
 // 31. Tabs
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1320,6 +1324,7 @@ $body-bg: #f4f8fc;
 // $tabs-content-padding: $column-gutter/2;
 
 // $tabs-vertical-navigation-margin-bottom: 1.25rem;
+
 
 // 32. Thumbnails
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1412,8 +1417,8 @@ $topbar-bg-color: darken($color-primary-4, 10%);
 // $topbar-link-dropdown-padding: 20px;
 
 $topbar-link-color: $silver;
-$topbar-link-bg-active: lighten($topbar-bg-color, 10%);
-$topbar-link-bg-color-hover: darken($topbar-bg-color, 5%);
+$topbar-link-bg-active: lighten($topbar-bg-color, 15%);
+$topbar-link-bg-color-hover: lighten($topbar-bg-color, 10%);
 $topbar-link-bg-hover: $topbar-link-bg-color-hover;
 
 // $topbar-button-font-size: 0.75rem;

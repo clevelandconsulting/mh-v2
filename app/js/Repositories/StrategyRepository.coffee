@@ -6,6 +6,9 @@ angular.module('app').service 'StrategyRepository', [ '$q', 'strategy', 'fmRestM
   getAllForPlan: (plan_id, pagesize) ->
    @getAllByKey('plan_id', plan_id, @sortScript, pagesize)
  
+  save: (strategy) ->
+   super(strategy).then (data) =>
+    return { msg: data, obj: strategy }
   
  new StrategyRepository()
 

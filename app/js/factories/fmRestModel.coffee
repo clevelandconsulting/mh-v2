@@ -10,7 +10,10 @@ class fmRestModel
     Date.now = -> new Date().getTime()
  
  formatFMDateForJS: (date) ->
-  new Date(date)
+  if date? && date != ''
+   new Date(date)
+  else
+   null
  
  formatDateForFM: (date) ->
    sep = "/"

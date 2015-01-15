@@ -10,8 +10,15 @@
   font-weight: normal;
   font-style: normal; }
 
-$base_border_color: $smoke;
-/*$base_background_color: #f4f8fc;*/
+$base_border_color: darken($body-bg,5%);
+
+@mixin border-radius($radius1, $radius2, $radius3, $radius4) {
+  -webkit-border-radius: $radius1, $radius2, $radius3, $radius4;
+     -moz-border-radius: $radius1, $radius2, $radius3, $radius4;
+      -ms-border-radius: $radius1, $radius2, $radius3, $radius4;
+          border-radius: $radius1, $radius2, $radius3, $radius4;
+}
+
 
 input.error, textarea.error , select.error {
  border-color: $alert-color;
@@ -22,7 +29,7 @@ body {
 }
 
 .container {
-	margin: 5px;
+	margin: 0px 0px;
 }
 
 .login-form .row.login-username {
@@ -40,8 +47,17 @@ body {
 	height: 200px;
 	position: relative;
 	background-color: $white;
-	@include radius();
 	@include block-glowing-effect('hover','300ms',fade-out( $charcoal, .25));
+}
+
+.plan-card-header {
+	background-color: $color-primary-1;
+}
+
+.plan-card-header h5{
+	margin-top: 0;
+	padding: 10px;
+	color: $white;
 }
 
 .plan-card-details {
@@ -57,6 +73,7 @@ body {
 	width: 100%;
 }
 
+/*
 .plan-card.plan-submitted {
 	border-color: darken( $info-color, 5% );
 	@include block-glowing-effect('hover','300ms',fade-out( $info-color, .25));
@@ -66,15 +83,15 @@ body {
 	border-color: darken( $success-color, 5% );
 	@include block-glowing-effect('hover','300ms',fade-out( $success-color, .25));
 }
-
+*/
 .plan-card-status.plan-draft {
 	background-color: $base_border_color;
 	color: darken( $base_border_color, 30% );
 }
 
 .plan-card-status.plan-submitted {
-	background-color: $info-color;
-	color: lighten( $info-color, 30% );
+	background-color: darken( $base_border_color, 30% );
+	color: lighten( $base_border_color, 30% );
 }
 
 .plan-card-status.plan-approved {
@@ -106,14 +123,22 @@ ul.scrollable li.selected a {
  color: white
 }
 
-
-#tactics > .tabs dd {
-	border-right: 1px solid $aluminum;
+#planFormID {
+	min-width: 800px;
 }
 
-#tactics > .tabs dd.active {
-	border: 1px solid $aluminum;
-	border-right: 1px solid white;
+#plan-header {
+	background-color: $white;
+	@include radius();
+	border: 1px solid $base_border_color;
+	padding: 0px 20px;
+}
+
+#plan-details {
+	background-color: $white;
+	@include radius();
+	border: 1px solid $base_border_color;
+	padding: 0px 20px;
 }
 
 #plan > .tabs {
@@ -121,10 +146,20 @@ ul.scrollable li.selected a {
 }
 
 #plan > .tabs dd {
+	display: none;
 	border: 1px solid $base_border_color;
 	margin-right: 5px;
 }
 
+.success-panel {
+  @include panel(
+    $bg:$success-color,
+    $padding:$panel-padding,
+    $adjust:true
+  );
+}
+
+/*
 #plan > .tabs dd a {
 		color: $aluminum;
 }
@@ -132,11 +167,15 @@ ul.scrollable li.selected a {
 #plan > .tabs dd.active a {
 	color: black;
 }
+*/
 
 #plan > .tabs-content {
-	margin-top: 5px;
-	
+	//margin-top: 5px;
+	/*
+@include radius();
+	background-color: $white;
 	border: 1px solid $base_border_color;
+*/
 }
 
 #plan > .tabs-content, #plan > .tabs-content .content {
@@ -161,30 +200,104 @@ ul.scrollable li.selected a {
 
 
 
+/*
 .accordion .content {
 	border: 1px solid $base_border_color;
 }
+*/
 
 dl.accordion dd {
 	margin-bottom: 5px !important;
 }
 
 dl.accordion dd a {
-	padding: 0;
-}
-.accordion .heading button {
-	margin-bottom: 0;
-}
-
-.accordion .heading, .accordion div.title, .accordion div.remove, .accordion .heading button {
-	height: 50px;
+	background-color: $white;
+	@include radius();
+	border: 1px solid $base_border_color;
+	color: $steel;
 }
 
-.accordion .heading div.title {
-	padding: 10px 10px 10px 20px;
-	color: $aluminum;
+dl.accordion dd a.active {
+	color: $black;
+	@include radius(0);
+	@include border-radius(3px,3px,0,0);
+	border-bottom: 1px solid $white;
 }
 
-.accordion .active div.title {
-	color: black;
+dl.accordion dd a:hover {
+	background-color: $white;
+	border: 1px solid darken($base_border_color,20%);
+	color: darken($steel,20%);
+}
+
+dl.accordion table {
+	border-collapse: collapse;
+	width: 100%;
+	border: 1px solid $base_border_color;
+}
+
+dl.accordion table tr {
+	border-top: 1px solid $base_border_color;
+	border-bottom: 1px solid $base_border_color;
+}
+
+dl.accordion table td:first-child,  dl.accordion table th:first-child {
+	padding-left: 40px;
+}
+
+dl.accordion table tfoot button {
+	margin: 0;
+}
+
+dl.accordion table a, dl.accordion table a:hover {
+	background-color: $table-bg;
+	border: 0;
+}
+
+dl.accordion table td.actions {
+	padding: rem-calc(0 0);
+}
+
+dl.accordion table a span[class*="fi-"] {
+	font-size: 160%;
+	top: 50%;
+	position: relative;
+	transform: translateY(-50%);
+	padding-right: 5px;
+}
+
+dl.accordion table a span.alert {
+	color: $alert-color;
+}
+/*
+
+#tactic-accordion > dl.accordion dd {
+	margin-bottom: 0 !important;
+}
+
+#tactic-accordion > dl.accordion dd a {
+	color: $color-complement-3;
+	@include radius(0);
+	border-top: 1px solid $white;
+	padding-left: 40px;
+}
+
+#tactic-accordion > dl.accordion dd a:hover {
+	border-top: 1px solid darken($base_border_color,20%);
+}
+*/
+.accordion-aside {
+	text-transform: uppercase;
+	font-size: 80%;
+}
+
+.strategy-heading {
+	padding: 20px;
+	background-color: $white;
+	border-right: 1px solid $base_border_color;
+	border-left: 1px solid $base_border_color;
+}
+
+.tactic-details {
+	padding: 20px 20px 20px 40px;
 }
