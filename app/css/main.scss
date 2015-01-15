@@ -1,3 +1,5 @@
+@import 'palette';
+@import 'settings';
 @import 'foundation';
 @import 'foundation-icons';
 
@@ -9,14 +11,14 @@
   font-style: normal; }
 
 $base_border_color: $smoke;
-$base_background_color: #f4f8fc;
+/*$base_background_color: #f4f8fc;*/
 
 input.error, textarea.error , select.error {
- border-color: red;
+ border-color: $alert-color;
 }
 
 body {
-	background-color: $base_background_color;
+	background-color: $body-bg;
 }
 
 .container {
@@ -37,7 +39,7 @@ body {
 	margin: $column-gutter 0px 0px 0px; 
 	height: 200px;
 	position: relative;
-	background-color: white;
+	background-color: $white;
 	@include radius();
 	@include block-glowing-effect('hover','300ms',fade-out( $charcoal, .25));
 }
@@ -72,7 +74,7 @@ body {
 
 .plan-card-status.plan-submitted {
 	background-color: $info-color;
-	color: darken( $info-color, 30% );
+	color: lighten( $info-color, 30% );
 }
 
 .plan-card-status.plan-approved {
