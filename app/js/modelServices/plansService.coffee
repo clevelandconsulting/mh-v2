@@ -70,6 +70,16 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    @PlanRepository.getPage(href,pagesize)
   
   
+  addStrategy: (plan) ->
+   strategy = @StrategyRepository.makeNew(plan.data.__guid)
+   strategy.isOpen = true
+   plan.strategies.push strategy
+   
+  addTactic: (strategy) ->
+   tactic = @TacticRepository.makeNew(strategy.data.__guid)
+   tactic.editing = true
+   strategy.tactics.push tactic
+  
   loadTactics: (strategy) ->
    #console.log 'loading tactics', strategy
    @TacticRepository.getAllForStrategy(strategy.data.__guid).then (data) =>
@@ -127,23 +137,37 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
     
   saveTactic: (tactic) ->
    if tactic.removed
-    promise = @TacticRepository.delete(tactic.href)
-    .then (data) =>
-     return {msg: data, obj: null}
-   else
+    if tactic.href != '' && tactic.href?
+	    promise = @TacticRepository.delete(tactic.href)
+	    .then (data) =>
+	     return {msg: data, obj: null}
+	   else
+	    #tactic was added, then removed, all without being added to DB, so just return null obj in a promise
+	    deferred = @q.defer()
+	    deferred.resolve {msg: "Tactic was removed.", obj: null}
+	    promise = deferred.promise
+	    
+	  else
     promise = @TacticRepository.save(tactic)
     .then (data) =>
      return data
-        
+       
    promise
 
   
   saveStrategy: (plan, strategy) ->
-   console.log 'saving', plan, strategy
+   #console.log 'saving', plan, strategy
    if strategy.removed
-    promise = @StrategyRepository.delete(strategy.href)
-    .then (data) =>
-     return { msg: data, obj: null}
+    if strategy.href != '' && strategy.href?
+	    promise = @StrategyRepository.delete(strategy.href)
+	    .then (data) =>
+	     return { msg: data, obj: null}
+	   else
+	    #strategy was added, then removed, all without being added to DB, so just return null obj in a promise
+	    deferred = @q.defer()
+	    deferred.resolve {msg: "Strategy was removed.", obj: null}
+	    promise = deferred.promise
+
    else
     deferred = @q.defer()
     promise = deferred.promise
@@ -199,14 +223,13 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
        .catch (error) =>
         deferred.reject error
      else
-      data.obj = plan
-      deferred.resolve data
+      deferred.resolve {msg: data, obj: plan}
     .catch (error) =>
      deferred.reject error
    
    deferred.promise.then (data) =>
     @PlanStorageService.saveById(data.obj.recordID, data.obj)
-    return data.msg
+    return data
     
     
    deferred.promise

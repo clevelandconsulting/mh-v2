@@ -1,10 +1,51 @@
 <form name='planForm' id='planFormID' ng-show='plan.plan !== undefined && plan.plan !== null'>
+	
+	
+	
+	
+	<!--
+	<div class='row sticky'>
+		<div class='columns small-4 text-center'>
+			<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
+		</div>
+		<div class='columns small-4 text-center'>
+			<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
+		</div>
+		<div class='columns small-4 text-center'>
+			<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
+		</div>
+ </div>
+ -->
+	
 	<div class='row'>
-		<div class='columns small-12'>
+		<div class='columns small-6'>
 		 <ul class="breadcrumbs">
 		  <li><a href="#/plan">Plans</a></li>
 		  <li class="current"><a href=''>{{plan.plan.data.campaign_title}}</a></li>
 		</ul>
+		</div>
+		<div class='columns small-6'>
+		 
+			 <ul class="button-group even-3">
+				  <li><a href="" role='button' class="button small" ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</a></li>
+				  <li><a href="" role='button' class="button small alert" ng-click='plan.remove(plan.plan)'>Remove</a></li>
+				  <li><a href="" role='button' class="button small success" ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</a></li>
+				</ul>
+			 
+  <!--
+ <div class='row'>
+				<div class='columns small-4 text-center'>
+					<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
+				</div>
+				<div class='columns small-4 text-center'>
+					<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
+				</div>
+				<div class='columns small-4 text-center'>
+					<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
+				</div>
+   </div>
+-->
+
 		</div>
 	</div>
 	
@@ -127,19 +168,20 @@
 				   <div class='small-8 large-10 columns'>
 					   <p>Add all the strategies and their tactics for this plan.</p>
 				   </div>
-				   <div class='small-4 large-2 columns'><button class='button expand'>Add Strategy</button></div>
+				   <div class='small-4 large-2 columns'><button class='button expand' ng-click='plan.clickAddStrategy()'>Add Strategy</button></div>
 			   </div>
 			   <div class='row'>
 				   <div class='columns small-12'>
 					   <accordion id='strategy-accordion'>
-					    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}' isopen='plan.isOpen'>
+					    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}' data-is-open='strategy.isOpen'>
 					     <accordion-heading>
-						     <div class='row'>
+						     <div class='row'  ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false'>
 							     <div class='small-10 large-11 columns'>
 							      Strategy {{(i+1)}}: {{strategy.title(40)}}
 							     </div>
 							     <div class='small-2 large-1 columns'>
-								     <span class='accordion-aside'>{{strategy.activeTactics()}} tactics</span>
+								     <span ng-hide='strategy.over'class='accordion-aside'>{{strategy.activeTactics()}} tactics</span>
+								     <span ng-show='strategy.over'><a href='' ng-click='plan.removeObject(strategy)'><span class='fi-x alert'></span></a></span>
 							     </div>
 						     </div>
 					     </accordion-heading>
@@ -183,7 +225,7 @@
 							     </tr>
 						     </tbody>
 						     <tfoot>
-							     <tr><td class='text-center' colspan='5'><button class='button'>Add Tactic</button></td></tr>
+							     <tr><td class='text-center' colspan='5'><button class='button' ng-click='plan.clickAddTactic(strategy)'>Add Tactic</button></td></tr>
 						     </tfoot>
 					     </table>
 					     
@@ -212,6 +254,7 @@
 								   </accordion-group> 
 						    </accordion>
 						    -->
+						    
 					    </accordion-group>
 					  </accordion>
 					  
@@ -343,19 +386,6 @@
 		</div>
 	</div>
 	
-	
-	
-	<div class='row'>
-		<div class='columns small-4 text-center'>
-			<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
-		</div>
-		<div class='columns small-4 text-center'>
-			<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
-		</div>
-		<div class='columns small-4 text-center'>
-			<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
-		</div>
- </div>
 </form>
 
 <a href='' class='button' ng-click='plan.refresh(plan.plan)'>Refresh</a>

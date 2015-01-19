@@ -19,6 +19,20 @@ $base_border_color: darken($body-bg,5%);
           border-radius: $radius1, $radius2, $radius3, $radius4;
 }
 
+html, body {
+ height: 100%;
+}
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -4em;
+}
+
+.footer, .push {
+height: 4em;
+}
+
 
 input.error, textarea.error , select.error {
  border-color: $alert-color;
@@ -29,7 +43,7 @@ body {
 }
 
 .container {
-	margin: 0px 0px;
+	margin: 10px 0px 0px 0px;
 }
 
 .login-form .row.login-username {

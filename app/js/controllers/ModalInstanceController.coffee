@@ -1,7 +1,8 @@
-angular.module('app').controller 'ModalInstanceController', ['$scope', '$modalInstance', 'item', 
+angular.module('app').controller 'ModalInstanceController', ['$scope', '$modalInstance', 'item', 'undo'
  class modalInstanceController
-  constructor: ($scope, $modalInstance, item) ->
+  constructor: ($scope, $modalInstance, item, undo) ->
 	  $scope.item = item
+	  $scope.undo = undo
 
 	  $scope.ok =  () ->
 	    $modalInstance.close $scope.item

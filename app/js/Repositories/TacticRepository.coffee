@@ -9,9 +9,16 @@ angular.module('app').service 'TacticRepository', [ '$q', 'tactic', 'fmRestModel
   save: (tactic) ->
    tactic.handleDates()
 	  
-	  super(tactic).then (data) =>
-	   return {msg: data, obj: tactic }
+	  if tactic.href != ''
+    super(tactic).then (data) =>
+     return { msg: data, obj: tactic }
+   else 
+    @add(tactic.data,'RestFM.Login').then (data) =>
+     console.log data
+     return { msg: data, obj: tactic }
   
+  makeNew: (strategy_id) ->
+   new tactic {strategy_id:strategy_id}, '', ''  
  
  new TacticRepository()
 

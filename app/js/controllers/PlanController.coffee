@@ -1,6 +1,7 @@
-angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', 'PlansService', 'NotificationService','listManager',
+angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', 'PlansService', 'NotificationService','listManager', 'logger'
  class PlanController 
-  constructor: (@scope, @routeParams, @location, @modal, @timeout, @plansService, @notifications, @listManager) ->
+  constructor: (@scope, @routeParams, @location, @modal, @timeout, @plansService, @notifications, @listManager, @logger) ->
+   @logger.on()
    @submitted = false
    
    @tabs = [
@@ -42,8 +43,6 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     
    ]
    
-   #console.log @listManager
-   
    findProduct = (items,product) ->
     found = product
     for item in items
@@ -70,9 +69,61 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     else 
      @plan.product = findProduct(@productList.items,@plan.product)
   
+  info: (msg,title) ->
+   @timeout( 
+	     ()=>
+	      #use time out to call this after function completes so form validation doesn't trigger
+	      @notifications.info msg, title
+	    ,
+	     400
+	    )
+  cancelInfo: (promise) ->
+   @timeout.cancel(promise)
+  
+  clickAddStrategy: () ->
+   @plansService.allow_requirements(false)
+   @plansService.addStrategy(@plan)
+   @timeout( 
+	     ()=>
+	      #use time out to call this after function completes so form validation doesn't trigger
+	      @scope.planForm.$setDirty()
+	      @plansService.allow_requirements(true)
+	    ,
+	     400
+	    )
+   
+  clickAddTactic: (strategy) ->
+   @logger.clog strategy
+   @plansService.allow_requirements(false)
+   @plansService.addTactic(strategy)
+   @timeout( 
+     ()=>
+      #use time out to call this after function completes so form validation doesn't trigger
+      @scope.planForm.$setDirty()
+      @plansService.allow_requirements(true)
+    ,
+     400
+    )
+   
+  
   removeObject: (obj) ->
-   obj.removed = true
-   @scope.planForm.$setDirty()
+  
+   @plansService.allow_requirements(false)
+   modalInstance = @modal.open {
+    templateUrl: 'modals/modalRemove.html',
+    controller: 'ModalInstanceController',
+    resolve: {
+	     undo: () => true,
+      item: () => {name:obj.constructor.name,object:obj}
+    }
+   }
+   
+   modalInstance.result
+   .then (item) =>
+    item.object.removed = true
+    @scope.planForm.$setDirty()
+  
+   
   
   disabled: (property) ->
    if @plan?
@@ -101,24 +152,39 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     console.log 'can\'t submit'
   
   refresh: (plan) ->
+   tPromise = @info 'Refreshing plan...', 'Refreshing'
    @plansService.getFromServer(plan.recordID)
    .then (data) =>
+    @cancelInfo(tPromise)
     @plan = data
     @scope.planForm.$setPristine()
+    @notifications.clear()
     @notifications.success 'Your data has been refreshed.'
    .catch (error) =>
+    @cancelInfo(tPromise)
+    @notifications.clear()
     @notifications.error error, 'Unable To Refresh'  
   
+  
+   
   save: (plan) ->
+   tPromise = @info 'Saving plan...', 'Saving'
+
    @plansService.allow_requirements(false)
    @plansService.save(plan)
    .then (data) =>
+    @cancelInfo(tPromise)
     @scope.planForm.$setPristine()
     @plansService.allow_requirements(true)
-    @notifications.success data, 'Updated!'
+    @notifications.clear()
+    @notifications.success data.msg, 'Updated!'
    .catch (error) =>
+    @cancelInfo(tPromise)
     @plansService.allow_requirements(true)
+    @notifications.clear()
     @notifications.error error, 'Not Updated!'
+   
+   
   
   remove: (plan) ->
   
@@ -127,6 +193,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     templateUrl: 'modals/modalRemove.html',
     controller: 'ModalInstanceController',
     resolve: {
+	     undo: () => false,
       item: () => {name:'plan',object:plan}
     }
    }
@@ -134,11 +201,14 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    modalInstance.result
    .then (item) =>
     #console.log item.object
+    tPromise = @info 'Removing plan...', 'Removing'
     @plansService.allow_requirements(true)
     @plansService.delete(item.object)
 	   .then (data) =>
+	    @cancelInfo(tPromise)
 	    @timeout( 
 	     ()=>
+	      @notifications.clear()
 	      @notifications.success data, "Plan Removed"
 	      @location.path('plan')
 	      
@@ -146,6 +216,8 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
 	     400
 	    )
 	   .catch (error) =>
+	    @cancelInfo(tPromise)
+	    @notifications.clear()
 	    @notifications.error error, "Plan NOT Removed"
    .catch (message) =>
     @plansService.allow_requirements(true)

@@ -7,8 +7,18 @@ angular.module('app').service 'StrategyRepository', [ '$q', 'strategy', 'fmRestM
    @getAllByKey('plan_id', plan_id, @sortScript, pagesize)
  
   save: (strategy) ->
-   super(strategy).then (data) =>
-    return { msg: data, obj: strategy }
+   console.log 'StrategyRepository.save', strategy
+   if strategy.href != ''
+    super(strategy).then (data) =>
+     return { msg: data, obj: strategy }
+   else 
+    @add(strategy.data,'RestFM.Login').then (data) =>
+     console.log data
+     return { msg: data, obj: strategy }
+  
+  makeNew: (plan_id) ->
+   new strategy {plan_id:plan_id}, '', ''
+   
   
  new StrategyRepository()
 
