@@ -1,24 +1,26 @@
-    <div class='sticky' ng-controller='NavController as nav'>
+
+    <div class='sticky header' ng-controller='NavController as nav'>
      <top-bar role='navigation'>
 		    <ul class="title-area">
 		      <li class="name">
-		        <h1><a href="#">McGraw Hill Marketing Plans</a></h1>
+		        <h1><a href="#/"><img src='img/mhe-logo.png' alt='McGraw Hill Education' height='39' width='39'/>&nbsp;MHE Marketing Plans</a></h1>
 		      </li>
 		      <li toggle-top-bar class="menu-icon"><a href="">Menu<span></span></a></li>
 		    </ul>
 		
 		    <top-bar-section>
-		      <!-- Left Nav Section -->
+		      
 		      <ul class="left" ng-show='nav.isLoggedIn()'>
-		        <li class='{{nav.$location.path().substring(1,9)==="plan"?"active":""}}'>
+		        <li class='{{nav.$location.path().substring(1,8)==="myplans"?"active":""}}'>
 			        <a ng-click='nav.$location.path("myplans").search("s",null)'>
 				        <span class='fi-page-multiple'></span>&nbsp;My Plans
 				       </a>
 				      </li>
+				      <li><a ng-click='nav.addNewPlan()'><span class='fi-plus'>&nbsp;Add New Plan</span></a></li>
 		      </ul>
-		      <!-- Right Nav Section -->
+		      
 		      <ul class="right" ng-show='nav.isLoggedIn()'>
-		        <li><a href=''><span class='fi-torso'></span>&nbsp;{{nav.username}}</a></li>
+		        <li><a href='' class='disabled'><span class='fi-torso'></span>&nbsp;{{nav.username}}</a></li>
 										<li><a href='' ng-click='nav.logout()'><span class='fi-power'></span>&nbsp;Logout</a></li>
 		      </ul>
 		    </top-bar-section>

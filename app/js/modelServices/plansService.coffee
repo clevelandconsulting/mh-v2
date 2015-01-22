@@ -4,18 +4,21 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    @blocked = {}
    @requirements_on = true
    @filter = ''
+   @loading = false
    
   getSelected: () ->
    @selectedPlan
   
   
   getFromServer: (id) ->
+   @loading = true
    @PlanRepository.getByRecordId(id)
     .then (data) =>
      if data != null
       @PlanStorageService.clearById(id)
-      @select(data)
-     return data
+      @select(data).then () =>
+       @loading = false
+       return data
     .catch (error) ->
      if error.code?
       if error.code == 101
@@ -24,6 +27,9 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
        message = 'Error ' + error.code + ': ' + error.reason
      else
       message = error
+     
+     @loading = false
+     
      #console.log 'rejecting PlansService.getOne() promise', id
      return message
      
@@ -82,17 +88,18 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
   
   loadTactics: (strategy) ->
    #console.log 'loading tactics', strategy
-   @TacticRepository.getAllForStrategy(strategy.data.__guid).then (data) =>
+   @TacticRepository.getAllForStrategy(strategy.data.__guid, 1000).then (data) =>
     #console.log 'found tactics', data
     if data?	    
 	    for item in data.items
 	     strategy.addTactic(item)
+	    strategy.sortTactics()
     return strategy
   
   loadStrategies: (plan) ->
    #console.log 'loading strategies', plan
    deferred = @q.defer()
-   @StrategyRepository.getAllForPlan(plan.data.__guid)
+   @StrategyRepository.getAllForPlan(plan.data.__guid, 1000)
    .then (strategies) => 
     #console.log 'found strategies', strategies
     if strategies?
@@ -114,6 +121,9 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    deferred.promise
   
   select: (plan) ->
+  
+   deferred = @q.defer()
+  
    stored = @PlanStorageService.getById(plan.recordID)
    if stored?
     @selectedPlan = stored
@@ -123,12 +133,20 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    #console.log 'l', @selectedPlan.strategies.length
    if @selectedPlan.strategies.length == 0
 	   @loadStrategies(@selectedPlan).then (plan) =>
+	    plan.sortStrategies()
 	    @PlanStorageService.saveById(@selectedPlan.recordID, plan)
+	    deferred.resolve true
 	  else
-	   @PlanStorageService.saveById(@selectedPlan.recordID, plan)
+	   if !stored?
+ 	   @PlanStorageService.saveById(@selectedPlan.recordID, plan)
+ 	   deferred.resolve true
   
+   deferred.promise
+   
+   
   add: () ->
-   @PlanRepository.add({campaign_title: 'Untitled'})
+   plan = @PlanRepository.makeNew('Untitled')
+   @PlanRepository.add(plan.data)
   
   delete: (plan) ->
    @PlanRepository.delete(plan.href).then (response) =>
@@ -189,20 +207,27 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
         tactics_saved = tactics_saved + 1
         if tactics_saved == num_of_tactics
          s.tactics = new_tactics
+         s.sortTactics()
          deferred.resolve {msg: data.msg, obj:s}
        .catch (error) =>
         deferred.reject error
      else
       deferred.resolve data
     .catch (error) =>
+     console.log 'plansService.saveStrategy -> repository save error', error
      deferred.reject error
      
    promise
   
-  save: (plan) ->
+  save: (plan, submit) ->
    deferred = @q.defer()
    
-   @PlanRepository.save(plan)
+   if submit
+    promise = @PlanRepository.submit(plan)
+   else
+    promise = @PlanRepository.save(plan)
+   
+   promise
     .then (data) =>
      num_of_strategies = plan.strategies.length
      
@@ -219,8 +244,10 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
         strategies_saved = strategies_saved + 1
         if strategies_saved == num_of_strategies
          plan.strategies = new_strategies
+         plan.sortStrategies()
          deferred.resolve {msg: data, obj:plan}
        .catch (error) =>
+        console.log 'plansservice.save error saving strategy', error
         deferred.reject error
      else
       deferred.resolve {msg: data, obj: plan}
@@ -233,4 +260,7 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
     
     
    deferred.promise
+  
+  submit: (plan) ->
+   @save(plan,true)
 ]

@@ -112,8 +112,8 @@ $silver      : #EFEFEF;
 // $steel       : #666666;
 // $charcoal    : #555555;
 // $tuatara     : #444444;
-// $oil         : #333333;
-// $jet         : #222222;
+ $oil         : #333333;
+ $jet         : #222222;
 // $black       : #000000;
 
 // We use these as default colors throughout
@@ -125,6 +125,7 @@ $silver      : #EFEFEF;
 // $info-color: #a0d3e8;
 
 $primary-color: $color-primary-0;
+$secondary-color: $color-complement-2;
 $alert-color: $color-secondary-2-0;
 $success-color: $color-secondary-1-0;
 $info-color: $color-primary-1;
@@ -152,10 +153,14 @@ $body-bg: #f4f8fc;
 // $global-radius: 3px;
 // $global-rounded: 1000px;
 
+$global-radius: 3px;
+
 // We use these to control inset shadow shiny edges and depressions.
 // $shiny-edge-size: 0 1px 0;
 // $shiny-edge-color: rgba($white, .5);
 // $shiny-edge-active-color: rgba($black, .2);
+
+$shiny-edge-size: 0 0 0;
 
 // d. Media Query Ranges
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -475,6 +480,7 @@ $body-bg: #f4f8fc;
 // $button-disabled-cursor: $cursor-default-value;
 
 $button-disabled-opacity: 0.4;
+$button-radius: $global-radius;
 
 // 06. Button Groups
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -484,6 +490,8 @@ $button-disabled-opacity: 0.4;
 // Sets the margin for the right side by default, and the left margin if right-to-left direction is used
 // $button-bar-margin-opposite: rem-calc(10);
 // $button-group-border-width: 1px;
+
+$button-group-border-width: 0px;
 
 // 07. Clearing
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -704,6 +712,17 @@ $button-disabled-opacity: 0.4;
 // $icon-bar-image-height: 1.875rem;
 // $icon-bar-active-color: $primary-color;
 // $icon-bar-item-padding: 1.25rem;
+
+$icon-bar-bg: lighten($jet, 75%);
+$icon-bar-font-color: darken($icon-bar-bg, 50%);
+$icon-bar-font-size: 0.5rem;
+$icon-bar-hover-color: $secondary-color;
+$icon-bar-icon-color: $icon-bar-font-color;
+$icon-bar-icon-size: 1.375rem;
+$icon-bar-image-width: 1.375rem;
+$icon-bar-image-height: 1.375rem;
+$icon-bar-active-color: $secondary-color;
+$icon-bar-item-padding: 1rem;
 
 // 13. Inline Lists
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1233,6 +1252,9 @@ $button-disabled-opacity: 0.4;
 // $sub-nav-item-divider: "";
 // $sub-nav-item-divider-margin: rem-calc(12);
 
+$sub-nav-font-color: darken($body-bg,50%);
+$sub-nav-active-bg: $color-primary-4;
+
 // 29. Switch
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -1307,6 +1329,7 @@ $button-disabled-opacity: 0.4;
 $table-head-bg: $white;
 $table-bg: $body-bg;
 $table-even-row-bg: $body-bg;
+$table-margin-bottom: rem-calc(0);
 
 // 31. Tabs
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1380,7 +1403,7 @@ $table-even-row-bg: $body-bg;
 // $topbar-bg-color: $oil;
 // $topbar-bg: $topbar-bg-color;
 
-$topbar-bg-color: darken($color-primary-4, 10%);
+
 
 // Height and margin
 // $topbar-height: 45px;
@@ -1418,10 +1441,12 @@ $topbar-bg-color: darken($color-primary-4, 10%);
 // $topbar-back-link-size: $h5-font-size;
 // $topbar-link-dropdown-padding: 20px;
 
+$topbar-link-bg: transparent;
+$topbar-bg-color: $jet;//darken($color-primary-4, 10%);
 $topbar-link-color: $silver;
 $topbar-link-bg-active: lighten($topbar-bg-color, 15%);
 $topbar-link-bg-color-hover: lighten($topbar-bg-color, 10%);
-$topbar-link-bg-hover: $topbar-link-bg-color-hover;
+$topbar-link-bg-hover: rgba(255,255,255,0.2); //$topbar-link-bg-color-hover;
 
 // $topbar-button-font-size: 0.75rem;
 // $topbar-button-top: 7px;

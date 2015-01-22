@@ -1,391 +1,218 @@
 <form name='planForm' id='planFormID' ng-show='plan.plan !== undefined && plan.plan !== null'>
-	
-	
-	
-	
-	<!--
-	<div class='row sticky'>
-		<div class='columns small-4 text-center'>
-			<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
-		</div>
-		<div class='columns small-4 text-center'>
-			<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
-		</div>
-		<div class='columns small-4 text-center'>
-			<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
-		</div>
- </div>
- -->
-	
-	<div class='row'>
-		<div class='columns small-6'>
-		 <ul class="breadcrumbs">
-		  <li><a href="#/plan">Plans</a></li>
-		  <li class="current"><a href=''>{{plan.plan.data.campaign_title}}</a></li>
-		</ul>
-		</div>
-		<div class='columns small-6'>
-		 
-			 <ul class="button-group even-3">
-				  <li><a href="" role='button' class="button small" ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</a></li>
-				  <li><a href="" role='button' class="button small alert" ng-click='plan.remove(plan.plan)'>Remove</a></li>
-				  <li><a href="" role='button' class="button small success" ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</a></li>
-				</ul>
-			 
-  <!--
- <div class='row'>
-				<div class='columns small-4 text-center'>
-					<button class='button expand' ng-disabled='planForm.$pristine' ng-click='plan.save(plan.plan)'>Save</button>
-				</div>
-				<div class='columns small-4 text-center'>
-					<button class='button expand alert' ng-click='plan.remove(plan.plan)'>Remove</button>
-				</div>
-				<div class='columns small-4 text-center'>
-					<button class='button expand success' ng-disabled='!plan.plan.readyForSubmission()' ng-click='plan.submit(plan.plan)'>Submit</button>
-				</div>
-   </div>
--->
-
-		</div>
-	</div>
-	
-	<div class='row'>
-	 <div class='small-12 columns'>
-		 <div id='plan-header'>
-			 
-			 
-				<div class='row'>
-					<div class='columns'><h2>Plan {{plan.plan.data.campaign_title}}</h2></div>
-				</div>
-				<div class='row'>		
-					<div class='columns small-6 large-8'>
-						
-						<div class='row'>	
-							<div class='columns small-12 large-6'>
-								<label>Marketing Manager: <input type='text' disabled ng-model='plan.plan.data.staff_full_name_c'></label>
-							</div>
-							<div class='columns small-12 large-6'>
-								<label>Campaign Title: <input type='text' ng-model='plan.plan.data.campaign_title'></label>
-							</div>
-						</div>
-						
-						<div class='row'>
-							<div class='columns small-12 large-12'>
-								<label>Product: <select type='text' name='product' ng-required='plan.required("product")' x-ng-model='plan.plan.product' x-ng-options='product as product.name group by product.discipline for product in plan.productList.items | orderBy:["discipline","name"]' ><option value=''>Select Product</option></select>
-								
-								
-								</label>
-							</div>
-						</div>
-						
-						<div class='row'>
-							<div class='columns small-6 large-3'>
-								<label>Begin: <select type='text' name='begin' ng-required='plan.required("begin")' x-ng-model='plan.plan.data.begin' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
-							</div>
-							<div class='columns small-6 large-3'>
-								<label>End: <select type='text' name='begin' ng-required='plan.required("end")' x-ng-model='plan.plan.data.end' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
-							</div>
-							<div class='columns small-6 large-3'>
-								<label>Budget: <input type='text' ng-model='plan.plan.data.budget'></label>
-							</div>
-							<div class='columns small-6 large-3'>
-								<label>Priority: <input type='text' ng-model='plan.plan.data.priority'></label>
-							</div>
-						</div>
-						
+	<div class='major-actions major-actions-top' ng-include='"partials/plan/actions.html"'></div>
+	<div class='plan-content'>
+		<div class='row'>
+		 <div class='small-12 columns'>
+			 <div id='plan-header' class='plan-section'>
+				 
+				 
+					<div class='row'>
+						<div class='columns'><h2>{{plan.plan.data.campaign_title}}</h2></div>
 					</div>
-					<div class='columns small-6 large-4'>
-						<div class='panel'>
-							<div class='row'>
-								<div class='columns small-6'><label>Status:</label></div>
-								<div class='columns small-6'>{{ plan.plan.status() }}</div>
+					
+					
+					<div class='row'>		
+						<div class='columns small-6 large-8'>
+							
+							<div class='row'>	
+								<div class='columns small-12 large-6'>
+									<label>Marketing Manager: <input type='text' disabled ng-model='plan.plan.data.staff_full_name_c'></label>
+								</div>
+								<div class='columns small-12 large-6'>
+									<label>Campaign Title: <input type='text' ng-model='plan.plan.data.campaign_title'></label>
+								</div>
 							</div>
+							
 							<div class='row'>
-								<div class='columns small-6'><label>Campaign Number:</label></div>
-								<div class='columns small-6'>{{ plan.plan.data.campaign_number }}</div>
+								<div class='columns small-12 large-12'>
+									<label>Product: <select type='text' name='product' ng-required='plan.required("product")' x-ng-model='plan.plan.product' x-ng-options='product as product.name group by product.discipline for product in plan.productList.items | orderBy:["discipline","name"]' ><option value=''>Select Product</option></select>
+									
+									
+									</label>
+								</div>
 							</div>
+							
 							<div class='row'>
-								<div class='columns small-6'><label>Date Submitted:</label></div>
-								<div class='columns small-6'>{{ plan.plan.data.date_submitted | date:'MM dd, yyyy'}}</div>
+								<div class='columns small-6 large-3'>
+									<label>Begin: <select type='text' name='begin' ng-required='plan.required("begin")' x-ng-model='plan.plan.data.begin' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
+								</div>
+								<div class='columns small-6 large-3'>
+									<label>End: <select type='text' name='begin' ng-required='plan.required("end")' x-ng-model='plan.plan.data.end' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
+								</div>
+								<div class='columns small-6 large-3'>
+									<label>Budget: <input type='text' ng-model='plan.plan.data.budget' ng-currency></label>
+								</div>
+								<div class='columns small-6 large-3'>
+									<label>Priority: <input type='text' ng-model='plan.plan.data.priority'></label>
+								</div>
 							</div>
-							<div class='row'>
-								<div class='columns small-6'><label>Date Approved:</label></div>
-								<div class='columns small-6'>{{ plan.plan.data.date_approved | date:'MM dd, yyyy'}}</div>
-							</div>
+							
 						</div>
-					</div>
-				</div>
-	
-	
-		 </div>
-	 </div>
-	</div>
-	<!--
-<div class='row'>
-		<div class='small-12 columns'>
-			<hr/>
-		</div>
-	</div>
--->
-	<div class='row'>
-		<div class='small-12 columns'>
-			<tabset id='plan'>
-		  <tab heading="Plan Details" active="plan.tabs[0].active">
-		  
-		   <div class='row'>
-			   <div class='columns small-12'>
-			    <div class='left'><h4>Plan Details</h4></div>
-			    <div class='right'><a href='' ng-click='plan.tabs[1].active=true'>View Tactics</a></div>
-			   </div>
-		   </div>
-		  
-		   <div id='plan-details'>
-			   
-			   <div class='row' ng-repeat='detail in plan.details'>
-							<div class='columns small-12'>
-								<div class='plan-details'>
-									<h5>{{detail.name}}</h5>
-									<div class='panel callout radius' ng-show='detail.message !== ""'>{{detail.message}}</div>
-									<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
+						<div class='columns small-6 large-4'>
+							<div class='panel'>
+								<div class='row'>
+									<div class='columns small-6'><label>Status:</label></div>
+									<div class='columns small-6'>{{ plan.plan.status() }}</div>
+								</div>
+								<div class='row'>
+									<div class='columns small-6'><label>Campaign Number:</label></div>
+									<div class='columns small-6'>{{ ::plan.plan.data.campaign_number }}</div>
+								</div>
+								<div class='row'>
+									<div class='columns small-6'><label>Date Submitted:</label></div>
+									<div class='columns small-6'>{{ plan.plan.date_submitted | date:'MMM d, yyyy'}}</div>
+								</div>
+								<div class='row'>
+									<div class='columns small-6'><label>Date Approved:</label></div>
+									<div class='columns small-6'>{{ ::plan.plan.date_approved | date:'MMM d, yyyy'}}</div>
 								</div>
 							</div>
 						</div>
-						
-						
-		   </div>
-		  </tab>
-		  <tab heading='Tactics' active="plan.tabs[1].active">
-		  
-		   <div class='row'>
-			   <div class='columns small-12'>
-			    <div class='left'><h4>Plan Tactics</h4></div>
-			    <div class='right'><a href='' ng-click='plan.tabs[0].active=true'>View Details</a></div>
-			   </div>
-		   </div>
-		  
-		   <div id='tactics'>
-			   <div class='row'>
-				   <div class='small-8 large-10 columns'>
-					   <p>Add all the strategies and their tactics for this plan.</p>
-				   </div>
-				   <div class='small-4 large-2 columns'><button class='button expand' ng-click='plan.clickAddStrategy()'>Add Strategy</button></div>
-			   </div>
+					</div>
+		
+			 </div>
+		 </div>
+		</div>
+	
+		<div class='row' ng-hide='plan.isLoading()'>
+			<div class='small-12 columns'>
+				<tabset id='plan'>
+			  <tab heading="Plan Details" active="plan.tabs[0].active">
+			  
 			   <div class='row'>
 				   <div class='columns small-12'>
-					   <accordion id='strategy-accordion'>
-					    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}' data-is-open='strategy.isOpen'>
-					     <accordion-heading>
-						     <div class='row'  ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false'>
-							     <div class='small-10 large-11 columns'>
-							      Strategy {{(i+1)}}: {{strategy.title(40)}}
-							     </div>
-							     <div class='small-2 large-1 columns'>
-								     <span ng-hide='strategy.over'class='accordion-aside'>{{strategy.activeTactics()}} tactics</span>
-								     <span ng-show='strategy.over'><a href='' ng-click='plan.removeObject(strategy)'><span class='fi-x alert'></span></a></span>
-							     </div>
-						     </div>
-					     </accordion-heading>
-					     <div class='strategy-heading'>
-						     <div class='row'>
-							     <div class='small-10 columns'>
-	  				      <textarea ng-model='strategy.data.description'></textarea>
-							     </div>
-							     <div class='small-2 columns'>
-								     <button class='button expand alert' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span>&nbsp;Remove</button>
-							     </div>
-						     </div>
-					     </div>
-					     <table role='grid'>
-						     <thead>
-							     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 70px'>&nbsp;</th></tr>
-						     </thead>
-						     <tbody>
-							     <tr ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false'>
-								     <td>
-									     <span ng-show='tactic.editing'><input type='text' ng-model='tactic.data.medium'></span>
-									     <span ng-hide='tactic.editing'>{{tactic.data.medium}}</span>
-									    </td>
-								     <td>
-									     <span ng-show='tactic.editing'><input type='text' ng-model='tactic.data.budget'></span>
-									     <span ng-hide='tactic.editing'>{{tactic.data.budget}}</span>
-									    </td>
-								     <td>
-									     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.begin_date'></span>
-									     <span ng-hide='tactic.editing' ng-show='tactic.begin_date !== null && tactic.begin_date !== undefined'>{{tactic.begin_date | date:"MMM d, yyyy"}}</span>
-									    </td>
-								     <td>
-									     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.end_date'></span>
-									     <span ng-hide='tactic.editing' ng-show='tactic.end_date !== null && tactic.end_date !== undefined'>{{tactic.end_date | date:"MMM d, yyyy"}}</span>
-									    </td>
-									    <td class='actions'>
-										    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='tactic.editing=true'><span class='fi-pencil'></span></a></span>
-										    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='plan.removeObject(tactic)'><span class='fi-x alert'></span></a></span>
-										    <span ng-show='tactic.editing'><a href='' ng-click='tactic.editing=false'><span class='fi-check'></span></a></span>
-									    </td>
-							     </tr>
-						     </tbody>
-						     <tfoot>
-							     <tr><td class='text-center' colspan='5'><button class='button' ng-click='plan.clickAddTactic(strategy)'>Add Tactic</button></td></tr>
-						     </tfoot>
-					     </table>
-					     
-					     <!--
-						    <accordion id='tactic-accordion'>
-						     <accordion-group ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}'>
-						      <accordion-heading>
-						       #{{(j+1)}}. {{tactic.title(40)}}
-						      </accordion-heading>
-						      <div class='tactic-details'>
-									    <div class='row tactic'>
-										    <div class='small-6 large-3 columns'>
-											    <label>Medium: <input type='text' ng-model='tactic.data.medium'></textarea></label>
-										    </div>
-										    <div class='small-6 large-3 columns'>
-											    <label>Budget: <input type='text' ng-model='tactic.data.budget'></textarea></label>
-										    </div>
-										    <div class='small-6 large-3 columns'>
-											    <label>Starts: <input type='date' ng-model='tactic.begin_date'></textarea></label>
-										    </div>
-										    <div class='small-6 large-3 columns'>
-											    <label>Ends: <input type='date' ng-model='tactic.end_date'></textarea></label>
-										    </div>
-									    </div>
-								    </div>
-								   </accordion-group> 
-						    </accordion>
-						    -->
-						    
-					    </accordion-group>
-					  </accordion>
-					  
+					   
+					   <dl class="sub-nav">
+							  <dd class="active"><a href=''>Plan Details</a></dd>
+							  <dd><a href='' ng-click='plan.tabs[1].active=true'>Plan Strategies &amp; Tactics</a></dd>
+							</dl>
+					   
+					   
+				    <!--
+<div class='left'><h4>Plan Details&nbsp;<small><a href='' ng-click='plan.tabs[1].active=true'>View Strategies &amp; Tactics</a></small></h4></div>
+				    <div class='right'><a href='' ng-click='plan.tabs[1].active=true'>View Strategies &amp; Tactics</a></div>
+-->
 				   </div>
 			   </div>
-			  </div>
-			   
-			   <!--
-			   <div class='row medium-collapse large-collapse'>
-				   <div class='medium-4 large-3 columns'>
-					   <ul class="side-nav scrollable">
-						   <li ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}'>
-          <a href='' ng-class='plan.selected==i?"active":""' ng-click='plan.selected=i'>{{strategy.title(20)}}</a>
-         </li>
-							  
-							</ul>
-							<ul class='side-nav'>
-								<li><a href=''><span class='fi-plus'></span>&nbsp;New Strategy</a></li>
+			  
+			   <div id='plan-details' class='plan-section'>
+				   
+				   <div class='row' ng-repeat='detail in plan.details'>
+								<div class='columns small-12'>
+									<div class='plan-details'>
+										<h5>{{::detail.name}}</h5>
+										<div class='panel callout radius' ng-show='detail.message !== ""'>{{::detail.message}}</div>
+										<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
+									</div>
+								</div>
+							</div>
+							
+							
+			   </div>
+			  </tab>
+			  <tab heading='Tactics' active="plan.tabs[1].active">
+			  
+			   <div class='row'>
+				   <div class='columns small-12'>
+					   
+					   <dl class="sub-nav">
+							  <dd><a href='' ng-click='plan.tabs[0].active=true'>Plan Details</a></dd>
+							  <dd class="active"><a href=''>Plan Strategies &amp; Tactics</a></dd>
+							  <dd class="right" ng-hide='plan.plan.strategyCount() === 0'><a href='' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add Strategy</a></dd>
+							</dl>
+					   
+				    <!--
+<div class='left'><h4>Plan Strategies &amp; Tactics</h4></div>
+				    <div class='right'><a href='' ng-click='plan.tabs[0].active=true'>View Details</a></div>
+-->
 				   </div>
-				   <div class='medium-8 large-9 columns'>
-					   <div ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}' ng-show='plan.selected == i'>
-						   <label>Description: <textarea ng-model='strategy.data.description'></textarea></label>
-					    <accordion>
-					     <accordion-group ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}'>
-					      <accordion-heading>
-					       <div class='row heading'>
-						       <div class='small-10 large-11 columns title'>#{{(j+1)}}. {{tactic.title(20)}}</div>
-						       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='tactic.removed=true'><span class='fi-x'></span></button></div>
-					       </div>
-					      </accordion-heading>
-							    <div class='row tactic'>
-								    <div class='small-6 large-3 columns'>
-									    <label>Medium: <input type='text' ng-model='tactic.data.medium'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Budget: <input type='text' ng-model='tactic.data.budget'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Starts: <input type='date' ng-model='tactic.begin_date'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Ends: <input type='date' ng-model='tactic.end_date'></textarea></label>
-								    </div>
-							    </div>
-							   </accordion-group> 
-					    </accordion>
+			   </div>
+			  
+			   <div id='tactics'>
+				   <div class='row' ng-show='plan.plan.strategyCount() === 0'>
+						  <div class='small-12 columns'>
+							  <div class='plan-section'>
+							   <p>This plan doesn't have any strategies yet. Click the button below to start your first strategy!</p>
+						    <button class='button radius expand' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add First Strategy</button>
+						   </div>
+					   </div>
+					   
+				   </div>
+				   <div class='row' ng-show='plan.plan.strategyCount() > 0'>
+					   <div class='columns small-12'>
+						   <accordion id='strategy-accordion'>
+						    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false} track by strategy.data.__guid' data-is-open='strategy.isOpen'>
+						     <accordion-heading >
+							     <div class='row' ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false' >
+								     <div class='small-9 large-10 columns'>
+								      Strategy {{(i+1)}}: {{strategy.title(40)}}
+								     </div>
+													<div class='small-2 large-1 columns'>
+									     <span class='accordion-aside right'>{{strategy.activeTactics()}} tactics</span>
+								     </div>
+								     <div class='small-1 large-1 columns'>
+									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
+								     </div>
+							     </div>
+						     </accordion-heading>
+						     <div class='strategy-heading' ng-class='strategy.activeTactics()===0?"strategy-heading-empty":""'>
+							     <div class='row'>
+								     <div class='small-12 columns'>
+		  				      <textarea ng-model='strategy.data.description'></textarea>
+								     </div>
+							     </div>
+						      <div class='row' ng-hide='strategy.activeTactics()>0'>
+								     <div class='small-12 columns'>
+											   <p>This strategy doesn't have any tactics yet. Click the button below to start your first tactic for this strategy!</p>
+										    <button class='button radius expand' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add First Tactic</button>
+										   </div>
+							     </div>
+						     </div>
+						     
+						     <table role='grid' >
+							     <thead ng-show='strategy.activeTactics()>0'>
+								     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 110px !important;'><a href='' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add Tactic</a></th></tr>
+							     </thead>
+							     <tbody>
+								     <tr ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false} track by tactic.data.__guid' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false'>
+									     <td style='width: 25%'>
+										     <span ng-show='tactic.editing'>
+										      <select type='text' name='medium' x-ng-model='tactic.medium' x-ng-options='m.name for m in plan.mediumList.items' ><option value=''>Select Type</option></select>
+										     </span>
+										     <span ng-hide='tactic.editing'>{{tactic.medium.name}}</span>
+										    </td>
+									     <td style='width: 15%'>
+										     <span ng-show='tactic.editing'><input type='text' ng-model='tactic.data.budget' ng-currency></span>
+										     <span ng-hide='tactic.editing'>{{tactic.data.budget | currency}}</span>
+										    </td>
+									     <td>
+										     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.begin_date'></span>
+										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>{{tactic.begin_date | date:"MMM d, yyyy"}}</span>
+										    </td>
+									     <td>
+										     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.end_date'></span>
+										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>{{tactic.end_date | date:"MMM d, yyyy"}}</span>
+										    </td>
+										    <td class='actions text-center' style='width: 110px;'>
+											    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='tactic.editing=true'><span class='fi-pencil'></span></a></span>
+											    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='plan.removeObject(tactic)'><span class='fi-x alert'></span></a></span>
+											    <span ng-show='tactic.editing'><a href='' ng-click='tactic.editing=false'><span class='fi-check'></span></a></span>
+										    </td>
+								     </tr>
+							     </tbody>
+						     </table>
+						     
+						    </accordion-group>
+						  </accordion>
+						  
 					   </div>
 				   </div>
-			   </div>
-			   -->
-		   
-		   <!--
-		   <tabset vertical="true" type="navType" id='tactics'>
-		    <tab heading="Vertical 1">Vertical content 1</tab>
-		    <tab heading="Vertical 2">Vertical content 2</tab>
-		    <tab>
-		     <tab-heading>
-		     <span class='fi-plus'></span>&nbsp;New Strategy
-		     </tab-heading>
-		     <textarea ng-model='plan.newstrategy'></textarea>
-		     <button class='button'>Add</button>
-     </tab>
-		  </tabset>
-		  -->
-		   <!--
-		   
-		   -->
-		   <!--
-		   <div class='row'>
-			   <div class='small-12 medium-8 large-10 columns'>
-				   <p>Add all the strategies and their tactics for this plan.</p>
-			   </div>
-			   <div class='small-12 medium-4 large-2 columns'><button class='button expand'>Add Strategy</button></div>
-		   </div>
-		   <div class='row'>
-			   <div class='columns small-12'>
-				   <accordion>
-				    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false}'>
-				     <accordion-heading>
-				      <div class='row heading'>
-				       <div class='small-10 large-11 columns title'>Strategy {{(i+1)}}: {{strategy.title(20)}}</div>
-				       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='strategy.removed=true'><span class='fi-x'></span></button></div>
-			       </div>
-				     </accordion-heading>
-			      <label>Description: <textarea ng-model='strategy.data.description'></textarea></label>
-			      <div class='row'>
-				      <div class='columns small-8 large-9'>
-					      <h5>Tactics</h5>
-			       </div>
-			       <div class='columns small-4 large-3'>
-					      <button class='button expand'>Add Tactic</button>
-			       </div>
-			      </div>
-					    <accordion>
-					     <accordion-group ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false}'>
-					      <accordion-heading>
-					       <div class='row heading'>
-						       <div class='small-10 large-11 columns title'>#{{(j+1)}}. {{tactic.title(20)}}</div>
-						       <div class='small-2 large-1 columns remove'><button class='button expand alert' ng-click='tactic.removed=true'><span class='fi-x'></span></button></div>
-					       </div>
-					      </accordion-heading>
-							    <div class='row tactic'>
-								    <div class='small-6 large-3 columns'>
-									    <label>Medium: <input type='text' ng-model='tactic.data.medium'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Budget: <input type='text' ng-model='tactic.data.budget'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Starts: <input type='date' ng-model='tactic.begin_date'></textarea></label>
-								    </div>
-								    <div class='small-6 large-3 columns'>
-									    <label>Ends: <input type='date' ng-model='tactic.end_date'></textarea></label>
-								    </div>
-							    </div>
-							   </accordion-group> 
-					    </accordion>
-					    
-				    </accordion-group>
-				  </accordion>
-				  
-			   </div>
-		   </div>
-		   -->
-		   
-		   
-		  </tab>
-		 </tabset>
+				  </div>
+			   
+			   
+			  </tab>
+			 </tabset>
+			</div>
 		</div>
 	</div>
-	
 </form>
-
-<a href='' class='button' ng-click='plan.refresh(plan.plan)'>Refresh</a>

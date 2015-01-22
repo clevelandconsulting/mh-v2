@@ -92,11 +92,35 @@ class fmRestRepository
    
    msg
   
-  save: (model) ->
-   data = model.getUpdateData()
-   href = model.href
+  makeNew: (data, model) ->
+   m = new model data, '', ''
    
-   @update(data,href)
+   m.resetGuid(false)
+   m.resetCreatedTS(false)
+   m.resetOriginal()
+   
+   #console.log 'created', model, m
+   
+   m
+   
+  
+  save: (model, script) ->
+  
+   if model.hasChanged()  
+	   data = model.getUpdateData()
+	   href = model.href
+	   
+	   if script? && script != ''
+	    href = href + '?RFMscript=' + script
+	   
+	   return @update(data,href).then (response) =>
+	    model.resetOriginal()
+	    return response
+	    
+	  else
+	   d = @$q.defer()
+	   d.resolve "Your " + @modelName + " was successfully updated!"
+	   return d.promise
   
   add: (data, preScript) ->
    

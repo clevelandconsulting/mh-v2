@@ -7,6 +7,11 @@ angular.module('app').factory 'strategy', [ 'fmRestModel', (fmRestModel) ->
 	   '__guid', '__created_ts', '__created_an', '__modified_ts', '__modified_an', '_common_one_c'
    ]
    @tactics = []
+   @date = @formatFMDateForJS(@data.__created_ts)
+   
+   if !@date?
+    @date = new Date(Date.now())
+    
    @removed = false
   
   title: (length) ->
@@ -25,6 +30,28 @@ angular.module('app').factory 'strategy', [ 'fmRestModel', (fmRestModel) ->
      count = count + 1
    
    count
+  
+  sortTactics: () ->
+   @tactics.sort (a, b) ->
+    keyA = new Date(a.begin_date)
+    keyB = new Date(b.begin_date)
+    
+    if keyA < keyB
+     return -1
+    if keyA > keyB
+     return 1
+     
+    keyA = new Date(a.data.__created_ts)
+    keyB = new Date(b.data.__created_ts)
+    
+    #console.log 'went to backup', keyA, keyB
+    
+    if keyA < keyB
+     return -1
+    if keyA > keyB
+     return 1
+    
+    return 0
   
   addTactic: (tactic) ->
    @tactics.push(tactic)

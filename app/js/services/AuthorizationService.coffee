@@ -1,5 +1,5 @@
 class AuthorizationService
-  constructor: (@$q, @credentialStorageService, @apiService) ->
+  constructor: (@$q, @credentialStorageService, @apiService, @storageService) ->
    @init()
    
   init: -> 
@@ -51,7 +51,7 @@ class AuthorizationService
   doLogout: ->
    #console.log 'doing logout'
    if @checkIfLoggedIn()
-    @credentialStorageService.clear()
+    @storageService.clearAll()
    @apiService.clearCredentials() 
      
-angular.module('app').factory 'AuthorizationService', ['$q', 'CredentialStorageService', 'ApiService', ($q, credentialStorageService, ApiService) -> new AuthorizationService($q, credentialStorageService, ApiService) ]
+angular.module('app').factory 'AuthorizationService', ['$q', 'CredentialStorageService', 'ApiService', 'StorageService', ($q, credentialStorageService, ApiService, StorageService) -> new AuthorizationService($q, credentialStorageService, ApiService, StorageService) ]

@@ -1,4 +1,4 @@
-angular.module('app').factory 'tactic', [ 'fmRestModel', (fmRestModel) ->
+angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestModel, listManager) ->
  class tactic extends fmRestModel 
   constructor: (data,href,recordID) ->
    super(data,href,recordID)
@@ -8,17 +8,41 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', (fmRestModel) ->
    ]
    @removed = false
   
+   
+   #console.log listManager
+   
+   @mediumList = listManager.mediumList
+   
+   @mediumList.loaded.then (result) =>
+    @medium = @findMedium(@mediumList.items, {name:@data.medium, value: @data.medium_type})
+  
    @begin_date = @formatFMDateForJS(@data.begin_date)
    @end_date = @formatFMDateForJS(@data.end_date) 
   
+  findMedium: (items,medium) ->
+    #console.log 'searching for medium', items
+    found = medium
+    for item in items
+     if medium.name == item.name && medium.value == item.value
+      found = item
+      break
+    found
   
+  handleMedium: () ->
+   @data.medium = @medium.name
+   @data.medium_type = @medium.value
+   
   handleDates: () ->
    if @begin_date?
     @data.begin_date = @formatDateForFM(@begin_date)
     
    if @end_date?
     @data.end_date = @formatDateForFM(@end_date)
-    
+  
+  prepForSave: () ->
+   @handleMedium()
+   @handleDates()
+  
   title: (length) ->
    if @data.medium?
     if @data.medium.length > length

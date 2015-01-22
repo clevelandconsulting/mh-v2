@@ -1,8 +1,10 @@
 angular.module('app').config ['$routeProvider', '$locationProvider', (routeProvider, locationProvider) ->
  #console.log 'routing!'
  routeProvider
- .when('/', {template:'<div>Hi / <a href="#/myplans">Test</a></div>'})
+ .when('/', {controller:'HomeController', controllerAs:'home', templateUrl:'home.html'})
  .when('/login', {controller:'LoginController', controllerAs:'login', templateUrl:'login.html'}) #{template:'<div>Hi login</div>'}) #
+ .when('/logout',{controller:'LogoutController', template:'<div>Logging Out...</div>'})
+ .when('/addnewplan', {controller:'AddNewPlanController', template:'<div>Adding New Plan...</div>'})
  .when('/myplans',{controller:'MyPlansController', controllerAs:'plans', templateUrl: 'plans.html'}) #{template:'<div>Hi myplans <a href="#/">Test</a></div>'}) 
  .when('/plan/:id',{controller:'PlanController', controllerAs:'plan', templateUrl: 'plan.html'})#{template:'<div>Hi plan</div>'})  #
  #.when('/test', {controller: 'testController', template: '<p>{{ result }}</p>'})

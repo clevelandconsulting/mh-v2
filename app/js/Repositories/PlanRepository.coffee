@@ -14,23 +14,28 @@ angular.module('app').service 'PlanRepository', ['$q', 'plan', 'fmRestList', 'fm
    
   getAllForStaff: (staff_id, pagesize) ->
    super(staff_id,@sortScript, pagesize)
+  
+  submit: (plan) ->
+   deferred = $q.defer()
+   plan.prepForSubmit()
+   @save(plan,'Plan.Api.Submit')
+   .then (data) =>
+    deferred.resolve data
+   .catch (error) =>
+    plan.unSubmit()
+    deferred.reject error
    
-  save: (plan) ->
-   #update product / portfolio information
-   plan.data.portfolio = plan.product.portfolio
-   plan.data.discipline = plan.product.discipline
-   plan.data.product = plan.product.value
-   
-   #get modifiable data
-   super(plan)
-   #data = plan.getUpdateData()
-   #href = plan.href
-   
-   #@update(data,href)
+   deferred.promise
+  
+  save: (plan, script) ->
+   plan.prepForSave()
+   super(plan, script)
   
   add: (data) ->
    super(data,'RestFM.Login')
- 
+  
+  makeNew: (title) ->
+   super({campaign_title:title}, plan) 
   
  new PlanRepository()
 

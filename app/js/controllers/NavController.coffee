@@ -1,5 +1,6 @@
 angular.module('app').controller 'NavController', ['$scope', '$location', 'AuthorizationService', 'UsersService',
- class navController
+
+ class NavController
   constructor: (@scope, @$location, @authorizationService, @userService) ->
    @scope.navbarCollapsed = true;
     
@@ -8,14 +9,10 @@ angular.module('app').controller 'NavController', ['$scope', '$location', 'Autho
    #console.log 'logged in: ' , loggedIn
    if loggedIn and @username == undefined
     @getUsername()
+   #else
+   # if !@loadingUsername
+   #  @username = undefined
    loggedIn
-   
-  logout: ->
-   #console.log 'logout called'
-   @authorizationService.doLogout()
-   @userService.clearCurrentUserId()
-   @username = undefined
-   @$location.path('/login')
 
   getUsername: ->
    if !@loadingUsername
@@ -28,4 +25,12 @@ angular.module('app').controller 'NavController', ['$scope', '$location', 'Autho
 	    @username = data.username
 	   
 	   @promise
+	 
+	 logout: () ->
+	  @$location.path('logout')
+	 
+	 addNewPlan: () ->
+	  @$location.path('addnewplan')
+	  
+	 
 ]

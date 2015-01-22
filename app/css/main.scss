@@ -1,6 +1,47 @@
 @import 'palette';
 @import 'settings';
-@import 'foundation';
+
+@charset "UTF-8";
+
+@import "foundation/components/grid";
+@import "foundation/components/accordion";
+//@import "foundation/components/alert-boxes";
+@import "foundation/components/block-grid";
+@import "foundation/components/breadcrumbs";
+@import "foundation/components/button-groups";
+@import "foundation/components/buttons";
+//@import "foundation/components/clearing";
+//@import "foundation/components/dropdown";
+//@import "foundation/components/dropdown-buttons";
+//@import "foundation/components/flex-video";
+@import "foundation/components/forms";
+@import "foundation/components/icon-bar";
+//@import "foundation/components/inline-lists";
+//@import "foundation/components/joyride";
+//@import "foundation/components/keystrokes";
+@import "foundation/components/labels";
+//@import "foundation/components/magellan";
+//@import "foundation/components/orbit";
+//@import "foundation/components/pagination";
+@import "foundation/components/panels";
+//@import "foundation/components/pricing-tables";
+//@import "foundation/components/progress-bars";
+//@import "foundation/components/range-slider";
+@import "foundation/components/reveal";
+//@import "foundation/components/side-nav";
+@import "foundation/components/split-buttons";
+@import "foundation/components/sub-nav";
+//@import "foundation/components/switches";
+@import "foundation/components/tables";
+@import "foundation/components/tabs";
+//@import "foundation/components/thumbs";
+//@import "foundation/components/tooltips";
+@import "foundation/components/top-bar";
+@import "foundation/components/type";
+//@import "foundation/components/offcanvas";
+//@import "foundation/components/visibility";
+
+
 @import 'foundation-icons';
 
 @font-face {
@@ -11,6 +52,8 @@
   font-style: normal; }
 
 $base_border_color: darken($body-bg,5%);
+$container: 10px;
+$major_actions-height: 88px;
 
 @mixin border-radius($radius1, $radius2, $radius3, $radius4) {
   -webkit-border-radius: $radius1, $radius2, $radius3, $radius4;
@@ -19,20 +62,149 @@ $base_border_color: darken($body-bg,5%);
           border-radius: $radius1, $radius2, $radius3, $radius4;
 }
 
-html, body {
- height: 100%;
-}
-.wrapper {
-	min-height: 100%;
-	height: auto !important;
-	height: 100%;
-	margin: 0 auto -4em;
+.top-bar {
+ background: $topbar-bg-color	url(../img/cubigraph-2_gray_withline.png) right no-repeat;
 }
 
-.footer, .push {
-height: 4em;
+
+.top-bar-section ul li {
+	background-color: transparent !important;
 }
 
+h2.welcome {
+	padding-bottom: 50px;
+	padding-top: 50px;
+
+}
+
+h3.welcome {
+	padding-bottom: 25px;
+	padding-top: 25px;
+}
+
+.home-top {
+	height: 160px;
+}
+
+.home-bottom {
+	background-color: $white;
+	border-top: 1px solid $base_border_color;
+	position: absolute;
+ top: 225px; /* Header Height */
+ bottom: 0px; /* Footer Height */
+ width: 100%;
+}
+
+.home-bottom p {
+	margin-bottom: rem-calc(50);
+}
+
+
+.top-bar-section ul li a:hover {
+	background-color: rgba(0,0,0,0.6);
+}
+
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
+.button-group li {
+	padding-left: 2px;
+	padding-right: 2px;
+}
+
+.button-group li:last-child {
+	padding-right: 0px;
+}
+
+.button-group li:first-child {
+	padding-left: 0px;
+}
+
+.major-actions {
+	padding:0;
+	background-color: $icon-bar-bg;
+}
+
+.major-actions .icon-bar {
+	margin-top: 0;
+	margin-bottom: 0;
+	border-top: 1px solid darken($icon-bar-bg, 5%);
+}
+
+.major-actions .icon-bar a:hover > i, 
+.major-actions .icon-bar a:hover > label {
+	color: darken($icon-bar-hover-color,50%);
+}
+
+.major-actions.major-actions-top {
+	 position: fixed;
+	 width: 100%;
+	 bottom: 0;
+	 height: $major_actions-height;
+	 //top: 45px;
+		//margin-bottom: $container;
+	 //border-bottom: 1px solid darken($base_border_color,4%);
+	 z-index:99;
+}
+
+.major-actions .icon-bar a.submit:hover {
+	background-color: $success-color;
+}
+
+.major-actions .icon-bar a.remove:hover {
+	background-color: $alert-color;
+}
+
+.major-actions .icon-bar a.save:hover {
+	background-color: $primary-color;
+}
+
+.icon-bar a.submit > i, .icon-bar a.submit > label {
+	color: $success-color;
+}
+
+.icon-bar a.save > i, .icon-bar a.save > label {
+	color: $primary-color;
+}
+
+.icon-bar a.remove > i, .icon-bar a.remove > label {
+	color: $alert-color;
+}
+
+.icon-bar a.disabled {
+	background-color: lighten($icon-bar-bg,5%);
+}
+
+.icon-bar a.disabled > i, .icon-bar a.disabled > label {
+	color: lighten($icon-bar-font-color, 28%);
+}
+
+.icon-bar a.submit:hover > i, 
+.icon-bar a.submit:hover > label, 
+.icon-bar a.remove:hover > i, 
+.icon-bar a.remove:hover > label, 
+.icon-bar a.save:hover > i, 
+.icon-bar a.save:hover > label{
+	color: $white;
+}
+
+
+dl.sub-nav {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	background-color: $base_border_color;
+	@include radius()
+}
+
+dl.sub-nav dt {
+	color: $steel;
+}
+
+.plan-content {
+	margin-bottom: $major_actions-height;
+}
 
 input.error, textarea.error , select.error {
  border-color: $alert-color;
@@ -43,12 +215,12 @@ body {
 }
 
 .container {
-	margin: 10px 0px 0px 0px;
+	margin: $container 0px 0px 0px;
 }
 
 .login-form .row.login-username {
-	margin-top: 10px;
-	margin-bottom: 10px;
+	margin-top: $container;
+	margin-bottom: $container;
 }
 
 .login-form .row.login-password {
@@ -70,7 +242,7 @@ body {
 
 .plan-card-header h5{
 	margin-top: 0;
-	padding: 10px;
+	padding: $container;
 	color: $white;
 }
 
@@ -87,17 +259,6 @@ body {
 	width: 100%;
 }
 
-/*
-.plan-card.plan-submitted {
-	border-color: darken( $info-color, 5% );
-	@include block-glowing-effect('hover','300ms',fade-out( $info-color, .25));
-}
-
-.plan-card.plan-approved {
-	border-color: darken( $success-color, 5% );
-	@include block-glowing-effect('hover','300ms',fade-out( $success-color, .25));
-}
-*/
 .plan-card-status.plan-draft {
 	background-color: $base_border_color;
 	color: darken( $base_border_color, 30% );
@@ -137,23 +298,17 @@ ul.scrollable li.selected a {
  color: white
 }
 
+.plan-section {
+	background-color: $white;
+	@include radius();
+	border: 1px solid $base_border_color;
+	padding: 10px 20px;
+}
+
 #planFormID {
 	min-width: 800px;
 }
 
-#plan-header {
-	background-color: $white;
-	@include radius();
-	border: 1px solid $base_border_color;
-	padding: 0px 20px;
-}
-
-#plan-details {
-	background-color: $white;
-	@include radius();
-	border: 1px solid $base_border_color;
-	padding: 0px 20px;
-}
 
 #plan > .tabs {
 	margin-top: 16px;
@@ -173,52 +328,13 @@ ul.scrollable li.selected a {
   );
 }
 
-/*
-#plan > .tabs dd a {
-		color: $aluminum;
-}
-
-#plan > .tabs dd.active a {
-	color: black;
-}
-*/
-
-#plan > .tabs-content {
-	//margin-top: 5px;
-	/*
-@include radius();
-	background-color: $white;
-	border: 1px solid $base_border_color;
-*/
-}
-
 #plan > .tabs-content, #plan > .tabs-content .content {
 	padding: 0;
-}
-
-#plan-details {
-	padding: 0px 20px;
 }
 
 #tactics {
 	padding: 0;
 }
-
-#tactics ul.side-nav {
-	padding: 0;
-}
-
-#tactics ul.side-nav li {
-	margin: 0;
-}
-
-
-
-/*
-.accordion .content {
-	border: 1px solid $base_border_color;
-}
-*/
 
 dl.accordion dd {
 	margin-bottom: 5px !important;
@@ -229,6 +345,16 @@ dl.accordion dd a {
 	@include radius();
 	border: 1px solid $base_border_color;
 	color: $steel;
+	padding: 0;
+}
+
+dl.accordion dd a div.row {
+	padding: 1rem;
+}
+
+dl.accordion dd a div.row div.columns {
+	height: 25px;
+	vertical-align: middle;
 }
 
 dl.accordion dd a.active {
@@ -259,50 +385,54 @@ dl.accordion table td:first-child,  dl.accordion table th:first-child {
 	padding-left: 40px;
 }
 
-dl.accordion table tfoot button {
-	margin: 0;
+dl.accordion table td input, dl.accordion table td select {
+	margin-bottom: 0;
 }
 
-dl.accordion table a, dl.accordion table a:hover {
+dl.accordion table th a, dl.accordion table th a:hover {
+	background-color: $table-head-bg;
+	border: 0 !important;
+}
+
+dl.accordion table td a, dl.accordion table td a:hover, span.actions a, span.actions a:hover {
 	background-color: $table-bg;
-	border: 0;
+	border: 0 !important;
 }
 
 dl.accordion table td.actions {
 	padding: rem-calc(0 0);
 }
 
-dl.accordion table a span[class*="fi-"] {
-	font-size: 160%;
+dl.accordion table td a span[class*="fi-"] {
 	top: 50%;
 	position: relative;
 	transform: translateY(-50%);
 	padding-right: 5px;
+	font-size: 160%;
 }
 
-dl.accordion table a span.alert {
+span.actions a.button {
+	margin-bottom: 0;
+}
+
+span.actions a.button.tiny {
+	padding-bottom: 0.35rem;
+	padding-top: 0.325rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+}
+
+dl.accordion table a span.alert, span.actions a span.alert {
 	color: $alert-color;
 }
-/*
 
-#tactic-accordion > dl.accordion dd {
-	margin-bottom: 0 !important;
+dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
+	color: darken($alert-color,10%);
 }
 
-#tactic-accordion > dl.accordion dd a {
-	color: $color-complement-3;
-	@include radius(0);
-	border-top: 1px solid $white;
-	padding-left: 40px;
-}
-
-#tactic-accordion > dl.accordion dd a:hover {
-	border-top: 1px solid darken($base_border_color,20%);
-}
-*/
 .accordion-aside {
 	text-transform: uppercase;
-	font-size: 80%;
+	font-size: 75%;
 }
 
 .strategy-heading {
@@ -312,6 +442,108 @@ dl.accordion table a span.alert {
 	border-left: 1px solid $base_border_color;
 }
 
+.strategy-heading-empty {
+	border-bottom: 1px solid $base_border_color;
+}
+
 .tactic-details {
 	padding: 20px 20px 20px 40px;
+}
+
+.loading {
+	margin-top: $column-gutter;
+}
+
+.loading p {
+	color: $steel;
+	margin-bottom: $column-gutter*2;
+}
+
+#ajaxloader
+{
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	left: 50%;
+	top: $column-gutter*3;
+	margin: 0 0 25px -15px;
+	border: 8px solid $primary-color;
+	border-right-color: transparent;
+	border-radius: 50%;
+	box-shadow: 0 0 25px 2px #eee;
+	-webkit-animation: spin 1s linear infinite;
+	-moz-animation: spin 1s linear infinite;
+	-ms-animation: spin 1s linear infinite;
+	-o-animation: spin 1s linear infinite;
+	animation: spin 1s linear infinite;
+}
+
+@-webkit-keyframes spin
+{
+	from { -webkit-transform: rotate(0deg); opacity: 0.4; }
+	50%  { -webkit-transform: rotate(180deg); opacity: 1; }
+	to   { -webkit-transform: rotate(360deg); opacity: 0.4; }
+}
+
+@-moz-keyframes spin
+{
+	from { -moz-transform: rotate(0deg); opacity: 0.4; }
+	50%  { -moz-transform: rotate(180deg); opacity: 1; }
+	to   { -moz-transform: rotate(360deg); opacity: 0.4; }
+}
+
+@-ms-keyframes spin
+{
+	from { -ms-transform: rotate(0deg); opacity: 0.4; }
+	50%  { -ms-transform: rotate(180deg); opacity: 1; }
+	to   { -ms-transform: rotate(360deg); opacity: 0.4; }
+}
+
+@-o-keyframes spin
+{
+	from { -o-transform: rotate(0deg); opacity: 0.4; }
+	50%  { -o-transform: rotate(180deg); opacity: 1; }
+	to   { -o-transform: rotate(360deg); opacity: 0.4; }
+}
+
+@keyframes spin
+{
+	from { transform: rotate(0deg); opacity: 0.2; }
+	50%  { transform: rotate(180deg); opacity: 1; }
+	to   { transform: rotate(360deg); opacity: 0.2; }
+}
+
+
+
+.fade {
+  opacity: 0;
+  -webkit-transition: opacity .15s linear;
+          transition: opacity .15s linear;
+}
+.fade.in {
+  opacity: 1;
+}
+
+.reveal-modal.fade {
+  -webkit-transition: -webkit-transform .3s ease-out;
+     -moz-transition:    -moz-transform .3s ease-out;
+       -o-transition:      -o-transform .3s ease-out;
+          transition:         transform .3s ease-out;
+  -webkit-transform: translate(0, -25%);
+      -ms-transform: translate(0, -25%);
+          transform: translate(0, -25%);
+}
+.reveal-modal.in {
+  -webkit-transform: translate(0, 0);
+      -ms-transform: translate(0, 0);
+          transform: translate(0, 0);
+}
+
+.reveal-modal-bg.fade {
+  filter: alpha(opacity=0);
+  opacity: 0;
+}
+.reveal-modal-bg.in {
+  filter: alpha(opacity=50);
+  opacity: .5;
 }
