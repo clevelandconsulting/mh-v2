@@ -10,7 +10,7 @@ class StorageService
   get: (name) ->
    @localStorage.get(name)
    
-  clearAll: () ->
-   @localStorage.clearAll()
+  clearAll: (regEx) ->
+   @localStorage.clearAll(regEx)
    
 angular.module('app').service 'StorageService', ['localStorageService', (localStorage) -> new StorageService(localStorage) ]

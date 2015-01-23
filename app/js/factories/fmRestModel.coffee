@@ -11,6 +11,9 @@ angular.module('app').factory 'fmRestModel', ['guid', (guid) ->
 	  if (!Date.now) 
 	    Date.now = -> new Date().getTime()
 	 
+	 id: () ->
+	  @data.__guid
+	 
 	 resetOriginal: () ->
 	  @original = {}
 	  

@@ -92,6 +92,9 @@ class fmRestRepository
    
    msg
   
+  fromJson: (json) ->
+   new @model json.data, json.href, json.recordID
+  
   makeNew: (data, model) ->
    m = new model data, '', ''
    
@@ -105,7 +108,6 @@ class fmRestRepository
    
   
   save: (model, script) ->
-  
    if model.hasChanged()  
 	   data = model.getUpdateData()
 	   href = model.href

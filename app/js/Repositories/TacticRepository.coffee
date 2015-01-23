@@ -19,7 +19,7 @@ angular.module('app').service 'TacticRepository', [ '$q', 'tactic', 'fmRestModel
      return { msg: data, obj: tactic }
    else 
     @add(tactic.data,'RestFM.Login').then (response) =>
-     #console.log response
+     console.log 'added tactic', response
      tactic.href = response.data.href
      tactic.recordID = response.data.recordID
      return { msg: response, obj: tactic }

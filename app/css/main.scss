@@ -22,7 +22,7 @@
 @import "foundation/components/labels";
 //@import "foundation/components/magellan";
 //@import "foundation/components/orbit";
-//@import "foundation/components/pagination";
+@import "foundation/components/pagination";
 @import "foundation/components/panels";
 //@import "foundation/components/pricing-tables";
 //@import "foundation/components/progress-bars";
@@ -54,6 +54,7 @@
 $base_border_color: darken($body-bg,5%);
 $container: 10px;
 $major_actions-height: 88px;
+
 
 @mixin border-radius($radius1, $radius2, $radius3, $radius4) {
   -webkit-border-radius: $radius1, $radius2, $radius3, $radius4;
@@ -90,8 +91,8 @@ h3.welcome {
 	background-color: $white;
 	border-top: 1px solid $base_border_color;
 	position: absolute;
- top: 225px; /* Header Height */
- bottom: 0px; /* Footer Height */
+ top: 225px; 
+ bottom: 0px; 
  width: 100%;
 }
 
@@ -143,9 +144,6 @@ a.disabled {
 	 width: 100%;
 	 bottom: 0;
 	 height: $major_actions-height;
-	 //top: 45px;
-		//margin-bottom: $container;
-	 //border-bottom: 1px solid darken($base_border_color,4%);
 	 z-index:99;
 }
 
@@ -282,7 +280,6 @@ body {
 ul.scrollable {
     max-height: 20em;
     line-height: 2em;
-    /*border: 1px solid #ccc;*/
     border-bottom: 1px solid $smoke;
     padding: 0;
     margin-left: 0;
@@ -458,8 +455,6 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 	color: $steel;
 	margin-bottom: $column-gutter*2;
 }
-
-
 
 #ajaxloader
 {

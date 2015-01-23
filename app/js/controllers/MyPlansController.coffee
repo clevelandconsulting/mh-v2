@@ -1,6 +1,6 @@
-angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlansService', 'NotificationService',
+angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlanListService', 'NotificationService',
  class MyPlansController 
-  constructor: (@scope, @location, @plansService, @notifications) ->
+  constructor: (@scope, @location, @planListService, @notifications) ->
    @cols = 3
    @rows = 3
    @foundationColsSm = 12
@@ -9,7 +9,7 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    
    @pagesize = @cols * @rows
    
-   @loadPlans(@plansService.filter)
+   @loadPlans(@planListService.filter)
    #console.log 'loading MyPlansController'
    
   load_success: (data) =>
@@ -46,28 +46,28 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    @notifications.error(data)
   
   setFilter: (filter) ->
-   @plansService.filter = filter
+   @planListService.filter = filter
    #@group_plans(@plans,filter)
    @loadPlans(filter)
   
   filterText: () ->
-   if @plansService.filter? && @plansService.filter != ''
-    @plansService.filter
+   if @planListService.filter? && @planListService.filter != ''
+    @planListService.filter
    else
     'All'
   
   loadPlans: (status) ->
    @plans = null
    if !status? || status == '' || status == 'All'
-    @plansService.getAll(@pagesize).then @load_success, @load_error
+    @planListService.getAll(@pagesize).then @load_success, @load_error
    else
-    @plansService.getByStatus(status, @pagesize).then @load_success, @load_error
+    @planListService.getByStatus(status, @pagesize).then @load_success, @load_error
    
   getPlans: (href) ->
-   @plansService.getByHref(href,@pagesize).then @load_success, @load_error
+   @planListService.getByHref(href,@pagesize).then @load_success, @load_error
    
   clickPlan: (plan) ->
-   @plansService.select(plan)
+   #@planListService.select(plan)
    @location.path('plan/'+plan.recordID)
 
 ]

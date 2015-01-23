@@ -1,10 +1,9 @@
-angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'PlansService', 'NotificationService','listManager', 'logger'
+angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'PlanService', 'NotificationService','listManager', 'logger'
  class PlanController 
-  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @plansService, @notifications, @listManager, @logger) ->
+  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @planService, @notifications, @listManager, @logger) ->
    @logger.on()
    @submitted = false
-   
-   
+   #console.log @planService
    #handle the case where a page change or reload occurs
    @window.onbeforeunload = (event) =>
     #console.log 'window.onbeforeunload event', event
@@ -25,12 +24,14 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
      result = confirm 'Any unsaved data will be lost, are you sure you want to do this?'
      if !result
       event.preventDefault()
-     
+   
+   #set up the 2 tabs we need to track when active
    @tabs = [
 	   {active: true},
 	   {active: false}
    ]
    
+   #set up the plan details information
    @details = [
     {
      'name':'Focus', 
@@ -65,7 +66,10 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     
    ]
    
+   
+   #load the lists we need
    findProduct = (items,product) ->
+    #console.log 'findProduct', items, product
     found = product
     for item in items
      if product.name == item.name && product.portfolio == item.portfolio
@@ -79,51 +83,72 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    @productList = @listManager.productList
    @mediumList = @listManager.mediumList
    
+   #once lists are loaded, then get the plan
    @q.all([
 	   @productList.loaded
 	   @mediumList.loaded
    ])
    .then () =>
-	   @plan = @plansService.getSelected()
-	   if !@plan?
-	    @plansService.getOne(@routeParams.id)
-	    .then (data) =>
-	     @plan = data
-	     @plan.product = findProduct(@productList.items,@plan.product)
-	    .catch (error) =>
-	     @notifications.error error, "Could Not Retrieve Plan"
-      #@location.path('plan')
-    else 
+    @planService.loadPlan(@routeParams.id)
+    .then (plan) =>
+     #console.log 'plan loaded', plan
+     @plan = plan
      @plan.product = findProduct(@productList.items,@plan.product)
+     #console.log 'plan loaded', plan
+    .catch (error) =>
+     @notifications.error error, "Could Not Retrieve Plan"
+	   # @plan = @planService.getSelected()
+# 	   if !@plan?
+# 	    @planService.getOne(@routeParams.id)
+# 	    .then (data) =>
+# 	     @plan = data
+# 	     @plan.product = findProduct(@productList.items,@plan.product)
+# 	    .catch (error) =>
+# 	     @notifications.error error, "Could Not Retrieve Plan"
+#       #@location.path('plan')
+#     else 
+#      @plan.product = findProduct(@productList.items,@plan.product)
+  
+  strategies: () ->
+   @planService.getStrategies()
+  
+  tactics: (strategy) ->
+   @planService.getTactics(strategy)
+  
+  tacticCount: (strategy) ->
+   @planService.getTacticsCount(strategy)
+  
+  test: () ->
+   @planService.testClear(@plan)
   
   clickAddStrategy: () ->
-   @plansService.allow_requirements(false)
-   @plansService.addStrategy(@plan)
+   @planService.allow_requirements(false)
+   @planService.addStrategy(@plan)
    @timeout( 
 	     ()=>
 	      #use time out to call this after function completes so form validation doesn't trigger
 	      @scope.planForm.$setDirty()
-	      @plansService.allow_requirements(true)
+	      @planService.allow_requirements(true)
 	    ,
 	     400
 	    )
    
   clickAddTactic: (strategy) ->
    #@logger.clog strategy
-   @plansService.allow_requirements(false)
-   @plansService.addTactic(strategy)
+   @planService.allow_requirements(false)
+   @planService.addTactic(strategy)
    @timeout( 
      ()=>
       #use time out to call this after function completes so form validation doesn't trigger
       @scope.planForm.$setDirty()
-      @plansService.allow_requirements(true)
+      @planService.allow_requirements(true)
     ,
      400
     )
    
   
   removeObject: (obj) ->
-   @plansService.allow_requirements(false)
+   @planService.allow_requirements(false)
    modalInstance = @modal.open {
     templateUrl: 'modals/modalRemove.html',
     controller: 'ModalInstanceController',
@@ -139,7 +164,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     @scope.planForm.$setDirty()
   
   isLoading: () ->
-   @plansService.loading
+   @planService.loading
   
   disabled: (property) ->
    if @plan?
@@ -155,7 +180,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    
   required: (name) ->
    #console.log 'checking requirements', name
-   required = @plansService.requirements(name)
+   required = @planService.requirements(name)
    #console.log required
    required
   
@@ -176,7 +201,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
 	   modalInstance.result
 	   .then (item) =>
 	   
-	    fn = () => @plansService.submit(plan)
+	    fn = () => @planService.submit(plan)
 	    success = (data) => @scope.planForm.$setPristine()
 	   
 	    @notifications.delayed 'submit', 'plan', fn, success
@@ -186,7 +211,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
   
   refresh: (plan) ->
    
-   fn = () => @plansService.getFromServer(plan.recordID)
+   fn = () => @planService.loadPlan(plan.recordID)
 	  success = (data) => 
 	   @plan = data
 	   @scope.planForm.$setPristine()
@@ -208,30 +233,36 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     @notifications.delayed 'refresh', 'plan', fn, success
   
   
+  over: (strategy, isOver) ->
+   strategy.over = isOver
+   #if !strategy.getTacticsLoaded()
+    #@planService.loadTactics(strategy, @plan.recordID)
+    
   opened: (strategy) ->
    if !strategy.getTacticsLoaded()
-    console.log 'loading tactics'
-    @plansService.loadTactics(strategy).then (data) =>
-     console.log 'tactics loaded'
-     strategy = data
+    #console.log 'loading tactics'
+    @planService.loadTactics(strategy, @plan.recordID)
+    #.then (data) =>
+     #console.log 'tactics loaded'
+     #strategy = data
    console.log 'opened', strategy  
     
   save: (plan) ->
    if @scope.planForm.$dirty
    
-    fn = () => @plansService.save(plan)
+    fn = () => @planService.save(plan)
 		  success = (data) => 
-		   @plansService.allow_requirements(true)
+		   @planService.allow_requirements(true)
 		   @scope.planForm.$setPristine()
 	   error = (error) =>
 	    console.log 'plan controller.save error', error
-	    @plansService.allow_requirements(true)
+	    @planService.allow_requirements(true)
 	    
 	   @notifications.delayed 'update', 'plan', fn, success, error
 
   
   remove: (plan) ->
-   @plansService.allow_requirements(false)
+   @planService.allow_requirements(false)
    modalInstance = @modal.open {
     templateUrl: 'modals/modalRemove.html',
     controller: 'ModalInstanceController',
@@ -243,15 +274,15 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    
    modalInstance.result
    .then (item) =>
-    @plansService.allow_requirements(true)
+    @planService.allow_requirements(true)
     
-    fn = () => @plansService.delete(item.object)
+    fn = () => @planService.delete(item.object)
 		  success = (data) => @location.path('plan')
 	   
 	   @notifications.delayed 'remove', 'plan', fn, success
    
    .catch (message) =>
-    @plansService.allow_requirements(true)
+    @planService.allow_requirements(true)
     #console.log 'Modal dismissed at: ' + new Date()
    
   

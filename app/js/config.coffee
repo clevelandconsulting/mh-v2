@@ -3,3 +3,7 @@ angular.module("app").config ['localStorageServiceProvider', '$logProvider', (lo
  localStorageServiceProvider.setPrefix('mhv2')
  logProvider.debugEnabled(true)
 ]
+
+angular.module('app').filter 'startFrom', () ->
+ (input, start) ->
+  input.slice(start)

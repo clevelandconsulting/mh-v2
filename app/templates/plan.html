@@ -85,13 +85,7 @@
 					   <dl class="sub-nav">
 							  <dd class="active"><a href=''>Plan Details</a></dd>
 							  <dd><a href='' ng-click='plan.tabs[1].active=true'>Plan Strategies &amp; Tactics</a></dd>
-							</dl>
-					   
-					   
-				    <!--
-<div class='left'><h4>Plan Details&nbsp;<small><a href='' ng-click='plan.tabs[1].active=true'>View Strategies &amp; Tactics</a></small></h4></div>
-				    <div class='right'><a href='' ng-click='plan.tabs[1].active=true'>View Strategies &amp; Tactics</a></div>
--->
+							 </dl>
 				   </div>
 			   </div>
 			  
@@ -119,17 +113,13 @@
 							  <dd><a href='' ng-click='plan.tabs[0].active=true'>Plan Details</a></dd>
 							  <dd class="active"><a href=''>Plan Strategies &amp; Tactics</a></dd>
 							  <dd class="right" ng-hide='plan.plan.strategyCount() === 0'><a href='' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add Strategy</a></dd>
-							</dl>
-					   
-				    <!--
-<div class='left'><h4>Plan Strategies &amp; Tactics</h4></div>
-				    <div class='right'><a href='' ng-click='plan.tabs[0].active=true'>View Details</a></div>
--->
+							 </dl>
 				   </div>
 			   </div>
 			  
 			   <div id='tactics'>
-				   <div class='row' ng-show='plan.plan.strategyCount() === 0'>
+				   <div class='row' ng-if='plan.strategies().length === 0'>
+					   
 						  <div class='small-12 columns'>
 							  <div class='plan-section'>
 							   <p>This plan doesn't have any strategies yet. Click the button below to start your first strategy!</p>
@@ -138,37 +128,39 @@
 					   </div>
 					   
 				   </div>
-				   <div class='row' ng-show='plan.plan.strategyCount() > 0'>
+				   
+				   
+				   
+				   <div class='row' ng-if='plan.strategies().length > 0'>
 					   <div class='columns small-12'>
+						   
+						   
+						   
+						   
+						   
+						    <!-- <ul><li ng-repeat='(i, strategy) in plan.strategies() | filter:{removed:false} track by strategy.data.__guid'>{{strategy}}</li></ul> -->
 						   <accordion id='strategy-accordion'>
-						    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false} track by strategy.data.__guid' data-is-open='strategy.isOpen'>
-						     <accordion-heading >
-							     <div class='row'  ng-click="plan.opened(strategy)" ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false' >
+						    
+          <accordion-group ng-repeat='(i, strategy) in plan.planService.strategies.items | startFrom: plan.planService.strategies.currentPage * plan.planService.strategies.pageSize  | limitTo:plan.planService.strategies.pageSize track by strategy.id()' data-is-open='strategy.isOpen' ng-show='!strategy.removed'>
+           <accordion-heading >
+							     <div class='row' ng-click='plan.opened(strategy)' ng-mouseover='plan.over(strategy, true)' ng-mouseout='plan.over(strategy, false)' >
 								     <div class='small-9 large-10 columns'>
-								      Strategy {{(i+1)}}: {{strategy.title(40)}}
+								      Strategy {{(i+(plan.planService.strategies.currentPage * plan.planService.strategies.pageSize)+1)}}: {{strategy.title(40)}}
 								     </div>
 								     <div class='small-3 large-2 columns'>
-									     <span class='accordion-aside left'>{{strategy.activeTactics()}} tactics</span>
+									     <!-- <span class='accordion-aside left'>{{plan.tacticCount(strategy)}} tactics</span> -->
 									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
 								     </div>
-													<!--
-<div class='small-2 large-1 columns'>
-									     <span class='accordion-aside right'>{{strategy.activeTactics()}} tactics</span>
-								     </div>
-								     <div class='small-1 large-1 columns'>
-									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
-								     </div>
--->
 							     </div>
 						     </accordion-heading>
-						     <div class='strategy-heading' ng-class='strategy.activeTactics()===0?"strategy-heading-empty":""'>
+						     <div class='strategy-heading' ng-class='plan.tacticCount(strategy)===0?"strategy-heading-empty":""'>
 							     <div class='row'>
 								     <div class='small-12 columns'>
 		  				      <textarea ng-model='strategy.data.description'></textarea>
 								     </div>
 							     </div>
 							     
-						      <div class='row' ng-hide='strategy.activeTactics()>0 || !strategy.getTacticsLoaded()'>
+						      <div class='row' ng-hide='plan.tacticCount(strategy)>0 || !strategy.getTacticsLoaded()'>
 								     <div class='small-12 columns'>
 											   <p>This strategy doesn't have any tactics yet. Click the button below to start your first tactic for this strategy!</p>
 										    <button class='button radius expand' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add First Tactic</button>
@@ -183,30 +175,30 @@
 							     </div>
 							     
 						     </div>
-						     
-						     						     
-						     <table role='grid' ng-show='strategy.getTacticsLoaded()' >
-							     <thead ng-show='strategy.activeTactics()>0'>
+
+						     <table role='grid' ng-if='strategy.getTacticsLoaded()' >
+							     <thead ng-show='plan.tacticCount(strategy)>0'>
 								     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 110px !important;'><a href='' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add Tactic</a></th></tr>
 							     </thead>
 							     <tbody>
-								     <tr ng-repeat='(j, tactic) in strategy.tactics | filter:{removed:false} track by tactic.data.__guid' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false'>
+								     
+             <tr ng-repeat='(j, tactic) in plan.planService.tactics[strategy.data.__guid].items | startFrom: plan.planService.tactics[strategy.data.__guid].currentPage * plan.planService.tactics[strategy.data.__guid].pageSize  | limitTo:plan.planService.strategies.pageSize track by tactic.id() ' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false' ng-show='!tactic.removed'>
 									     <td style='width: 25%'>
-										     <span ng-show='tactic.editing'>
+										     <span ng-if='tactic.editing'>
 										      <select type='text' name='medium' x-ng-model='tactic.medium' x-ng-options='m.name for m in plan.mediumList.items' ><option value=''>Select Type</option></select>
 										     </span>
 										     <span ng-hide='tactic.editing'>{{tactic.medium.name}}</span>
 										    </td>
 									     <td style='width: 15%'>
-										     <span ng-show='tactic.editing'><input type='text' ng-model='tactic.data.budget' ng-currency></span>
+										     <span ng-if='tactic.editing'><input type='text' ng-model='tactic.data.budget' ng-currency></span>
 										     <span ng-hide='tactic.editing'>{{tactic.data.budget | currency}}</span>
 										    </td>
 									     <td>
-										     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.begin_date'></span>
+										     <span ng-if='tactic.editing'><input type='date' ng-model='tactic.begin_date'></span>
 										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>{{tactic.begin_date | date:"MMM d, yyyy"}}</span>
 										    </td>
 									     <td>
-										     <span ng-show='tactic.editing'><input type='date' ng-model='tactic.end_date'></span>
+										     <span ng-if='tactic.editing'><input type='date' ng-model='tactic.end_date'></span>
 										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>{{tactic.end_date | date:"MMM d, yyyy"}}</span>
 										    </td>
 										    <td class='actions text-center' style='width: 110px;'>
@@ -215,11 +207,30 @@
 											    <span ng-show='tactic.editing'><a href='' ng-click='tactic.editing=false'><span class='fi-check'></span></a></span>
 										    </td>
 								     </tr>
+
 							     </tbody>
+							     <tfoot>
+								     <tr><td colspan='5'>
+									     <ul class="pagination">
+													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].decrementPage()'>&laquo;</a></li>
+													  <li ng-repeat='(i,obj) in plan.planService.tactics[strategy.data.__guid].pageArray() track by $index'><a ng-class='plan.planService.tactics[strategy.data.__guid].currentPage === i?"active":""' href='' ng-click='plan.planService.tactics[strategy.data.__guid].setCurrentPage(i)'>{{i+1}}</a></li>
+													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].incrementPage()'>&raquo;</a></li>
+													</ul>
+								     </td>
+								     </tr>
+							     </tfoot>
 						     </table>
 						     
 						    </accordion-group>
+
 						  </accordion>
+						  
+						  <ul class="pagination">
+								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.decrementPage()'>&laquo;</a></li>
+								  <li ng-repeat='(i,obj) in plan.planService.strategies.pageArray() track by $index'><a ng-class='plan.planService.strategies.currentPage === i?"active":""' href='' ng-click='plan.planService.strategies.setCurrentPage(i)'>{{i+1}}</a></li>
+
+								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.incrementPage()'>&raquo;</a></li>
+								</ul>
 						  
 					   </div>
 				   </div>
@@ -230,5 +241,7 @@
 			 </tabset>
 			</div>
 		</div>
+		<button ng-click='plan.test()'>Test</button>
 	</div>
 </form>
+

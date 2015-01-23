@@ -27,10 +27,26 @@
 	     break
 	  found
   
-  get: -> @storage.get(@name)
-  save: (items) -> @storage.store(@name, items) #, {expires:UserStorageService.expiry})
-   
-  clear: -> @storage.store(@name)
+  stripObjects: (objects) ->
+   if objects != null
+	   raw = []
+	   for obj in objects
+	    raw.push({data:obj.data,href:obj.href,recordID:obj.recordID})
+	   
+	   raw
+	  else
+	   objects
+  
+  clearAllRegEx: (regEx) ->
+   @storage.clearAll(regEx)
+  
+  saveByKey: (key,value) -> @storage.store(key,value)
+  getByKey: (key) -> @storage.get(key)
+  clearByKey: (key) -> @storage.store(key)
+  
+  get: -> @getByKey(@name)
+  save: (items) -> @saveByKey(@name, items) #, {expires:UserStorageService.expiry})
+  clear: -> @clearByKey(@name)
   add: (item) ->
    items = @get()
    if items == '' || !items?
@@ -45,14 +61,13 @@
    else
     return @name
   
-     
-  saveById: (id, item) -> @storage.store(@getName(id),item)
-  getById: (id) -> @storage.get(@getName(id))
-  clearById: (id) -> @storage.store(@getName(id))
+  saveById: (id, item) -> @saveByKey(@getName(id),item)
+  getById: (id) -> @getByKey(@getName(id))
+  clearById: (id) -> @clearByKey(@getName(id))
   
   current: () -> @getName("current")
-  getCurrent: () -> @storage.get(@current())
-  saveCurrent: (current) -> @storage.store(@current(), current)
+  getCurrent: () -> @getByKey(@current())
+  saveCurrent: (current) -> @getByKey(@current(), current)
   clearCurrent: -> @saveCurrent()
 
  angular.module('app').factory 'ModelStorageService', -> ModelStorageService
