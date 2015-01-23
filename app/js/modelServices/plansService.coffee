@@ -5,6 +5,7 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    @requirements_on = true
    @filter = ''
    @loading = false
+   @loadingTactics = false
    
   getSelected: () ->
    @selectedPlan
@@ -18,6 +19,8 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
       @PlanStorageService.clearById(id)
       @select(data).then () =>
        @loading = false
+       # d = new Date()
+       # console.log 'done loading plan', d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
        return data
     .catch (error) ->
      if error.code?
@@ -87,14 +90,20 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
    strategy.tactics.push tactic
   
   loadTactics: (strategy) ->
-   #console.log 'loading tactics', strategy
-   @TacticRepository.getAllForStrategy(strategy.data.__guid, 1000).then (data) =>
-    #console.log 'found tactics', data
-    if data?	    
-	    for item in data.items
-	     strategy.addTactic(item)
-	    strategy.sortTactics()
-    return strategy
+   if !@loadingTactics
+	   @loadingTactics = true
+	   console.log 'loading tactics for', strategy
+	   @TacticRepository.getAllForStrategy(strategy.data.__guid, 1000).then (data) =>
+	    console.log 'found tactics', data
+	    if data?	    
+		    for item in data.items
+		     strategy.addTactic(item)
+		    strategy.sortTactics()
+		    
+		   strategy.setTacticsLoaded(true)
+		   @loadingTactics = false
+		   console.log 'finished loading tactics for', strategy
+	    return strategy
   
   loadStrategies: (plan) ->
    #console.log 'loading strategies', plan
@@ -105,14 +114,16 @@ angular.module('app').service 'PlansService', ['$q', 'PlanRepository', 'Strategy
     if strategies?
 	    loaded = 0
 	    for strategy in strategies.items
-	     @loadTactics(strategy)
-	     .then (strategy) =>
-	      plan.addStrategy(strategy)
-	      loaded = loaded+1
-	      if loaded == strategies.items.length
-	       deferred.resolve plan
-	     .catch (error) =>
-	      deferred.reject error
+	     plan.addStrategy(strategy)
+	    deferred.resolve plan
+	     # @loadTactics(strategy)
+# 	     .then (strategy) =>
+# 	      plan.addStrategy(strategy)
+# 	      loaded = loaded+1
+# 	      if loaded == strategies.items.length
+# 	       deferred.resolve plan
+# 	     .catch (error) =>
+# 	      deferred.reject error
 	   else
 	    deferred.resolve plan
    .catch (error) =>

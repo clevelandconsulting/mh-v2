@@ -459,6 +459,8 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 	margin-bottom: $column-gutter*2;
 }
 
+
+
 #ajaxloader
 {
 	position: absolute;
@@ -466,7 +468,7 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 	height: 30px;
 	left: 50%;
 	top: $column-gutter*3;
-	margin: 0 0 25px -15px;
+	margin: -20px 0 25px -15px;
 	border: 8px solid $primary-color;
 	border-right-color: transparent;
 	border-radius: 50%;
@@ -476,6 +478,10 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 	-ms-animation: spin 1s linear infinite;
 	-o-animation: spin 1s linear infinite;
 	animation: spin 1s linear infinite;
+}
+
+.panel #ajaxloader {
+	margin: 5px 0 25px -15px;
 }
 
 @-webkit-keyframes spin

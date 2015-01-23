@@ -4,7 +4,12 @@ angular.module('app').service 'TacticRepository', [ '$q', 'tactic', 'fmRestModel
    super($q, ApiService, tactic, fmRestList, 'layout/Api-Tactic', 'tactic')
    
   getAllForStrategy: (strategy_id, pagesize) ->
-   @getAllByKey('strategy_id', strategy_id, @sortScript, pagesize)
+   @getAllByKey('strategy_id', strategy_id, @sortScript, pagesize)    
+   # .then (data) =>
+   #     d = new Date()
+   #     console.log 'downloaded tactics for ' + strategy_id, d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+   #     return data
+
  
   save: (tactic) ->
    tactic.prepForSave()

@@ -206,7 +206,15 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
      @notifications.delayed 'refresh', 'plan', fn, success
    else
     @notifications.delayed 'refresh', 'plan', fn, success
-    
+  
+  
+  opened: (strategy) ->
+   if !strategy.getTacticsLoaded()
+    console.log 'loading tactics'
+    @plansService.loadTactics(strategy).then (data) =>
+     console.log 'tactics loaded'
+     strategy = data
+   console.log 'opened', strategy  
     
   save: (plan) ->
    if @scope.planForm.$dirty

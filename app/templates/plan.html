@@ -143,16 +143,22 @@
 						   <accordion id='strategy-accordion'>
 						    <accordion-group ng-repeat='(i, strategy) in plan.plan.strategies | filter:{removed:false} track by strategy.data.__guid' data-is-open='strategy.isOpen'>
 						     <accordion-heading >
-							     <div class='row' ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false' >
+							     <div class='row'  ng-click="plan.opened(strategy)" ng-mouseover='strategy.over=true' ng-mouseout='strategy.over=false' >
 								     <div class='small-9 large-10 columns'>
 								      Strategy {{(i+1)}}: {{strategy.title(40)}}
 								     </div>
-													<div class='small-2 large-1 columns'>
+								     <div class='small-3 large-2 columns'>
+									     <span class='accordion-aside left'>{{strategy.activeTactics()}} tactics</span>
+									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
+								     </div>
+													<!--
+<div class='small-2 large-1 columns'>
 									     <span class='accordion-aside right'>{{strategy.activeTactics()}} tactics</span>
 								     </div>
 								     <div class='small-1 large-1 columns'>
 									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
 								     </div>
+-->
 							     </div>
 						     </accordion-heading>
 						     <div class='strategy-heading' ng-class='strategy.activeTactics()===0?"strategy-heading-empty":""'>
@@ -161,15 +167,25 @@
 		  				      <textarea ng-model='strategy.data.description'></textarea>
 								     </div>
 							     </div>
-						      <div class='row' ng-hide='strategy.activeTactics()>0'>
+							     
+						      <div class='row' ng-hide='strategy.activeTactics()>0 || !strategy.getTacticsLoaded()'>
 								     <div class='small-12 columns'>
 											   <p>This strategy doesn't have any tactics yet. Click the button below to start your first tactic for this strategy!</p>
 										    <button class='button radius expand' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add First Tactic</button>
 										   </div>
 							     </div>
+							     
+							     <div class='row' ng-hide='strategy.getTacticsLoaded()'>
+								     <div class='small-12 columns text-center'>
+								      <p>Loading Tactics...</p>
+								      <div id='ajaxloader'></div>
+								     </div>
+							     </div>
+							     
 						     </div>
 						     
-						     <table role='grid' >
+						     						     
+						     <table role='grid' ng-show='strategy.getTacticsLoaded()' >
 							     <thead ng-show='strategy.activeTactics()>0'>
 								     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 110px !important;'><a href='' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add Tactic</a></th></tr>
 							     </thead>

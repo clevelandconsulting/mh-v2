@@ -5,6 +5,10 @@ angular.module('app').service 'StrategyRepository', [ '$q', 'strategy', 'fmRestM
    
   getAllForPlan: (plan_id, pagesize) ->
    @getAllByKey('plan_id', plan_id, @sortScript, pagesize)
+   # .then (data) =>
+#     d = new Date()
+#     console.log 'downloaded strategies', d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+#     return data
  
   save: (strategy) ->
    #console.log 'StrategyRepository.save', strategy
@@ -19,7 +23,12 @@ angular.module('app').service 'StrategyRepository', [ '$q', 'strategy', 'fmRestM
      return { msg: response, obj: strategy }
   
   makeNew: (plan_id) ->
-   super({plan_id:plan_id}, strategy)
+   s = super({plan_id:plan_id}, strategy)
+   s.setTacticsLoaded(true)
+   
+   console.log 'added strategy', s 
+   
+   s 
   
  new StrategyRepository()
 
