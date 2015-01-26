@@ -12,9 +12,7 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
    #console.log listManager
    
    @mediumList = listManager.mediumList
-   
-   @mediumList.loaded.then (result) =>
-    @medium = @findMedium(@mediumList.items, {name:@data.medium, value: @data.medium_type})
+   @medium = @findMedium(@mediumList.items, {name:@data.medium, value: @data.medium_type})
   
    @begin_date = @formatFMDateForJS(@data.begin_date)
    @end_date = @formatFMDateForJS(@data.end_date) 

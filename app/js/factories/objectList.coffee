@@ -1,7 +1,7 @@
 class objectList
  constructor: (@items) ->
   @currentPage = 0; 
-  @pageSize = 25;
+  @pageSize = 20;
  
  incrementPage: () ->
   @setCurrentPage @currentPage+1
@@ -28,10 +28,22 @@ class objectList
   @items.push(object)
  
  remove: (object) ->
-  if @items?
-	  index = @items.indexOf(object)
-	  if index > -1
-	   @items.splice(index,1)
+  index = @findIndex(object)
+  if index > -1
+   @items.splice(index,1)
+ 
+ findIndex: (object) ->
+  if @items
+ 	 @items.indexOf(object)
+  else
+   -1
+ 
+ findPage: (object) ->
+  index = @findIndex(object)
+  if index > -1
+   Math.floor(index/@pageSize)
+  else
+   -1
  
  count: () ->
   length = 0

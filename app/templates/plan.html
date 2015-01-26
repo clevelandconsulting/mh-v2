@@ -112,13 +112,13 @@
 					   <dl class="sub-nav">
 							  <dd><a href='' ng-click='plan.tabs[0].active=true'>Plan Details</a></dd>
 							  <dd class="active"><a href=''>Plan Strategies &amp; Tactics</a></dd>
-							  <dd class="right" ng-hide='plan.plan.strategyCount() === 0'><a href='' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add Strategy</a></dd>
+							  <dd class="right" ng-hide='plan.planService.strategies.items.length === 0'><a href='' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add Strategy</a></dd>
 							 </dl>
 				   </div>
 			   </div>
 			  
 			   <div id='tactics'>
-				   <div class='row' ng-if='plan.strategies().length === 0'>
+				   <div class='row' ng-if='plan.planService.strategies.items.length === 0'>
 					   
 						  <div class='small-12 columns'>
 							  <div class='plan-section'>
@@ -131,7 +131,7 @@
 				   
 				   
 				   
-				   <div class='row' ng-if='plan.strategies().length > 0'>
+				   <div class='row' ng-if='plan.planService.strategies.items.length > 0'>
 					   <div class='columns small-12'>
 						   
 						   
@@ -145,7 +145,7 @@
            <accordion-heading >
 							     <div class='row' ng-click='plan.opened(strategy)' ng-mouseover='plan.over(strategy, true)' ng-mouseout='plan.over(strategy, false)' >
 								     <div class='small-9 large-10 columns'>
-								      Strategy {{(i+(plan.planService.strategies.currentPage * plan.planService.strategies.pageSize)+1)}}: {{strategy.title(40)}}
+								      Strategy {{(i+(plan.planService.strategies.currentPage * plan.planService.strategies.pageSize)+1)}}: {{strategy.title(40)}} {{::strategy.date}}
 								     </div>
 								     <div class='small-3 large-2 columns'>
 									     <!-- <span class='accordion-aside left'>{{plan.tacticCount(strategy)}} tactics</span> -->
@@ -153,7 +153,7 @@
 								     </div>
 							     </div>
 						     </accordion-heading>
-						     <div class='strategy-heading' ng-class='plan.tacticCount(strategy)===0?"strategy-heading-empty":""'>
+						     <div id='{{strategy.data.__guid}}' class='strategy-heading' ng-class='plan.tacticCount(strategy)===0?"strategy-heading-empty":""'>
 							     <div class='row'>
 								     <div class='small-12 columns'>
 		  				      <textarea ng-model='strategy.data.description'></textarea>
@@ -176,13 +176,13 @@
 							     
 						     </div>
 
-						     <table role='grid' ng-if='strategy.getTacticsLoaded()' >
+						     <table role='grid' ng-if='strategy.getTacticsLoaded() && ( strategy.isOpen || strategy.wasOpened )' >
 							     <thead ng-show='plan.tacticCount(strategy)>0'>
 								     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 110px !important;'><a href='' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add Tactic</a></th></tr>
 							     </thead>
-							     <tbody>
+							     <tbody ng-if='plan.planService.tactics[strategy.data.__guid] !== null && plan.planService.tactics[strategy.data.__guid] !== undefined'>
 								     
-             <tr ng-repeat='(j, tactic) in plan.planService.tactics[strategy.data.__guid].items | startFrom: plan.planService.tactics[strategy.data.__guid].currentPage * plan.planService.tactics[strategy.data.__guid].pageSize  | limitTo:plan.planService.strategies.pageSize track by tactic.id() ' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false' ng-show='!tactic.removed'>
+             <tr ng-repeat='(j, tactic) in plan.planService.tactics[strategy.data.__guid].items | startFrom: plan.planService.tactics[strategy.data.__guid].currentPage * plan.planService.tactics[strategy.data.__guid].pageSize  | limitTo:plan.planService.strategies.pageSize track by tactic.id() ' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false' ng-show='!tactic.removed' id='{{tactic.data.__guid}}'>
 									     <td style='width: 25%'>
 										     <span ng-if='tactic.editing'>
 										      <select type='text' name='medium' x-ng-model='tactic.medium' x-ng-options='m.name for m in plan.mediumList.items' ><option value=''>Select Type</option></select>
@@ -209,25 +209,25 @@
 								     </tr>
 
 							     </tbody>
-							     <tfoot>
-								     <tr><td colspan='5'>
+						     </table>
+						     <div class='row' ng-if='plan.planService.tactics[strategy.data.__guid].numberOfPages()>1'>
+							     <div class='small-12 columns'>
+							      <div class='pager'>
 									     <ul class="pagination">
 													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].decrementPage()'>&laquo;</a></li>
-													  <li ng-repeat='(i,obj) in plan.planService.tactics[strategy.data.__guid].pageArray() track by $index'><a ng-class='plan.planService.tactics[strategy.data.__guid].currentPage === i?"active":""' href='' ng-click='plan.planService.tactics[strategy.data.__guid].setCurrentPage(i)'>{{i+1}}</a></li>
+													  <li ng-repeat='(i,obj) in plan.planService.tactics[strategy.data.__guid].pageArray() track by $index' ng-class='plan.planService.tactics[strategy.data.__guid].currentPage === i?"current":""' ><a href='' ng-click='plan.planService.tactics[strategy.data.__guid].setCurrentPage(i)'>{{i+1}}</a></li>
 													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].incrementPage()'>&raquo;</a></li>
-													</ul>
-								     </td>
-								     </tr>
-							     </tfoot>
-						     </table>
-						     
+													 </ul>
+							      </div>
+						      </div>
+						     </div>
 						    </accordion-group>
 
 						  </accordion>
 						  
-						  <ul class="pagination">
+						  <ul class="pagination" ng-if='plan.planService.strategies.numberOfPages()>1'>
 								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.decrementPage()'>&laquo;</a></li>
-								  <li ng-repeat='(i,obj) in plan.planService.strategies.pageArray() track by $index'><a ng-class='plan.planService.strategies.currentPage === i?"active":""' href='' ng-click='plan.planService.strategies.setCurrentPage(i)'>{{i+1}}</a></li>
+								  <li ng-repeat='(i,obj) in plan.planService.strategies.pageArray() track by $index' ng-class='plan.planService.strategies.currentPage === i?"current":""'><a ng- href='' ng-click='plan.planService.strategies.setCurrentPage(i)'>{{i+1}}</a></li>
 
 								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.incrementPage()'>&raquo;</a></li>
 								</ul>

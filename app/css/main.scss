@@ -337,7 +337,7 @@ dl.accordion dd {
 	margin-bottom: 5px !important;
 }
 
-dl.accordion dd a {
+dl.accordion dd > a {
 	background-color: $white;
 	@include radius();
 	border: 1px solid $base_border_color;
@@ -345,23 +345,23 @@ dl.accordion dd a {
 	padding: 0;
 }
 
-dl.accordion dd a div.row {
+dl.accordion dd > a div.row {
 	padding: 1rem;
 }
 
-dl.accordion dd a div.row div.columns {
+dl.accordion dd > a div.row div.columns {
 	height: 25px;
 	vertical-align: middle;
 }
 
-dl.accordion dd a.active {
+dl.accordion dd > a.active {
 	color: $black;
 	@include radius(0);
 	@include border-radius(3px,3px,0,0);
 	border-bottom: 1px solid $white;
 }
 
-dl.accordion dd a:hover {
+dl.accordion dd > a:hover {
 	background-color: $white;
 	border: 1px solid darken($base_border_color,20%);
 	color: darken($steel,20%);
@@ -437,6 +437,7 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 	background-color: $white;
 	border-right: 1px solid $base_border_color;
 	border-left: 1px solid $base_border_color;
+	
 }
 
 .strategy-heading-empty {
@@ -446,6 +447,25 @@ dl.accordion table a:hover span.alert, span.actions a:hover span.alert {
 .tactic-details {
 	padding: 20px 20px 20px 40px;
 }
+
+dl.accordion div.pager {
+		background-color: white;
+		padding: 20px;
+		border-right: 1px solid $base_border_color;
+	 border-left: 1px solid $base_border_color;
+	 border-bottom: 1px solid $base_border_color;
+	 @include border-radius(3px,3px,0,0);
+}
+
+dl.accordion ul.pagination {
+	margin-left: 0;
+	margin-bottom: 0;
+}
+
+dl.accordion ul.pagination li {
+	//padding-bottom: 20px;
+}
+
 
 .loading {
 	margin-top: $column-gutter;

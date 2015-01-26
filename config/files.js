@@ -49,6 +49,7 @@ module.exports = function(lineman) {
          //"vendor/bower/angular-bootstrap/ui-bootstrap.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap-tpls.js",
          "vendor/bower/ng-currency/dist/ng-currency.js",
+         "vendor/bower/ngScrollTo/ng-scrollto.js",
          //"vendor/bower/firebase/firebase.js",
          //"vendor/bower/angularfire/dist/angularfire.js",
          "vendor/bower/angular-local-storage/dist/angular-local-storage.js",

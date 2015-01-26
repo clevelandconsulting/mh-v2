@@ -203,6 +203,8 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     
    @strategies.add strategy
    
+   strategy
+   
   addTactic: (strategy) ->
    tactic = TacticRepository.makeNew(strategy.data.__guid)
    tactic.editing = true
@@ -211,6 +213,8 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     @tactics[strategy.id()] = new tacticList(strategy)
     
    @tactics[strategy.id()].add tactic
+   
+   tactic
   
     
   
@@ -354,6 +358,14 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     PlanStorageService.clearStrategiesById(plan.recordID)
     PlanStorageService.clearAllTacticsForPlan(plan.recordID)
     return response
+  
+  goToTacticPage: (strategy_id,tactic) ->
+   if @tactics[strategy_id]
+    page = @tactics[strategy_id].findPage()
+    @tactics[strategy_id].setCurrentPage(page)
+    true
+   else
+    false
   
   # getSelected: () ->
 #    @selectedPlan

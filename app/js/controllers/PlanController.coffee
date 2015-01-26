@@ -1,6 +1,6 @@
-angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'PlanService', 'NotificationService','listManager', 'logger'
+angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'ScrollTo', 'PlanService', 'NotificationService','listManager', 'logger'
  class PlanController 
-  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @planService, @notifications, @listManager, @logger) ->
+  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @scrollTo, @planService, @notifications, @listManager, @logger) ->
    @logger.on()
    @submitted = false
    #console.log @planService
@@ -136,15 +136,16 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
   clickAddTactic: (strategy) ->
    #@logger.clog strategy
    @planService.allow_requirements(false)
-   @planService.addTactic(strategy)
-   @timeout( 
-     ()=>
-      #use time out to call this after function completes so form validation doesn't trigger
-      @scope.planForm.$setDirty()
-      @planService.allow_requirements(true)
-    ,
-     400
-    )
+   tactic = @planService.addTactic(strategy)
+   @goToTactic(strategy.id(),tactic)
+   # @timeout( 
+#      ()=>
+#       #use time out to call this after function completes so form validation doesn't trigger
+#       @scope.planForm.$setDirty()
+#       @planService.allow_requirements(true)
+#     ,
+#      400
+#     )
    
   
   removeObject: (obj) ->
@@ -233,12 +234,35 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
     @notifications.delayed 'refresh', 'plan', fn, success
   
   
+  goToTactic: (strategy_id, tactic) ->
+   console.log 'goToTactic()', strategy_id, tactic
+   paging = @planService.goToTacticPage(strategy_id,tactic)
+   if paging
+	   @timeout( 
+	     ()=>
+	      #use time out to call this after function completes dom is loaded
+	      @goToId(tactic.id())
+	    ,
+	     1000
+	    )
+   # if paging
+#     
+  
+  goToId: (id) ->
+   console.log 'goToId()',id
+   @scrollTo.idOrName(id, 90)
+   # old = location.hash()
+#    @location.hash(id)
+#    @anchorScroll()
+#    @location.hash(old)
+  
   over: (strategy, isOver) ->
    strategy.over = isOver
-   #if !strategy.getTacticsLoaded()
-    #@planService.loadTactics(strategy, @plan.recordID)
+   if !strategy.getTacticsLoaded()
+    @planService.loadTactics(strategy, @plan.recordID)
     
   opened: (strategy) ->
+   strategy.wasOpened = true
    if !strategy.getTacticsLoaded()
     #console.log 'loading tactics'
     @planService.loadTactics(strategy, @plan.recordID)
