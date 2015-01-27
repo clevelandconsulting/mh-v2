@@ -3,7 +3,14 @@ angular.module("app").config ['localStorageServiceProvider', '$logProvider', 'ng
  localStorageServiceProvider.setPrefix('mhv2')
  logProvider.debugEnabled(true)
  ngScrollToOptionsProvider.extend({
-  handler: (el) -> $(el).scrollintoview()
+  handler: 
+   (el, offset) -> 
+    #console.log 'scrolling to ', el, offset
+    $(el).scrollintoview({yOffset:offset})
+    
+    #$(el).scrollIntoView(250, "easeOutExpo", () -> alert("done scroll!") )
+    #if offset?
+    # window.scrollTo(0, ($(el).offset().top - offset))
  })
 ]
 

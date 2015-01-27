@@ -1,6 +1,6 @@
 <form name='planForm' id='planFormID' ng-show='plan.plan !== undefined && plan.plan !== null'>
 	<div class='major-actions major-actions-top' ng-include='"partials/plan/actions.html"'></div>
-	<div class='plan-content'>
+	<div class='plan-content' id='planContent'>
 		<div class='row'>
 		 <div class='small-12 columns'>
 			 <div id='plan-header' class='plan-section'>
@@ -77,18 +77,19 @@
 		<div class='row' ng-hide='plan.isLoading()'>
 			<div class='small-12 columns'>
 				<tabset id='plan'>
+				
+				 <!-- Start Plan Details Tab -->
 			  <tab heading="Plan Details" active="plan.tabs[0].active">
-			  
+			   <!-- Start Tab selection options -->
 			   <div class='row'>
 				   <div class='columns small-12'>
-					   
 					   <dl class="sub-nav">
 							  <dd class="active"><a href=''>Plan Details</a></dd>
 							  <dd><a href='' ng-click='plan.tabs[1].active=true'>Plan Strategies &amp; Tactics</a></dd>
 							 </dl>
 				   </div>
 			   </div>
-			  
+			   <!-- End Tab selection options -->
 			   <div id='plan-details' class='plan-section'>
 				   
 				   <div class='row' ng-repeat='detail in plan.details'>
@@ -96,19 +97,27 @@
 									<div class='plan-details'>
 										<h5>{{::detail.name}}</h5>
 										<div class='panel callout radius' ng-show='detail.message !== ""'>{{::detail.message}}</div>
-										<textarea name='{{detail.property}}' ng-class='plan.invalidClass(detail.property)' ng-required='plan.required(detail.property)' ng-model='plan.plan.data[detail.property]' ng-disabled='plan.disabled(detail.property)'></textarea>
+										<textarea 
+										 name='{{detail.property}}' 
+										 ng-class='plan.invalidClass(detail.property)' 
+										 ng-required='plan.required(detail.property)' 
+										 ng-model='plan.plan.data[detail.property]' 
+										 ng-disabled='plan.disabled(detail.property)'></textarea>
 									</div>
 								</div>
 							</div>
 							
-							
 			   </div>
+			   
 			  </tab>
-			  <tab heading='Tactics' active="plan.tabs[1].active">
+			  <!-- End Plan Details Tab -->
 			  
+			  <!-- Start Plan Strategies & Tactics Tab -->
+			  <tab heading='Tactics' active="plan.tabs[1].active">
+			   
+			   <!-- Start Tab selection options -->
 			   <div class='row'>
 				   <div class='columns small-12'>
-					   
 					   <dl class="sub-nav">
 							  <dd><a href='' ng-click='plan.tabs[0].active=true'>Plan Details</a></dd>
 							  <dd class="active"><a href=''>Plan Strategies &amp; Tactics</a></dd>
@@ -116,132 +125,212 @@
 							 </dl>
 				   </div>
 			   </div>
-			  
+			   <!-- End Tab selection options -->
+			   
 			   <div id='tactics'>
-				   <div class='row' ng-if='plan.planService.strategies.items.length === 0'>
-					   
+				   
+				   
+				   <!-- Start No Strategies For Plan Section -->
+				   <div class='row' ng-if='plan.planService.strategies.items.length === 0'> 
 						  <div class='small-12 columns'>
 							  <div class='plan-section'>
 							   <p>This plan doesn't have any strategies yet. Click the button below to start your first strategy!</p>
 						    <button class='button radius expand' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add First Strategy</button>
 						   </div>
 					   </div>
-					   
 				   </div>
-				   
+				   <!-- End No Strategies For Plan Section -->
 				   
 				   
 				   <div class='row' ng-if='plan.planService.strategies.items.length > 0'>
 					   <div class='columns small-12'>
-						   
-						   
-						   
-						   
-						   
-						    <!-- <ul><li ng-repeat='(i, strategy) in plan.strategies() | filter:{removed:false} track by strategy.data.__guid'>{{strategy}}</li></ul> -->
+
 						   <accordion id='strategy-accordion'>
-						    
-          <accordion-group ng-repeat='(i, strategy) in plan.planService.strategies.items | startFrom: plan.planService.strategies.currentPage * plan.planService.strategies.pageSize  | limitTo:plan.planService.strategies.pageSize track by strategy.id()' data-is-open='strategy.isOpen' ng-show='!strategy.removed'>
-           <accordion-heading >
-							     <div class='row' ng-click='plan.opened(strategy)' ng-mouseover='plan.over(strategy, true)' ng-mouseout='plan.over(strategy, false)' >
+          <accordion-group 
+          	ng-repeat='(i, strategy) in plan.planService.strategies.items | startFrom: plan.planService.strategies.currentPage * plan.planService.strategies.pageSize  | limitTo:plan.planService.strategies.pageSize track by strategy.id()' 
+          	data-is-open='strategy.isOpen' 
+          	ng-show='!strategy.removed' 
+          	id='{{strategy.data.__guid}}'>
+          
+           <accordion-heading>
+							     <div class='row' ng-click='plan.opened(strategy, $event)' ng-mouseover='plan.over(strategy, true)' ng-mouseout='plan.over(strategy, false)' >
+								     <!-- Start Strategy Title -->
 								     <div class='small-9 large-10 columns'>
-								      Strategy {{(i+(plan.planService.strategies.currentPage * plan.planService.strategies.pageSize)+1)}}: {{strategy.title(40)}} {{::strategy.date}}
+								      Strategy {{plan.strategyNum(plan.planService.strategies,i)}}: {{strategy.title(40)}}
 								     </div>
+								     <!-- End Strategy Title -->
+								     <!-- Start Strategy Actions -->
 								     <div class='small-3 large-2 columns'>
-									     <!-- <span class='accordion-aside left'>{{plan.tacticCount(strategy)}} tactics</span> -->
-									     <span ng-show='strategy.over' class='right actions'><a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'><span class='fi-x'></span></a></span>
+									     <span ng-show='strategy.over' class='right actions'>
+									      <a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'>
+										      <span class='fi-x'></span>
+										     </a>
+									     </span>
 								     </div>
+								     <!-- End Strategy Actions -->
 							     </div>
 						     </accordion-heading>
-						     <div id='{{strategy.data.__guid}}' class='strategy-heading' ng-class='plan.tacticCount(strategy)===0?"strategy-heading-empty":""'>
+						     
+						     <div class='strategy-heading' ng-class='!plan.hasTactics(strategy) || !strategy.tactics_loaded?"strategy-heading-empty":""'>
+							     
 							     <div class='row'>
 								     <div class='small-12 columns'>
 		  				      <textarea ng-model='strategy.data.description'></textarea>
 								     </div>
 							     </div>
 							     
-						      <div class='row' ng-hide='plan.tacticCount(strategy)>0 || !strategy.getTacticsLoaded()'>
+							     <!-- Start Section to Display when no tactics for this strategy -->
+						      <div class='row' ng-hide='plan.planService.tactics[strategy.data.__guid].items.length > 0 || !strategy.tactics_loaded'>
 								     <div class='small-12 columns'>
 											   <p>This strategy doesn't have any tactics yet. Click the button below to start your first tactic for this strategy!</p>
-										    <button class='button radius expand' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add First Tactic</button>
+										    <button class='button radius expand no-margin' ng-click='plan.clickAddTactic(strategy)'>
+										     <span class='fi-plus'></span>&nbsp;Add First Tactic
+										    </button>
 										   </div>
 							     </div>
+							     <!-- End Section to Display when no tactics for this strategy -->
 							     
-							     <div class='row' ng-hide='strategy.getTacticsLoaded()'>
+							     <!-- Start Section to Display when loading the tactics for this strategy -->
+							     <div class='row' ng-hide='strategy.tactics_loaded'>
 								     <div class='small-12 columns text-center'>
 								      <p>Loading Tactics...</p>
 								      <div id='ajaxloader'></div>
 								     </div>
 							     </div>
-							     
+							     <!-- End Section to Display when loading the tactics for this strategy -->
 						     </div>
 
-						     <table role='grid' ng-if='strategy.getTacticsLoaded() && ( strategy.isOpen || strategy.wasOpened )' >
-							     <thead ng-show='plan.tacticCount(strategy)>0'>
-								     <tr><th>Tactic Medium</th><th>Budget</th><th>Starts</th><th>Ends</th><th style='width: 110px !important;'><a href='' ng-click='plan.clickAddTactic(strategy)'><span class='fi-plus'></span>&nbsp;Add Tactic</a></th></tr>
+											<!-- Start displaying tactics for this strategy -->
+						     <table role='grid' ng-if='plan.planService.tactics[strategy.data.__guid].items.length > 0 && ( strategy.isOpen || strategy.wasOpened )' >
+							     
+							     <thead>
+								     <tr ng-mouseout='plan.hover=""'>
+									     <th tactic-header o-list='plan.planService.tactics[strategy.data.__guid]' key='medium' title='Tactic Medium'></th>
+									     <th tactic-header o-list='plan.planService.tactics[strategy.data.__guid]' key='budget' title='Budget'></th>
+									     <th tactic-header o-list='plan.planService.tactics[strategy.data.__guid]' key='begin_date' title='Starts'></th>
+									     <th tactic-header o-list='plan.planService.tactics[strategy.data.__guid]' key='end_date' title='Ends'></th>
+									     <th style='width: 110px !important;'>
+										     <a href='' ng-click='plan.clickAddTactic(strategy)'>
+											     <span class='fi-plus'></span>&nbsp;Add Tactic
+											    </a>
+										    </th>
+										   </tr>
 							     </thead>
 							     <tbody ng-if='plan.planService.tactics[strategy.data.__guid] !== null && plan.planService.tactics[strategy.data.__guid] !== undefined'>
 								     
-             <tr ng-repeat='(j, tactic) in plan.planService.tactics[strategy.data.__guid].items | startFrom: plan.planService.tactics[strategy.data.__guid].currentPage * plan.planService.tactics[strategy.data.__guid].pageSize  | limitTo:plan.planService.strategies.pageSize track by tactic.id() ' ng-mouseover='tactic.over=true' ng-mouseout='tactic.over=false' ng-show='!tactic.removed' id='{{tactic.data.__guid}}'>
-									     <td style='width: 25%'>
+             <tr 
+	             ng-repeat='(j, tactic) in plan.planService.tactics[strategy.data.__guid].items | startFrom: plan.planService.tactics[strategy.data.__guid].currentPage * plan.planService.tactics[strategy.data.__guid].pageSize  | limitTo:plan.planService.strategies.pageSize track by tactic.id() ' 
+		            ng-mouseover='tactic.over=true' 
+			           ng-mouseout='tactic.over=false' 
+				          ng-show='!tactic.removed' 
+					         id='{{tactic.data.__guid}}'>
+						         
+						        
+									     
+              <td style='width: 25%' ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="medium"?"sorted":""'>
 										     <span ng-if='tactic.editing'>
-										      <select type='text' name='medium' x-ng-model='tactic.medium' x-ng-options='m.name for m in plan.mediumList.items' ><option value=''>Select Type</option></select>
+										      <select type='text' name='medium' x-ng-model='tactic.medium' x-ng-options='m.name for m in plan.mediumList.items' >
+											      <option value=''>Select Type</option>
+											     </select>
 										     </span>
-										     <span ng-hide='tactic.editing'>{{tactic.medium.name}}</span>
+										     <span ng-hide='tactic.editing'>
+										      {{tactic.medium.name}}
+										     </span>
 										    </td>
-									     <td style='width: 15%'>
-										     <span ng-if='tactic.editing'><input type='text' ng-model='tactic.data.budget' ng-currency></span>
-										     <span ng-hide='tactic.editing'>{{tactic.data.budget | currency}}</span>
+									     <td style='width: 15%' ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="budget"?"sorted":""'>
+										     <span ng-if='tactic.editing'>
+										      <input type='text' ng-model='tactic.data.budget' ng-currency>
+										     </span>
+										     <span ng-hide='tactic.editing'>
+										      {{tactic.data.budget | currency}}
+										     </span>
 										    </td>
-									     <td>
-										     <span ng-if='tactic.editing'><input type='date' ng-model='tactic.begin_date'></span>
-										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>{{tactic.begin_date | date:"MMM d, yyyy"}}</span>
+									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="begin_date"?"sorted":""'>
+										     <span ng-if='tactic.editing'>
+										      <input type='date' ng-model='tactic.begin_date'>
+										     </span>
+										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>
+										      {{tactic.begin_date | date:"MMM d, yyyy"}}
+										     </span>
 										    </td>
-									     <td>
-										     <span ng-if='tactic.editing'><input type='date' ng-model='tactic.end_date'></span>
-										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>{{tactic.end_date | date:"MMM d, yyyy"}}</span>
+									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="end_date"?"sorted":""'>
+										     <span ng-if='tactic.editing'>
+										      <input type='date' ng-model='tactic.end_date'>
+										     </span>
+										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>
+										      {{tactic.end_date | date:"MMM d, yyyy"}}
+										     </span>
 										    </td>
 										    <td class='actions text-center' style='width: 110px;'>
-											    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='tactic.editing=true'><span class='fi-pencil'></span></a></span>
-											    <span ng-show='tactic.over && !tactic.editing'><a href='' ng-click='plan.removeObject(tactic)'><span class='fi-x alert'></span></a></span>
-											    <span ng-show='tactic.editing'><a href='' ng-click='tactic.editing=false'><span class='fi-check'></span></a></span>
+											    <span ng-show='tactic.over && !tactic.editing'>
+											     <a href='' ng-click='tactic.editing=true'>
+												     <span class='fi-pencil'></span>
+												    </a>
+												   </span>
+											    <span ng-show='tactic.over && !tactic.editing'>
+											     <a href='' ng-click='plan.removeObject(tactic)'>
+												     <span class='fi-x alert'></span>
+												    </a>
+												   </span>
+											    <span ng-show='tactic.editing'>
+											     <a href='' ng-click='tactic.editing=false'>
+												     <span class='fi-check'></span>
+												    </a>
+												   </span>
 										    </td>
+
 								     </tr>
 
 							     </tbody>
 						     </table>
+						     <!-- End displaying tactics for this strategy -->
+						     
+						     <!-- Start Pager For Tactics (if required) -->
 						     <div class='row' ng-if='plan.planService.tactics[strategy.data.__guid].numberOfPages()>1'>
 							     <div class='small-12 columns'>
 							      <div class='pager'>
+								      
 									     <ul class="pagination">
 													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].decrementPage()'>&laquo;</a></li>
-													  <li ng-repeat='(i,obj) in plan.planService.tactics[strategy.data.__guid].pageArray() track by $index' ng-class='plan.planService.tactics[strategy.data.__guid].currentPage === i?"current":""' ><a href='' ng-click='plan.planService.tactics[strategy.data.__guid].setCurrentPage(i)'>{{i+1}}</a></li>
+													  <li 
+													   ng-repeat='(i,obj) in plan.planService.tactics[strategy.data.__guid].pageArray() track by $index' 
+													   ng-class='plan.planService.tactics[strategy.data.__guid].currentPage === i?"current":""' >
+													   <a href='' ng-click='plan.planService.tactics[strategy.data.__guid].setCurrentPage(i)'>{{i+1}}</a>
+													  </li>
 													  <li class="arrow"><a href="" ng-click='plan.planService.tactics[strategy.data.__guid].incrementPage()'>&raquo;</a></li>
 													 </ul>
+							      
 							      </div>
 						      </div>
 						     </div>
+						     <!-- End Pager For Tactics (if required) -->
+						     
 						    </accordion-group>
 
 						  </accordion>
 						  
+        <!-- Start Pager For Strategies (if required) -->
 						  <ul class="pagination" ng-if='plan.planService.strategies.numberOfPages()>1'>
 								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.decrementPage()'>&laquo;</a></li>
-								  <li ng-repeat='(i,obj) in plan.planService.strategies.pageArray() track by $index' ng-class='plan.planService.strategies.currentPage === i?"current":""'><a ng- href='' ng-click='plan.planService.strategies.setCurrentPage(i)'>{{i+1}}</a></li>
-
+								  <li 
+								   ng-repeat='(i,obj) in plan.planService.strategies.pageArray() track by $index' 
+								   ng-class='plan.planService.strategies.currentPage === i?"current":""'>
+								   <a ng- href='' ng-click='plan.planService.strategies.setCurrentPage(i)'>{{i+1}}</a>
+								  </li>
 								  <li class="arrow"><a href="" ng-click='plan.planService.strategies.incrementPage()'>&raquo;</a></li>
 								</ul>
+								<!-- End Pager For Strategies -->
 						  
-					   </div>
-				   </div>
-				  </div>
+					   </div><!-- End Columns -->
+				   </div><!-- End Row -->
+				  </div><!-- End #tactics -->
 			   
 			   
 			  </tab>
+			  <!-- End Plan Strategies & Tactics Tab -->
 			 </tabset>
 			</div>
 		</div>
-		<button ng-click='plan.test()'>Test</button>
 	</div>
 </form>
 

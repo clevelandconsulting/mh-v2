@@ -2,6 +2,8 @@ class objectList
  constructor: (@items) ->
   @currentPage = 0; 
   @pageSize = 20;
+  if !@items?
+   @items = []
  
  incrementPage: () ->
   @setCurrentPage @currentPage+1
@@ -57,25 +59,92 @@ class objectList
       
   return length
  
- dateSort: (key) ->
+ numericSort: (key, reverse) ->
+  if !items?
+   @items.sort (a,b) =>
+    keyA = a[key]
+    keyB = b[key]
+    
+    #console.log a, b, keyA, keyB
+    
+    if keyA?
+     if keyA.sortKey?
+      keyA = keyA[keyA.sortKey()]
+					#keyA = parseFloat(keyA)
+						
+    if keyB?
+     if keyB.sortKey?
+      keyB = keyB[keyB.sortKey()]
+     #keyB = parseFloat(keyB)
+     
+    result = @keySort(keyA,keyB,reverse)
+    
+    #console.log 'sorted ', keyA, keyB, reverse, result
+    
+    if result != 0
+     result
+    else
+     @createdSort(a,b,reverse)
+ 
+ alphaSort: (key, reverse) ->
   if @items?
-   @items.sort (a, b) ->
+   @items.sort (a, b) =>
+    keyA = a[key]
+    keyB = b[key]
+    
+    if keyA?
+     if keyA.sortKey?
+      keyA = keyA[keyA.sortKey()]
+     #console.log keyA
+     keyA = keyA.toUpperCase()
+     
+    if keyB?
+     if keyB.sortKey?
+      keyB = keyB[keyB.sortKey()]
+     #console.log keyB
+     keyB = keyB.toUpperCase()
+     
+    result = @keySort(keyA,keyB,reverse)
+    
+    if result != 0
+     result
+    else
+     @createdSort(a,b,reverse)
+ 
+ dateSort: (key, reverse) ->
+  if @items?
+   @items.sort (a, b) =>
     keyA = new Date(a[key])
     keyB = new Date(b[key])
     
-    if keyA < keyB
-     return -1
-    if keyA > keyB
-     return 1
-     
-    keyA = new Date(a.data.__created_ts)
-    keyB = new Date(b.data.__created_ts)
+    result = @keySort(keyA,keyB,reverse)
     
-    if keyA < keyB
-     return -1
-    if keyA > keyB
-     return 1
+    if result != 0
+     result
+    else
+     @createdSort(a,b,reverse)
+ 
+ createdSort: (a, b, reverse) ->
+  keyA = new Date(a.data.__created_ts)
+  keyB = new Date(b.data.__created_ts)
+  
+  @keySort(keyA,keyB,reverse)
+
+ keySort: (keyA, keyB, reverse) ->
+  if keyA < keyB
+   if reverse
+    return 1
+   else
+    return -1
     
-    return 0
+  if keyA > keyB
+   if reverse
+    return -1
+   else
+    return 1
+  
+  return 0
+
+        
  
 angular.module('app').factory 'objectList', -> objectList

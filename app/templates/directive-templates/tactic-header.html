@@ -1,0 +1,7 @@
+<th ng-class='oList.sortKey===key?"sorted":""' ng-mouseover='oList.hover=key'>
+ <a href='' ng-click='sort(oList,key)' >
+  {{ title }} 
+  <i ng-show='oList.sortKey===key' class='fa fa-sort-amount-{{oList.sortReverse?"de":"a"}}sc'></i>
+  <i ng-show='oList.sortKey!==key && oList.hover===key' class='fa fa-sort'></i>
+ </a>
+</th>

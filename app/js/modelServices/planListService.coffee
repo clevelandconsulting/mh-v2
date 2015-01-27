@@ -12,4 +12,8 @@ angular.module('app').service 'PlanListService', ['$q', 'PlanRepository',
   getByHref: (href, pagesize) ->
    @PlanRepository.getPage(href,pagesize)
    
+  add: () ->
+    plan = @PlanRepository.makeNew('Untitled')
+    @PlanRepository.add(plan.data)
+   
 ]

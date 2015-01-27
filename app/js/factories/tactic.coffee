@@ -13,9 +13,20 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
    
    @mediumList = listManager.mediumList
    @medium = @findMedium(@mediumList.items, {name:@data.medium, value: @data.medium_type})
-  
+   
+   @medium.sortKey = () -> 'name'
+   
    @begin_date = @formatFMDateForJS(@data.begin_date)
    @end_date = @formatFMDateForJS(@data.end_date) 
+   
+   @__defineGetter__ "budget", () =>
+    #console.log 'called budget getter'
+    if @_budget != @data.budget
+     console.log 'parsing float'
+     @_budget = @data.budget
+     @_parsedBudget = parseFloat(@data.budget)
+   
+    @_parsedBudget
   
   findMedium: (items,medium) ->
     #console.log 'searching for medium', items
@@ -49,5 +60,5 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
      return @data.medium
    else
     return ''
-  
+    
 ]

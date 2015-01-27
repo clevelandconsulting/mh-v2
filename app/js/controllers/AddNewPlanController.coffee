@@ -1,12 +1,12 @@
-angular.module('app').controller 'AddNewPlanController', ['$location', 'PlansService', 'NotificationService',
+angular.module('app').controller 'AddNewPlanController', ['$location', 'PlanListService', 'NotificationService',
 
  class AddNewPlanController
-  constructor: (@$location, @plansService, @notifications) -> 
+  constructor: (@$location, @planListService, @notifications) -> 
 	  fn = () =>
-	   @plansService.add()
+	   @planListService.add()
 	   
 	  success = (response) =>
-    @plansService.select(response.data)
+    #@planListService.select(response.data)
     @$location.path('plan/'+response.data.recordID)
 	 
 	  @notifications.delayed('add', 'plan', fn , success, null, 200) 

@@ -13,53 +13,33 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    #
    #--------------------------------------------------------------------
    
-   @getPlanFromServer = (id) =>
-	   PlanRepository.getByRecordId(id)
-	   .catch (error) ->
-     if error.code?
-      if error.code == 101
-       message = 'Record does not exist'
-      else
-       message = 'Error ' + error.code + ': ' + error.reason
+   @handleError = (error) ->
+    #console.log 'handleError', error
+    if error.code?
+     if error.code == 101
+      message = 'Record does not exist'
      else
-      message = error
-     
-     #console.log 'rejecting PlansService.getOne() promise', id
-     return message
+      message = 'Error ' + error.code + ': ' + error.reason
+    else
+     message = error
+    
+    #console.log 'rejecting PlansService.getOne() promise', id
+    return message
+    
+   @getPlanFromServer = (id) =>
+	   PlanRepository.getByRecordId(id) #.catch (error) => @handleError(error)
      
    @getStrategiesFromServer = (plan) =>
-	   StrategyRepository.getAllForPlan(plan.data.__guid, 1000)
-	   .catch (error) ->
-     if error.code?
-      if error.code == 401
-       message = 'No records found'
-      else
-       message = 'Error ' + error.code + ': ' + error.reason
-     else
-      message = error
-     
-     #console.log 'rejecting PlansService.getOne() promise', id
-     return message
-   
+	   StrategyRepository.getAllForPlan(plan.data.__guid, 1000).catch (error) => @handleError(error)
+	      
    @getTacticsFromServer = (strategy) =>
-	   TacticRepository.getAllForStrategy(strategy.data.__guid, 1000)
-	   .catch (error) ->
-     if error.code?
-      if error.code == 401
-       message = 'No records found'
-      else
-       message = 'Error ' + error.code + ': ' + error.reason
-     else
-      message = error
-     
-     #console.log 'rejecting PlansService.getOne() promise', id
-     return message
-     
+	   TacticRepository.getAllForStrategy(strategy.data.__guid, 1000).catch (error) => @handleError(error)
+          
    @fetchPlan = (id, forceRefresh) ->
 	   deferred = $q.defer()
 	   
 	   if !forceRefresh? || !forceRefresh
-	    console.log 'looking into storage for plan', id
+	    #console.log 'looking into storage for plan', id
 	    stored = PlanStorageService.getById(id)
 	   else
 	    stored = null
@@ -67,12 +47,14 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   if stored == null
 	    @getPlanFromServer(id)
 	    .then (plan_response) =>
+	     #console.log 'plan from server response', plan_response
 	     if plan_response == null
 	      deferred_resolve plan_response
 	     else
 	      PlanStorageService.saveById(id, plan_response)
 	      deferred.resolve plan_response
 	    .catch (error) ->
+	     #console.log 'plan from server error', error
 	     deferred.reject error
 	   else
 	    deferred.resolve stored
@@ -83,9 +65,9 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   deferred = $q.defer()
 	   
 	   if !forceRefresh? || !forceRefresh
-	    console.log 'looking into storage for strategies', plan.recordID
+	    #console.log 'looking into storage for strategies', plan.recordID
 	    stored = PlanStorageService.getStrategiesById(plan.recordID)
-	    console.log 'results', stored
+	    #console.log 'results', stored
 	   else
 	    stored = null
 	    
@@ -114,14 +96,14 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   else
 	    stored = null
 	   
-	   console.log 'tactic storage', stored, strategy, plan_recID
+	   #console.log 'tactic storage', stored, strategy, plan_recID
 	   
 	   if stored == null
 	    @getTacticsFromServer(strategy)
 	    .then (tactics_response) =>
-	     console.log 'get tactics from server', tactics_response
+	     #console.log 'get tactics from server', tactics_response
 	     if tactics_response == null
-	      PlanStorageService.saveTacticsById(plan_recID, strategy.recordID, null)
+	      PlanStorageService.saveTacticsById(plan_recID, strategy.recordID, [])
 	      deferred.resolve tactics_response
 	     else
 	      tactics = tactics_response.items
@@ -159,40 +141,54 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
   
   #handle loading the plan & tactics
   loadPlan: (id, forceRefresh) ->
+  
+   deferred = $q.defer()
+   
    @loading = true
    @tactics = {}
    @fetchPlan(id, forceRefresh)
    .then (plan) =>
-    deferred = $q.defer()
+    #console.log 'loaded', plan
     if plan != null
      @fetchStrategies(plan, forceRefresh)
      .then (strategies) =>
       @strategies = new strategyList(strategies)
       @strategies.sort()
       @loading = false
-      console.log 'strategies loaded', @strategies
+      #console.log 'strategies loaded', @strategies
       deferred.resolve plan 
      .catch (error) =>
       @loading = false
       deferred.reject error
-    deferred.promise
+    else
+     @loading = false
+     deferred.reject 'Plan does not exist'
    .catch (error) =>
+    #console.log 'fetch plan error', error
     @loading = false
-    return error
+    deferred.reject  error
+   
+   deferred.promise
 
   loadTactics: (strategy, plan_recID, forceRefresh) ->
-   if !@loadingTactics
-	   @loadingTactics = true
+   if !@loadingTactics[strategy]
+	   @loadingTactics[strategy] = true
 	   #console.log 'loading tactics for', strategy
 	   @fetchTactics(strategy, plan_recID, forceRefresh)
 	   .then (data) =>
+	    #console.log 'fetch tactics', data
+	    #window.tactics = data
 	    if data?	    
 	     @tactics[strategy.id()] = new tacticList(strategy, data)
 	     @tactics[strategy.id()].sort()
 		    
 		   strategy.setTacticsLoaded(true)
-		   @loadingTactics = false
+		   @loadingTactics[strategy] = false
 	    return strategy
+	   .catch (error) =>
+	    strategy.setTacticsLoaded(true)
+		   @loadingTactics[strategy] = false
+	    return error
   
   #handle adding strategies & tactics
   addStrategy: (plan) ->
@@ -260,7 +256,6 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	    
 	   $q.all(repoPromises)
 	   .then () =>
-	    console.log PlanStorageService
 	    PlanStorageService.saveStrategiesById(plan.recordID, @strategies.items)
 	    cleanup()
 	   .catch (error) ->
@@ -286,20 +281,20 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   @savingTactics = true
 	   repoPromises = []
 	   
-	   console.log @tactics
+	   #console.log @tactics
 	   
 	   for strategy_id, tList of @tactics
 	    for tactic in tList.items
-	     console.log 'saving tactic...', tactic
+	     #console.log 'saving tactic...', tactic
 	     p = TacticRepository.save(tactic).then (data) => tactic = data.obj
 	     repoPromises.push p
 	   
 	   $q.all(repoPromises)
 	   .then () =>
-	    console.log 'saved tactics', @tactics, plan
+	    #console.log 'saved tactics', @tactics, plan
 	    
 	    for strategy_id, tList of @tactics
-	     console.log 'saving tactics to local', tList
+	     #console.log 'saving tactics to local', tList
 	     PlanStorageService.saveTacticsById(plan.recordID, tList.strategy.recordID, tList.items)
 	    cleanup()
 	    
@@ -315,7 +310,6 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
   
   
   save: (plan, submit) ->
-   console.log @
    @saving = true
    deferred = $q.defer()
      
@@ -361,8 +355,17 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
   
   goToTacticPage: (strategy_id,tactic) ->
    if @tactics[strategy_id]
-    page = @tactics[strategy_id].findPage()
+    page = @tactics[strategy_id].findPage(tactic)
     @tactics[strategy_id].setCurrentPage(page)
+    true
+   else
+    false
+  
+  
+  goToStrategyPage: (strategy) ->
+   if @strategies
+    page = @strategies.findPage(strategy)
+    @strategies.setCurrentPage(page)
     true
    else
     false

@@ -63,6 +63,10 @@ $major_actions-height: 88px;
           border-radius: $radius1, $radius2, $radius3, $radius4;
 }
 
+
+.no-margin {
+	margin: 0;
+}
 .top-bar {
  background: $topbar-bg-color	url(../img/cubigraph-2_gray_withline.png) right no-repeat;
 }
@@ -391,9 +395,27 @@ dl.accordion table th a, dl.accordion table th a:hover {
 	border: 0 !important;
 }
 
+dl.accordion table th a {
+	color: $steel;
+}
+
+dl.accordion table th a:hover {
+	color: $black;
+	text-decoration: underline;
+}
+
+dl.accordion table th.sorted {
+	background-color: darken($table-head-bg,2%);
+	color: $black;
+}
+
 dl.accordion table td a, dl.accordion table td a:hover, span.actions a, span.actions a:hover {
 	background-color: $table-bg;
 	border: 0 !important;
+}
+
+dl.accordion table td.sorted {
+	background-color: darken($table-bg,2%);
 }
 
 dl.accordion table td.actions {
