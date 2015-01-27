@@ -104,15 +104,15 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	     #console.log 'get tactics from server', tactics_response
 	     if tactics_response == null
 	      PlanStorageService.saveTacticsById(plan_recID, strategy.recordID, [])
-	      deferred.resolve tactics_response
+	      deferred.resolve {tactics:tactics_response, strategy:strategy}
 	     else
 	      tactics = tactics_response.items
 	      PlanStorageService.saveTacticsById(plan_recID, strategy.recordID, tactics)
-	      deferred.resolve tactics
+	      deferred.resolve {tactics:tactics, strategy:strategy}
 	    .catch (error) ->
 	     deferred.reject error
 	   else
-	    deferred.resolve stored
+	    deferred.resolve {tactics:stored, strategy:strategy}
 	     
 	   deferred.promise 
 	   
@@ -178,12 +178,12 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   .then (data) =>
 	    #console.log 'fetch tactics', data
 	    #window.tactics = data
-	    if data?	    
-	     @tactics[strategy.id()] = new tacticList(strategy, data)
-	     @tactics[strategy.id()].sort()
+	    if data.tactics?	    
+	     @tactics[data.strategy.id()] = new tacticList(data.strategy, data.tactics)
+	     @tactics[data.strategy.id()].sort()
 		    
-		   strategy.setTacticsLoaded(true)
-		   @loadingTactics[strategy] = false
+		   data.strategy.setTacticsLoaded(true)
+		   @loadingTactics[data.strategy] = false
 	    return strategy
 	   .catch (error) =>
 	    strategy.setTacticsLoaded(true)
