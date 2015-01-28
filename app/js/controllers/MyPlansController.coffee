@@ -9,11 +9,30 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    
    @pagesize = @cols * @rows
    
-   @loadPlans(@planListService.filter)
-   #console.log 'loading MyPlansController'
+   #load in the years
+   currentYear = new Date().getFullYear()
+   @years = []
+   for i in [2015..(currentYear+1)]
+    @years.push i 
+    
+   #load the year active through the list service
+   year = @planListService.year
+   if !year?
+    year = currentYear
+    
+   @scope.year = year
+   
+   
+   @scope.$watch 'year', (newVal,oldVal) =>
+    #store the list so we come back to it
+    @planListService.year = newVal
+    #load the plans for the year
+    @loadPlans(@planListService.filter)
+   
    
   load_success: (data) =>
    @plans = data
+   #console.log @plans
    @recordDisplay = 'Plans ' + (@plans.skip + 1).toString() + ' through ' + (@plans.skip+@plans.fetchCount).toString() + ' of ' + @plans.foundSetCount.toString()
    
    @group_plans(@plans)
@@ -59,9 +78,9 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
   loadPlans: (status) ->
    @plans = null
    if !status? || status == '' || status == 'All'
-    @planListService.getAll(@pagesize).then @load_success, @load_error
+    @planListService.getByYear(@scope.year, '', @pagesize).then @load_success, @load_error
    else
-    @planListService.getByStatus(status, @pagesize).then @load_success, @load_error
+    @planListService.getByYear(@scope.year, status, @pagesize).then @load_success, @load_error
    
   getPlans: (href) ->
    @planListService.getByHref(href,@pagesize).then @load_success, @load_error

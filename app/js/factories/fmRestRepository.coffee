@@ -2,6 +2,7 @@ class fmRestRepository
   @fieldNameKey: 'RFMsF'
   @fieldValueKey: 'RFMsV'
   @scriptKey: 'RFMscript'
+  @scriptParamKey: 'RFMscriptParam'
   @pageKey: 'RFMmax'
   
   constructor: (@$q, @api, @model, @modelList, @path, @modelName) ->
@@ -60,7 +61,12 @@ class fmRestRepository
    if script? and script != ''
     if path.slice(-1) != '?'
      path = path + '&'
-    path = path + fmRestRepository.scriptKey + '='+ script
+    
+    if typeof script == 'object'
+     path = path + fmRestRepository.scriptKey + '=' + script.name + '&' + fmRestRepository.scriptParamKey + '=' + script.param
+    else
+     path = path + fmRestRepository.scriptKey + '='+ script
+     
    if pagesize? and pagesize != ''
     if path.slice(-1) != '?'
      path = path + '&'
@@ -106,7 +112,6 @@ class fmRestRepository
    
    m
    
-  
   save: (model, script) ->
    if model.hasChanged()  
 	   data = model.getUpdateData()

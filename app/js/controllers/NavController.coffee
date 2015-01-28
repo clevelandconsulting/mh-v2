@@ -1,7 +1,7 @@
-angular.module('app').controller 'NavController', ['$scope', '$location', 'AuthorizationService', 'UsersService',
+angular.module('app').controller 'NavController', ['$scope', '$location', '$timeout', 'AuthorizationService', 'UsersService',
 
  class NavController
-  constructor: (@scope, @$location, @authorizationService, @userService) ->
+  constructor: (@scope, @$location, @timeout, @authorizationService, @userService) ->
    @scope.navbarCollapsed = true;
     
   isLoggedIn: ->
@@ -16,13 +16,24 @@ angular.module('app').controller 'NavController', ['$scope', '$location', 'Autho
 
   getUsername: ->
    if !@loadingUsername
-   
+    #console.log 'loading username'
 	   @promise = @userService.getCurrentUser()
 	   @loadingUsername = true
 	   
-	   @promise.then (data) =>
+	   @promise
+	   .then (data) =>
+	    #console.log 'found it', data
 	    @loadingUsername = false
 	    @username = data.username
+	   .catch (error) =>
+	    #console.log 'nothing found'
+	    @timeout(
+		    () => @loadingUsername = false
+		    ,
+		    500
+	    )
+	    
+	    return error
 	   
 	   @promise
 	 

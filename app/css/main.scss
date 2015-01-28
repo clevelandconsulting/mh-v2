@@ -212,6 +212,23 @@ input.error, textarea.error , select.error {
  border-color: $alert-color;
 }
 
+select.years {
+	margin-bottom: 0px;
+}
+
+.panel input, .panel select {
+	margin-bottom: 0px;
+}
+
+.panel div.columns {
+	 display: table;
+}
+
+.panel label {
+	display: table-cell;
+ vertical-align:middle; 
+}
+
 body {
 	background-color: $body-bg;
 }

@@ -2,18 +2,33 @@ angular.module('app').service 'PlanRepository', ['$q', 'plan', 'fmRestList', 'fm
  class PlanRepository extends fmRestRepository
   constructor : -> 
    super($q, ApiService, plan, fmRestList, 'layout/Api-Plan', 'plan')
+   
+  getByYear: (year, status, pagesize) ->
+   #console.log 'getting by year', year, status, pagesize
+   if status? && status != ''
+    @getByStatus(status,pagesize,year)
+   else
+    @getPlans(pagesize,year)
 
-  getByStatus: (status, pagesize) ->
-   @getAllByKey('status', status, 'Plan.Api.Filter',pagesize)
+  getByStatus: (status, pagesize, param) ->
+   script = @getFilterScript(param)
+   @getAllByKey('status', status, script, pagesize)
 
-  getPlans: (pagesize) ->
-   @getAllWithScript('','Plan.Api.Filter',pagesize)
+  getPlans: (pagesize, param) ->
+   script = @getFilterScript(param)
+   @getAllWithScript('', script, pagesize)
   
   getPage: (href, pagesize) ->
    @getAllWithScript(href,'',pagesize)
    
-  getAllForStaff: (staff_id, pagesize) ->
-   super(staff_id,@sortScript, pagesize)
+  # getAllForStaff: (staff_id, pagesize) ->
+#    super(staff_id,@sortScript, pagesize)
+  
+  getFilterScript: (param) ->
+   if param?
+    {name:'Plan.Api.Filter',param:param}
+   else
+    'Plan.Api.Filter'
   
   submit: (plan) ->
    deferred = $q.defer()

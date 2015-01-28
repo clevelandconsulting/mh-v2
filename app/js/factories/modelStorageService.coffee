@@ -67,7 +67,7 @@
   
   current: () -> @getName("current")
   getCurrent: () -> @getByKey(@current())
-  saveCurrent: (current) -> @getByKey(@current(), current)
+  saveCurrent: (current) -> @saveByKey(@current(), current)
   clearCurrent: -> @saveCurrent()
 
  angular.module('app').factory 'ModelStorageService', -> ModelStorageService

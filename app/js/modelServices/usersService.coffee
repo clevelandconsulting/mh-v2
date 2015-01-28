@@ -60,9 +60,11 @@ angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageSer
   
   getCurrentUser: ->
    userid = @getCurrentUserId()
+   #console.log 'getting current user', userid
    if userid != '' and userid?
     @getUserById(userid)
    else
+    #console.log 'nothing found'
     @d = @q.defer()
     @d.reject 'No User Found'
     @d.promise

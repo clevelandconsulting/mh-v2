@@ -45,6 +45,8 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    #handle the dates for display
    @date_approved = @formatFMDateForJS(@data.date_approved)
    @date_submitted = @formatFMDateForJS(@data.date_submitted) 
+   
+   @data.year = parseInt(@data.year)
   
   
   handleDates: () ->

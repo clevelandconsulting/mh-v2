@@ -3,18 +3,28 @@
 		 
 		 <div class='row'>
 			 
-			 <div class='small-12 columns'>
+			 <div class='small-10 large-11 columns'>
 				 <dl class="sub-nav">
-					  <dt>Filter My Plans:</dt>
+					  <dt>Filter:</dt>
 					  <dd ng-class='plans.filterText()==="All"?"active":""'><a href=''ng-click='plans.setFilter()'>All</a></dd>
 					  <dd ng-class='plans.filterText()==="Draft"?"active":""'><a href=''ng-click='plans.setFilter("Draft")'>Draft</a></dd>
 					  <dd ng-class='plans.filterText()==="Submitted"?"active":""'><a href=''ng-click='plans.setFilter("Submitted")'>Submitted</a></dd>
 					  <dd ng-class='plans.filterText()==="Approved"?"active":""'><a href=''ng-click='plans.setFilter("Approved")'>Approved</a></dd>
 					</dl>
 			 </div>
+			 <div class='small-2 large-1 columns'>
+				 <select class='years' type='text' name='year' x-ng-model='year' x-ng-options='year for year in plans.years' ></select>
+			 </div>
 			 
 		 </div>
-	  
+		 
+	  <div ng-if='plans.plans !== null && plans.plans.items.length === 0'>
+		  <div class='row'>
+			  <div class='columns small-12'>
+				  <div class="panel callout radius"><h5>No Plans Found</h5><p>No {{ plans.filterText() !== "All" ? plans.filterText().toLowerCase() : "" }} plans were found for {{ year }}. </div>
+				 </div>
+				</div>
+	  </div>
 	  <div ng-show='plans.plans!==null && plans.plans !== undefined'>
 	  
 		  <div class='row' ng-repeat='_plans in plans.plan_groups'>

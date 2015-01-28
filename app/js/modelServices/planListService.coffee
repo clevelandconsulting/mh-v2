@@ -6,6 +6,9 @@ angular.module('app').service 'PlanListService', ['$q', 'PlanRepository',
   getByStatus: (status, pagesize) ->
    @PlanRepository.getByStatus(status,pagesize)
   
+  getByYear: (year, status, pagesize) ->
+   @PlanRepository.getByYear(year,status,pagesize)
+  
   getAll: (pagesize) ->
    @PlanRepository.getPlans(pagesize)
    

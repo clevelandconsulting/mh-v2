@@ -13,7 +13,7 @@ angular.module('app').controller 'LoginController', [ 'AuthorizationService', 'N
 
     repoSuccess = (data) =>
      #console.log 'username retrieved success', data
-     @userService.saveCurrentUserId(data.recordID)
+     #console.log 'saving userid', @userService.saveCurrentUserId(data.recordID)
      @location.path('/project')
      @timeout.cancel(promise)
      @notifications.clear()
