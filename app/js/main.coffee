@@ -1,4 +1,4 @@
-angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo'])
+angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo', 'base64'])
 
 
 angular.element(document).ready () ->

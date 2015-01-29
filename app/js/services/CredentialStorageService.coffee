@@ -1,4 +1,4 @@
-angular.module('app').service 'CredentialStorageService', [ 'StorageService', 'Base64Service', class CredentialStorageService
+angular.module('app').service 'CredentialStorageService', [ 'StorageService', '$base64', class CredentialStorageService
   constructor: (@storageService, @base64) ->
   
   form: (username,password) ->

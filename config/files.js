@@ -26,7 +26,7 @@ module.exports = function(lineman) {
 
     js: {
     	vendor: [
-    	    "vendor/bower/js-base64/base64.js",
+    	    //"vendor/bower/js-base64/base64.js",
     	    "vendor/bower/jquery/dist/jquery.js",
     	    //"vendor/bower/jquery-ui/ui/jquery.ui.core.js",
     	    //"vendor/bower/jquery-ui/ui/jquery.ui.widget.js",
@@ -46,6 +46,7 @@ module.exports = function(lineman) {
          "vendor/bower/autofill-event/src/autofill-event.js",
          "vendor/bower/angular-foundation/mm-foundation.js",
          "vendor/bower/angular-foundation/mm-foundation-tpls.js",
+         "vendor/bower/angular-base64/angular-base64.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap-tpls.js",
          "vendor/bower/ng-currency/dist/ng-currency.js",
