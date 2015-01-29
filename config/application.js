@@ -17,10 +17,9 @@ module.exports = function(lineman) {
 	  
 	  
 	  uglify: {
-			  options :
-			    {
-			      ascii_only: true
-			    }
+			  codegen: {
+				   ascii_only: true
+			  }
 			},
 	  
 	  webfonts: {
