@@ -16,6 +16,13 @@ module.exports = function(lineman) {
   return {
 	  
 	  
+	  uglify: {
+			  options :
+			    {
+			      ascii_only: true
+			    }
+			},
+	  
 	  webfonts: {
       files: {
         "vendor/bower/bootstrap-sass-official/assets/fonts/": "vendor/bower/bootstrap-sass-official/assets/fonts/**/*.*",
