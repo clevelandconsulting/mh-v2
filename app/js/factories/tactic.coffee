@@ -24,7 +24,10 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
     if @_budget != @data.budget
      console.log 'parsing float'
      @_budget = @data.budget
-     @_parsedBudget = parseFloat(@data.budget)
+     if @data.budget == '' || !@data.budget?
+      @_parsedBudget = 0
+     else
+      @_parsedBudget = parseFloat(@data.budget)
    
     @_parsedBudget
   
