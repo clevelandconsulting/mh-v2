@@ -30,9 +30,18 @@ angular.module('app').factory 'fmRestModel', ['guid', (guid) ->
 	  if no_original_update? && !no_original_update
 	   @resetOriginal()
 	   
-	 markRemoved: () ->
+	 markRemoved: (mark) ->
+	  if !mark?
 	   @removed = true
-	 
+	  else
+	   @removed = mark
+	   
+	 isRemoved: () ->
+	  if @removed?
+	   @removed
+	  else
+	   false
+	   
 	 hasChanged: () ->
 	  #console.log 'checking for changes', @
 	  if @href != ''

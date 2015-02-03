@@ -43,10 +43,12 @@ module.exports = function(lineman) {
          "vendor/bower/angular-route/angular-route.js",
          "vendor/bower/angular-animate/angular-animate.js",
          "vendor/bower/angular-sanitize/angular-sanitize.js",
+         "vendor/bower/angular-filter/dist/angular-filter.js",
          "vendor/bower/autofill-event/src/autofill-event.js",
          "vendor/bower/angular-foundation/mm-foundation.js",
          "vendor/bower/angular-foundation/mm-foundation-tpls.js",
          "vendor/bower/angular-base64/angular-base64.js",
+         "vendor/bower/angular-native-picker/build/angular-datepicker.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap-tpls.js",
          "vendor/bower/ng-currency/dist/ng-currency.js",
@@ -64,6 +66,8 @@ module.exports = function(lineman) {
     },
     css: {
       vendor: [
+	        "vendor/bower/angular-native-picker/build/themes/classic.css",
+	        "vendor/bower/angular-native-picker/build/themes/classic.date.css",
          "vendor/bower/toastr/toastr.css"
       ]
     }

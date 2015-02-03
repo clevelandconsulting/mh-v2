@@ -50,7 +50,7 @@ class fmRestRepository
       #console.log 'rejecting fmRestRepository.getAll() promise'
       d.reject {code: fmcode, reason: reason, status: response.status}
     else
-     console.log 'rejecting fmRestRepository.getAll() promise'
+     #console.log 'rejecting fmRestRepository.getAll() promise'
      d.reject response
    
    d.promise
@@ -113,6 +113,16 @@ class fmRestRepository
    m
    
   save: (model, script) ->
+   #console.log 'attempting to save', model
+   if model.isRemoved()
+    #console.log 'attempting to remove', model
+    if model.href != ''
+     return @delete(model.href)
+    else
+     d = @$q.defer()
+	    d.resolve "Your " + @modelName + " was successfully removed!"
+	    return d.promise
+    
    if model.hasChanged()  
 	   data = model.getUpdateData()
 	   href = model.href

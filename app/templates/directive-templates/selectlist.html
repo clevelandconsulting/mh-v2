@@ -1,5 +1,15 @@
 <ul class='scrollable'>
- <li x-ng-repeat='item in items' x-ng-class='{true:"selected",false:""}[ngModel.indexOf(item.value)>-1]'>
-  <a x-ng-click='toggle($index)'>{{item.value}}</a>
- </li>
+	
+	<ul ng-if='groupBy !== undefined && groupBy !== null' x-ng-repeat='(key,value) in items | groupBy: groupBy' >
+		<li class='grouped'>{{key}}</li>
+	 <li x-ng-repeat='item in value' x-ng-class='{true:"selected",false:""}[ngModel.exists(item)]' x-ng-click='doIt(item)'>
+	  <a href=''>{{item.value}}</a>
+	 </li>
+	</ul>
+	
+	<li ng-if='groupBy === undefined || groupBy === null' x-ng-repeat='item in items' x-ng-class='{true:"selected",false:""}[ngModel.exists(item)]' x-ng-click='doIt(item)'>
+	  <a>{{item.value}}</a>
+	 </li>
+	
 </ul>
+

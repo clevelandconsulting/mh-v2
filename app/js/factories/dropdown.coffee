@@ -12,6 +12,8 @@ angular.module('app').factory 'dropdown', ['$http', '$q', ($http, $q) ->
    deferred.resolve items
    
    
+  removeAll: () ->
+   @items = []
   
   load: (url) ->
    stateJson = $http.get(url).then (results) =>

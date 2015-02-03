@@ -1,4 +1,4 @@
-angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo', 'base64'])
+angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo', 'base64', 'angular.filter', 'angular-datepicker'])
 
 
 angular.element(document).ready () ->
@@ -11,6 +11,15 @@ angular.element(document).ready () ->
   , 
    ($1) -> $1.toUpperCase()
   )
+ 
+ String.prototype.shorten = (length) ->
+  if this?
+   if this.length > length
+    return this.substring(0,length-3) + '...'
+   else
+    return this.toString()
+  else
+   return '' 
  
  
  angular.bootstrap document, ["app"]

@@ -16,11 +16,16 @@ angular.module('app').service 'StrategyRepository', [ '$q', 'strategy', 'fmRestM
     super(strategy).then (data) =>
      return { msg: data, obj: strategy }
    else 
-    @add(strategy.data,'RestFM.Login').then (response) =>
-     #console.log response
-     strategy.href = response.data.href
-     strategy.recordID = response.data.recordID
-     return { msg: response, obj: strategy }
+    if !strategy.isRemoved()
+	    @add(strategy.data,'RestFM.Login').then (response) =>
+	     #console.log response
+	     strategy.href = response.data.href
+	     strategy.recordID = response.data.recordID
+	     return { msg: response, obj: strategy }
+    else
+     d = @$q.defer()
+     d.resolve { msg: "Successfully removed", obj: null}
+     return d.promise
   
   makeNew: (plan_id) ->
    s = super({plan_id:plan_id}, strategy)

@@ -39,19 +39,19 @@
     <label>Plans</label>
   </a>
 -->
-  <a class="item" ng-class='!planForm.$dirty?"disabled":""' ng-click='plan.refresh(plan.plan)'>
+  <a class="item" ng-class='!planForm.$dirty?"disabled":""' ng-click='plan.refresh(plan.plan)' tooltip='Click to reload plan from server.' tooltip-popup-delay='200' tooltip-animation="false" >
     <i class='fi-refresh'></i>
     <label>Refresh</label>
   </a>
-  <a class="item save" ng-class='planForm.$pristine?"disabled":""' ng-click='plan.save(plan.plan)'>
+  <a class="item save" ng-class='planForm.$pristine?"disabled":""' ng-click='plan.save(plan.plan)' tooltip='Click to save the plan to the server.' tooltip-popup-delay='200' tooltip-animation="false" >
     <i class='fi-archive'></i>
     <label>Save</label>
   </a>
-  <a class="item submit" ng-class='!plan.plan.readyForSubmission()||plan.plan.status()!=="Draft"?"disabled":""' ng-click='plan.submit(plan.plan)'>
+  <a class="item submit" ng-class='!plan.planService.canSubmit(plan.plan)||plan.plan.status()!=="Draft"?"disabled":""' ng-click='plan.submit(plan.plan)' tooltip='Click to submit the plan.' tooltip-popup-delay='200' tooltip-animation="false" >
     <i class='fi-upload'></i>
     <label>Submit</label>
   </a>
-  <a class="item remove" ng-class='plan.plan.status()!=="Draft"?"disabled":""' ng-click='plan.remove(plan.plan)'>
+  <a class="item remove" ng-class='plan.plan.status()!=="Draft"?"disabled":""' ng-click='plan.remove(plan.plan)' tooltip='Click to completely remove the plan.' tooltip-popup-delay='200' tooltip-animation="false" >
     <i class='fi-x'></i>
     <label>Remove</label>
   </a>

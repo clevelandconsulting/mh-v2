@@ -1,6 +1,6 @@
-angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlanListService', 'NotificationService',
+angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlanListService', 'NotificationService', 'SchoolYear',
  class MyPlansController 
-  constructor: (@scope, @location, @planListService, @notifications) ->
+  constructor: (@scope, @location, @planListService, @notifications, @schoolYear) ->
    @cols = 3
    @rows = 3
    @foundationColsSm = 12
@@ -9,33 +9,35 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
    
    @pagesize = @cols * @rows
    
-   #load in the years
-   currentYear = new Date().getFullYear()
-   @years = []
-   for i in [2015..(currentYear+1)]
-    @years.push i 
+   # #load in the years
+#    currentYear = new Date().getFullYear()
+#    @years = []
+#    for i in [2015..(currentYear+1)]
+#     @years.push i 
+#     
+#    #load the year active through the list service
+#    year = @planListService.year
+#    if !year?
+#     year = currentYear
     
-   #load the year active through the list service
-   year = @planListService.year
-   if !year?
-    year = currentYear
-    
-   @scope.year = year
-   
+   @scope.year = @schoolYear.year
+   @years = @schoolYear.years
    
    @scope.$watch 'year', (newVal,oldVal) =>
     #store the list so we come back to it
-    @planListService.year = newVal
+    @schoolYear.year = newVal
     #load the plans for the year
     @loadPlans(@planListService.filter)
    
    
   load_success: (data) =>
-   @plans = data
-   #console.log @plans
-   @recordDisplay = 'Plans ' + (@plans.skip + 1).toString() + ' through ' + (@plans.skip+@plans.fetchCount).toString() + ' of ' + @plans.foundSetCount.toString()
-   
-   @group_plans(@plans)
+   @load_complete = true
+   if data?
+	   @plans = data
+	   #console.log @plans
+	   @recordDisplay = 'Plans ' + (@plans.skip + 1).toString() + ' through ' + (@plans.skip+@plans.fetchCount).toString() + ' of ' + @plans.foundSetCount.toString()
+	   
+	   @group_plans(@plans)
    #console.log 'finished loading plans'
    #console.log @plan_groups
   
@@ -62,6 +64,7 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
     @plan_groups[j].push(plan)
   
   load_error:(data) =>
+   @load_complete = true
    @notifications.error(data)
   
   setFilter: (filter) ->
@@ -76,6 +79,7 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
     'All'
   
   loadPlans: (status) ->
+   @load_complete = false
    @plans = null
    if !status? || status == '' || status == 'All'
     @planListService.getByYear(@scope.year, '', @pagesize).then @load_success, @load_error

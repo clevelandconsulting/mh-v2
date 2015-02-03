@@ -3,7 +3,7 @@
 		 
 		 <div class='row'>
 			 
-			 <div class='small-10 large-11 columns'>
+			 <div class='small-8 medium-10 columns'>
 				 <dl class="sub-nav">
 					  <dt>Filter:</dt>
 					  <dd ng-class='plans.filterText()==="All"?"active":""'><a href=''ng-click='plans.setFilter()'>All</a></dd>
@@ -12,20 +12,20 @@
 					  <dd ng-class='plans.filterText()==="Approved"?"active":""'><a href=''ng-click='plans.setFilter("Approved")'>Approved</a></dd>
 					</dl>
 			 </div>
-			 <div class='small-2 large-1 columns'>
+			 <div class='small-4 medium-2 columns'>
 				 <select class='years' type='text' name='year' x-ng-model='year' x-ng-options='year for year in plans.years' ></select>
 			 </div>
 			 
 		 </div>
 		 
-	  <div ng-if='plans.plans !== null && plans.plans.items.length === 0'>
+	  <div ng-if='( plans.plans !== null && plans.plans.items.length === 0 && plans.load_complete === true ) || ( plans.plans === null && plans.load_complete === true )'>
 		  <div class='row'>
 			  <div class='columns small-12'>
 				  <div class="panel callout radius"><h5>No Plans Found</h5><p>No {{ plans.filterText() !== "All" ? plans.filterText().toLowerCase() : "" }} plans were found for {{ year }}. </div>
 				 </div>
 				</div>
 	  </div>
-	  <div ng-show='plans.plans!==null && plans.plans !== undefined'>
+	  <div ng-show='plans.plans!==null && plans.plans !== undefined && plans.load_complete === true'>
 	  
 		  <div class='row' ng-repeat='_plans in plans.plan_groups'>
 			  <div ng-repeat='(i, item) in _plans track by item.data.__guid'>
@@ -52,7 +52,7 @@
 	  
 	  </div>
 
-	  <div ng-hide='plans.plans!==null && plans.plans !== undefined' class='row'>
+	  <div ng-hide='plans.load_complete === true' class='row'>
 		  <div class='small-centered small-3 columns'>
 			  <div class='panel loading text-center'>
 				  <p>Loading Plans...</p>

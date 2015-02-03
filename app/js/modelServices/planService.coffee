@@ -1,4 +1,4 @@
-angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyRepository', 'TacticRepository', 'PlanStorageService', 'tacticList', 'strategyList', ($q, PlanRepository, StrategyRepository, TacticRepository, PlanStorageService, tacticList, strategyList) ->
+angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyRepository', 'TacticRepository', 'PlanProductRepository', 'PlanStorageService', 'tacticList', 'strategyList', 'planProductList', ($q, PlanRepository, StrategyRepository, TacticRepository, PlanProductRepository, PlanStorageService, tacticList, strategyList, planProductList) ->
 
  class PlanService
   constructor: () ->
@@ -28,7 +28,10 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     
    @getPlanFromServer = (id) =>
 	   PlanRepository.getByRecordId(id) #.catch (error) => @handleError(error)
-     
+   
+   @getPlanProductsFromServer = (plan) =>
+    PlanProductRepository.getAllForPlan(plan.data.__guid, 1000).catch (error) => @handleError(error)
+   
    @getStrategiesFromServer = (plan) =>
 	   StrategyRepository.getAllForPlan(plan.data.__guid, 1000).catch (error) => @handleError(error)
 	      
@@ -60,6 +63,33 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	    deferred.resolve stored
 	     
 	   deferred.promise  
+	  
+	  @fetchPlanProducts = (plan, forceRefresh) ->
+	   deferred = $q.defer()
+	   
+	   if !forceRefresh? || !forceRefresh
+	    #console.log 'looking into storage for strategies', plan.recordID
+	    stored = PlanStorageService.getPPsById(plan.recordID)
+	    #console.log 'results', stored
+	   else
+	    stored = null
+	    
+	   if stored == null
+	    @getPlanProductsFromServer(plan)
+	    .then (pps_response) =>
+	     if pps_response == null
+	      PlanStorageService.savePPsById(plan.recordID, [])
+	      deferred.resolve pps_response
+	     else
+	      pps = pps_response.items
+	      PlanStorageService.savePPsById(plan.recordID, pps)
+	      deferred.resolve pps
+	    .catch (error) ->
+	     deferred.reject error
+	   else
+	    deferred.resolve stored
+	     
+	   deferred.promise
 	  
 	  @fetchStrategies = (plan, forceRefresh) ->
 	   deferred = $q.defer()
@@ -150,16 +180,42 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    .then (plan) =>
     #console.log 'loaded', plan
     if plan != null
+     @loadingStrategies = true
+     @loadingPlanProducts = true
+     
+     @fetchPlanProducts(plan, forceRefresh)
+     .then (pps) =>
+      @pps = new planProductList(pps)
+      @pps.sort()
+      @loadingPlanProducts = false
+      if !@loadingStrategies
+       @loading = false
+       #console.log 'strategies loaded', @strategies
+       deferred.resolve plan 
+     .catch (error) =>
+      @loading = false
+      deferred.reject error
+      
+
+     
      @fetchStrategies(plan, forceRefresh)
      .then (strategies) =>
       @strategies = new strategyList(strategies)
       @strategies.sort()
-      @loading = false
-      #console.log 'strategies loaded', @strategies
-      deferred.resolve plan 
+      @loadingStrategies = false
+      if forceRefresh && strategies? && strategies != undefined
+       #clear out the storage
+       for strategy in strategies
+        PlanStorageService.clearTacticsById(plan.recordID, strategy.recordID)
+        delete @tactics[strategy.id()]
+      if !@loadingPlanProducts
+       @loading = false
+       #console.log 'strategies loaded', @strategies
+       deferred.resolve plan 
      .catch (error) =>
       @loading = false
       deferred.reject error
+      
     else
      @loading = false
      deferred.reject 'Plan does not exist'
@@ -201,6 +257,16 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    
    strategy
    
+  addPlanProduct: (plan, product) ->
+   pp = PlanProductRepository.makeNew(plan.data.__guid, product)
+   if !@pps?
+    @pps = new planProductList()
+    
+   @pps.add pp
+   
+   pp
+
+   
   addTactic: (strategy) ->
    tactic = TacticRepository.makeNew(strategy.data.__guid)
    tactic.editing = true
@@ -215,9 +281,29 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     
   
   #handle getting the tactic & count for a particular strategy
+  
+  canSubmit: (plan) ->
+   if plan? && plan != undefined
+	   if !plan.readyForSubmission()
+	    return false
+	   else
+	    if @pps.existsCount() > 0
+	     return true
+	    else
+	     return false
+	  else
+	   return false
+     
+  
   getStrategies: () ->
    if @strategies?
     @strategies.items
+   else 
+    null
+  
+  getPlanProducts: () ->
+   if @pps?
+    @pps.items
    else 
     null
     
@@ -236,6 +322,9 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
 	   else
 	    strategy.dbCount()
   
+  
+  
+  
   saveStrategies: (plan) ->
    deferred = $q.defer()
    
@@ -249,14 +338,56 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    if @strategies?
 	   @savingStrategies = true
 	   repoPromises = []
-	   
-	   for strategy, i in @strategies.items
-	    p = StrategyRepository.save(strategy).then (data) => strategy = data.obj
-	    repoPromises.push p
+	   newItems = []
+	   for strategy in @strategies.items
+	    if strategy != undefined || !strategy?
+		    p = StrategyRepository.save(strategy).then (data) => strategy = data.obj
+		    if strategy? && strategy != undefined && !strategy.isRemoved()
+			    newItems.push(strategy)
+		    repoPromises.push p
 	    
 	   $q.all(repoPromises)
 	   .then () =>
+	    @strategies.items = newItems
 	    PlanStorageService.saveStrategiesById(plan.recordID, @strategies.items)
+	    cleanup()
+	   .catch (error) ->
+	    cleanup(error)
+	     
+	  else
+	  
+	   deferred.resolve true
+  
+   deferred.promise
+  
+  
+  savePlanProducts: (plan) ->
+   deferred = $q.defer()
+   
+   cleanup = (error) =>
+    @savingPPs = false
+    if error?
+     deferred.reject error
+    else
+     deferred.resolve true
+     
+   if @pps?
+	   @savingPPs = true
+	   repoPromises = []
+	   newItems = []
+	   #console.log 'attempting to save plan product items', @pps.items
+	   for pp in @pps.items
+	    if pp != undefined || !pp?
+		    p = PlanProductRepository.save(pp).then (data) => pp = data.obj
+		    if pp? && pp != undefined && !pp.isRemoved()
+			    newItems.push(pp)
+		    repoPromises.push p
+	    
+	   $q.all(repoPromises)
+	   .then () =>
+	    #console.log 'cleaning up after plan product save', @pps.items, newItems    
+	    @pps.items = newItems
+	    PlanStorageService.savePPsById(plan.recordID, @pps.items)
 	    cleanup()
 	   .catch (error) ->
 	    cleanup(error)
@@ -280,20 +411,28 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    if @tactics?
 	   @savingTactics = true
 	   repoPromises = []
-	   
+	   newItems = []
 	   #console.log @tactics
 	   
 	   for strategy_id, tList of @tactics
-	    for tactic in tList.items
+	    newItems[strategy_id] = []
+	    for tactic, j in tList.items
 	     #console.log 'saving tactic...', tactic
-	     p = TacticRepository.save(tactic).then (data) => tactic = data.obj
-	     repoPromises.push p
+	     
+	     if tactic?
+		     p = TacticRepository.save(tactic).then (data) => tactic = data.obj
+		     if tactic? && tactic != undefined && !tactic.isRemoved()
+		      newItems[tactic.data.strategy_id].push(tactic)
+	
+		     repoPromises.push p
+
 	   
 	   $q.all(repoPromises)
 	   .then () =>
 	    #console.log 'saved tactics', @tactics, plan
 	    
 	    for strategy_id, tList of @tactics
+	     tList.items = newItems[strategy_id]
 	     #console.log 'saving tactics to local', tList
 	     PlanStorageService.saveTacticsById(plan.recordID, tList.strategy.recordID, tList.items)
 	    cleanup()
@@ -320,15 +459,20 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
    
    promise
    .then (data) =>
-    @saveStrategies(plan)
-    .then (data) =>
-     @saveTactics(plan)
-     .then (data) =>
-      @saving = false
-      deferred.resolve {msg:"Your plan was saved."}
-     .catch (error) =>
-      @saving = false
-      deferred.reject error
+    @savePlanProducts(plan)
+	   .then (data) =>
+	    @saveStrategies(plan)
+	    .then (data) =>
+	     @saveTactics(plan)
+	     .then (data) =>
+	      @saving = false
+	      deferred.resolve {msg:"Your plan was saved."}
+	     .catch (error) =>
+	      @saving = false
+	      deferred.reject error
+	   .catch (error) =>
+	    @saving = false
+	    deferred.reject error
    .catch (error) =>
     @saving = false
     deferred.reject error
@@ -349,6 +493,7 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
   delete: (plan) ->
    PlanRepository.delete(plan.href).then (response) =>
     PlanStorageService.clearById(plan.recordID)
+    PlanStorageService.clearPPsById(plan.recordID)
     PlanStorageService.clearStrategiesById(plan.recordID)
     PlanStorageService.clearAllTacticsForPlan(plan.recordID)
     return response
@@ -369,241 +514,6 @@ angular.module('app').service 'PlanService', ['$q', 'PlanRepository', 'StrategyR
     true
    else
     false
-  
-  # getSelected: () ->
-#    @selectedPlan
-#   
-#   getFromServer: (id) ->
-#    @loading = true
-#    PlanRepository.getByRecordId(id)
-#     .then (data) =>
-#      if data != null
-#       PlanStorageService.clearById(id)
-#       @select(data).then () =>
-#        @loading = false
-#        # d = new Date()
-#        # console.log 'done loading plan', d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
-#        return data
-#     .catch (error) ->
-#      if error.code?
-#       if error.code == 101
-#        message = 'Record does not exist'
-#       else
-#        message = 'Error ' + error.code + ': ' + error.reason
-#      else
-#       message = error
-#      
-#      @loading = false
-#      
-#      #console.log 'rejecting PlansService.getOne() promise', id
-#      return message
-#      
-#   getOne: (id) ->
-#    deferred = $q.defer()
-#    
-#    stored = PlanStorageService.getById(id)
-#    if stored == null
-#     @getFromServer(id)
-#     .then (data) =>
-#      if data == null
-#       deferred.reject 'You do not have access to this record.'
-#      else
-#       deferred.resolve data
-#     .catch (error) ->
-#      deferred.reject error
-#    else
-#     deferred.resolve stored
-#      
-#    deferred.promise  
-#   
-#   addStrategy: (plan) ->
-#    strategy = StrategyRepository.makeNew(plan.data.__guid)
-#    strategy.isOpen = true
-#    plan.strategies.push strategy
-#    
-#   addTactic: (strategy) ->
-#    tactic = TacticRepository.makeNew(strategy.data.__guid)
-#    tactic.editing = true
-#    strategy.tactics.push tactic
-#   
-#   loadTactics: (strategy) ->
-#    if !@loadingTactics
-# 	   @loadingTactics = true
-# 	   console.log 'loading tactics for', strategy
-# 	   TacticRepository.getAllForStrategy(strategy.data.__guid, 1000).then (data) =>
-# 	    console.log 'found tactics', data
-# 	    if data?	    
-# 		    for item in data.items
-# 		     strategy.addTactic(item)
-# 		    strategy.sortTactics()
-# 		    
-# 		   strategy.setTacticsLoaded(true)
-# 		   @loadingTactics = false
-# 		   console.log 'finished loading tactics for', strategy
-# 	    return strategy
-#   
-#   loadStrategies: (plan) ->
-#    #console.log 'loading strategies', plan
-#    deferred = $q.defer()
-#    StrategyRepository.getAllForPlan(plan.data.__guid, 1000)
-#    .then (strategies) => 
-#     #console.log 'found strategies', strategies
-#     if strategies?
-# 	    loaded = 0
-# 	    for strategy in strategies.items
-# 	     plan.addStrategy(strategy)
-# 	    deferred.resolve plan
-# 
-# 	   else
-# 	    deferred.resolve plan
-#    .catch (error) =>
-#     deferred.reject error
-#     
-#    deferred.promise
-#   
-#   select: (plan) ->
-#   
-#    deferred = $q.defer()
-#   
-#    stored = PlanStorageService.getById(plan.recordID)
-#    if stored?
-#     @selectedPlan = stored
-#    else
-#     @selectedPlan = plan
-#  
-#    #console.log 'l', @selectedPlan.strategies.length
-#    if @selectedPlan.strategies.length == 0
-# 	   @loadStrategies(@selectedPlan).then (plan) =>
-# 	    plan.sortStrategies()
-# 	    PlanStorageService.saveById(@selectedPlan.recordID, plan)
-# 	    deferred.resolve true
-# 	  else
-# 	   if !stored?
-#  	   PlanStorageService.saveById(@selectedPlan.recordID, plan)
-#  	   deferred.resolve true
-#   
-#    deferred.promise
-#    
-#    
-#   add: () ->
-#    plan = PlanRepository.makeNew('Untitled')
-#    PlanRepository.add(plan.data)
-#   
-#   delete: (plan) ->
-#    PlanRepository.delete(plan.href).then (response) =>
-#     PlanStorageService.clearById(plan.recordID)
-#     return response
-#     
-#   saveTactic: (tactic) ->
-#    if tactic.removed
-#     if tactic.href != '' && tactic.href?
-# 	    promise = TacticRepository.delete(tactic.href)
-# 	    .then (data) =>
-# 	     return {msg: data, obj: null}
-# 	   else
-# 	    #tactic was added, then removed, all without being added to DB, so just return null obj in a promise
-# 	    deferred = @q.defer()
-# 	    deferred.resolve {msg: "Tactic was removed.", obj: null}
-# 	    promise = deferred.promise
-# 	    
-# 	  else
-#     promise = TacticRepository.save(tactic)
-#     .then (data) =>
-#      return data
-#        
-#    promise
-# 
-#   
-#   saveStrategy: (plan, strategy) ->
-#    #console.log 'saving', plan, strategy
-#    if strategy.removed
-#     if strategy.href != '' && strategy.href?
-# 	    promise = StrategyRepository.delete(strategy.href)
-# 	    .then (data) =>
-# 	     return { msg: data, obj: null}
-# 	   else
-# 	    #strategy was added, then removed, all without being added to DB, so just return null obj in a promise
-# 	    deferred = $q.defer()
-# 	    deferred.resolve {msg: "Strategy was removed.", obj: null}
-# 	    promise = deferred.promise
-# 
-#    else
-#     deferred = $q.defer()
-#     promise = deferred.promise
-#     
-#     StrategyRepository.save(strategy)
-#     .then (data) =>
-#      s = data.obj
-#      num_of_tactics = s.tactics.length
-#      
-#      if num_of_tactics > 0
-#       new_tactics = []
-#       tactics_saved = 0
-#       for tactic in s.tactics
-#        @saveTactic(tactic)
-#        .then (tacticData) =>
-#         if tacticData.obj != null
-#          new_tactics.push(tacticData.obj)
-#          
-#         tactics_saved = tactics_saved + 1
-#         if tactics_saved == num_of_tactics
-#          s.tactics = new_tactics
-#          s.sortTactics()
-#          deferred.resolve {msg: data.msg, obj:s}
-#        .catch (error) =>
-#         deferred.reject error
-#      else
-#       deferred.resolve data
-#     .catch (error) =>
-#      console.log 'plansService.saveStrategy -> repository save error', error
-#      deferred.reject error
-#      
-#    promise
-#   
-#   save: (plan, submit) ->
-#    deferred = $q.defer()
-#    
-#    if submit
-#     promise = PlanRepository.submit(plan)
-#    else
-#     promise = PlanRepository.save(plan)
-#    
-#    promise
-#     .then (data) =>
-#      num_of_strategies = plan.strategies.length
-#      
-#      if num_of_strategies > 0
-#       strategies_saved = 0
-#       new_strategies = []
-#       
-#       for strategy in plan.strategies
-#        @saveStrategy(plan,strategy)
-#        .then (strategyData) =>
-#         if strategyData.obj != null
-#          new_strategies.push(strategyData.obj)
-#         #plan.strategies[strategies_saved] = strategyData.obj
-#         strategies_saved = strategies_saved + 1
-#         if strategies_saved == num_of_strategies
-#          plan.strategies = new_strategies
-#          plan.sortStrategies()
-#          deferred.resolve {msg: data, obj:plan}
-#        .catch (error) =>
-#         console.log 'plansservice.save error saving strategy', error
-#         deferred.reject error
-#      else
-#       deferred.resolve {msg: data, obj: plan}
-#     .catch (error) =>
-#      deferred.reject error
-#    
-#    deferred.promise.then (data) =>
-#     PlanStorageService.saveById(data.obj.recordID, data.obj)
-#     return data
-#     
-#     
-#    deferred.promise
-#   
-#   submit: (plan) ->
-#    @save(plan,true)
    
  new PlanService()
 ]

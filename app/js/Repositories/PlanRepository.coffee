@@ -49,8 +49,8 @@ angular.module('app').service 'PlanRepository', ['$q', 'plan', 'fmRestList', 'fm
   add: (data) ->
    super(data,'RestFM.Login')
   
-  makeNew: (title) ->
-   super({campaign_title:title}, plan) 
+  makeNew: (title, year) ->
+   super({campaign_title:title, year:year}, plan) 
   
  new PlanRepository()
 

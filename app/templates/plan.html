@@ -1,5 +1,4 @@
 <form name='planForm' id='planFormID' ng-show='plan.plan !== undefined && plan.plan !== null'>
-	<div class='major-actions major-actions-top' ng-include='"partials/plan/actions.html"'></div>
 	<div class='plan-content' id='planContent'>
 		<div class='row'>
 		 <div class='small-12 columns'>
@@ -16,34 +15,70 @@
 							
 							<div class='row'>	
 								<div class='columns small-12 large-6'>
-									<label>Marketing Manager: <input type='text' disabled ng-model='plan.plan.data.staff_full_name_c'></label>
+									<label>Marketing Manager: <div class='panel panel-textarea'>{{::plan.plan.data.staff_full_name_c}}</div></label>
 								</div>
 								<div class='columns small-12 large-6'>
-									<label>Campaign Title: <input type='text' ng-model='plan.plan.data.campaign_title'></label>
+									<label>Campaign Title: <input name='campaign_title' type='text' ng-model='plan.plan.data.campaign_title' ng-class='plan.invalidClass("campaign_title")'  ng-required='plan.required("campaign_title")'></label>
 								</div>
 							</div>
 							
 							<div class='row'>
 								<div class='columns small-12 large-12'>
-									<label>Product: <select type='text' name='product' ng-required='plan.required("product")' x-ng-model='plan.plan.product' x-ng-options='product as product.name group by product.discipline for product in plan.productList.items | orderBy:["discipline","name"]' ><option value=''>Select Product</option></select>
-									
-									
+									<label>Product: 
+									 <div class='tip' ng-show='plan.productediting' ng-click='plan.editProduct(false)'>
+									  Select the products to include: 
+									  <a>
+												<span class='fi-check'></span>
+							    </a>
+							   </div>
+								  <select-list ng-show='plan.productediting' ng-model='plan.planService.pps' items='plan.productList.items' group-by='discipline' toggle='plan.toggleProduct(product)'></select-list>
+									 <div 
+										 
+											class='panel panel-textarea' 
+											ng-mouseover='productover=true' 
+											ng-mouseleave='productover=false' 
+											ng-click='plan.editProduct()'>
+												<div class='clearfix'>
+													<div class='product-list left'>
+														
+														<div class='product-list-item' ng-repeat='(i, p) in plan.planService.pps.getAllByName()'>
+															<i ng-if='i>0' class='fa fa-leaf'></i>{{p}}
+														</div>
+														<div ng-if='plan.planService.pps.getAllByName().length === 0'>&nbsp;</div>
+
+													</div>
+													<!--
+	<ul>
+														<li ng-repeat='(i, p) in plan.planService.pps.getAllByName()'><i ng-if='i>0' class='fa fa-leaf'></i>{{p}}</li>
+													</ul>
+	-->
+											 
+											 <div class='edit-link right' ng-show='!plan.productediting && productover && plan.plan.status() === "Draft"'>
+								     <a>
+									     <span class='fi-pencil'></span>
+									    </a>
+									   </div>
+											</div>
+								  </div>
+
+									  
+									  <!-- <select type='text' name='product' ng-class='plan.invalidClass("product")' required x-ng-model='plan.plan.product' x-ng-options='product as product.name group by product.discipline for product in plan.productList.items | orderBy:["discipline","name"]' ><option value=''>Select Product</option></select> -->
 									</label>
 								</div>
 							</div>
 							
 							<div class='row'>
 								<div class='columns small-6 large-3'>
-									<label>Begin: <select type='text' name='begin' ng-required='plan.required("begin")' x-ng-model='plan.plan.data.begin' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
+									<label>Campaign Start: <select type='text' name='begin' ng-required='plan.required("begin")' x-ng-model='plan.plan.data.begin' x-ng-options='month.value as month.name for month in plan.monthsDD.items' ><option value=''>Start Month</option></select></label>
 								</div>
 								<div class='columns small-6 large-3'>
-									<label>End: <select type='text' name='begin' ng-required='plan.required("end")' x-ng-model='plan.plan.data.end' x-ng-options='month.value as month.name for month in plan.monthList.items' ></select></label>
+									<label>Campaign Finish: <select type='text' name='begin' ng-required='plan.required("end")' x-ng-model='plan.plan.data.end' x-ng-options='month.value as month.name for month in plan.monthsDD.items' ><option value=''>Finish Month</option></select></label>
 								</div>
 								<div class='columns small-6 large-3'>
-									<label>Budget: <input type='text' ng-model='plan.plan.data.budget' ng-currency></label>
+									<label>Budget: <input type='text' name='budget' ng-model='plan.plan.data.budget' ng-required='plan.required("budget")' ng-currency ng-class='plan.invalidClass("budget")' ></label>
 								</div>
 								<div class='columns small-6 large-3'>
-									<label>Priority: <input type='text' ng-model='plan.plan.data.priority'></label>
+									<label>Priority: <input type='text' name='priority' ng-model='plan.plan.data.priority' ng-required='plan.required("priority")' ng-class='plan.invalidClass("priority")' ></label>
 								</div>
 							</div>
 							
@@ -69,7 +104,10 @@
 								</div><!-- end row -->
 								<div class='row' equal-height>
 									<div class='columns small-6'><label>Campaign Year:</label></div>
-									<div class='columns small-6'><input type='number' ng-model='plan.plan.data.year'></label></div>
+									<div class='columns small-6'>
+										<select class='years' type='text' name='year' x-ng-model='plan.plan.data.year' x-ng-options='year for year in plan.years' ng-required='plan.required("year")' ng-class='plan.invalidClass("year")' ng-change='plan.yearUpdated(plan.plan.data.year)'></select>
+										<!-- <input name='year' type='text' ng-model='plan.plan.data.year' ng-required='plan.required("year")' ng-class='plan.invalidClass("year")'> -->
+									</div>
 								</div>
 							</div><!-- end panel -->
 							
@@ -92,14 +130,51 @@
 				   <div class='columns small-12'>
 					   <dl class="sub-nav">
 							  <dd class="active"><a href=''>Plan Details</a></dd>
-							  <dd><a href='' ng-click='plan.tabs[1].active=true'>Plan Strategies &amp; Tactics</a></dd>
+							  <dd><a href='' ng-click='plan.tabs[1].active=true'>Plan Strategem</a></dd>
 							 </dl>
 				   </div>
 			   </div>
 			   <!-- End Tab selection options -->
-			   <div id='plan-details' class='plan-section'>
-				   
-				   <div class='row' ng-repeat='detail in plan.details'>
+			   
+				   <accordion id='details-accordion' close-others='true'>
+				    <accordion-group 
+          	ng-repeat='(i, detail) in plan.details' 
+          	data-is-open='detail.isOpen'>
+          <accordion-heading>
+           <div class='row'>
+	           <div class='small-12 columns'>
+								      {{::detail.name}}: {{plan.plan.data[detail.property].shorten(70)}}
+	           </div>
+           </div>
+						    </accordion-heading>
+						    <div class='detail-heading detail-heading-empty'>
+							     
+							     <div class='row'>
+								     <div class='small-12 columns'>
+		  				      <div class='panel callout radius' ng-show='detail.message !== ""'>{{::detail.message}}</div>
+								     </div>
+							     </div>
+							     <div class='row'>
+								     <div class='small-12 columns'>
+		  				      <textarea 
+												 name='{{::detail.property}}' 
+												 ng-class='plan.invalidClass(detail.property)' 
+												 ng-required='plan.required(detail.property)' 
+												 ng-model='plan.plan.data[detail.property]' 
+												 ng-disabled='plan.disabled(detail.property)'></textarea>
+								     </div>
+							     </div>
+							     
+						     </div>
+						    
+						    
+						    
+											
+				    </accordion-group>
+				   </accordion>
+				   <!--
+					   <div id='plan-details' class='plan-section'>
+<div class='row' ng-repeat='detail in plan.details'>
 								<div class='columns small-12'>
 									<div class='plan-details'>
 										<h5>{{::detail.name}}</h5>
@@ -113,8 +188,10 @@
 									</div>
 								</div>
 							</div>
+							</div>
+-->
 							
-			   </div>
+			   
 			   
 			  </tab>
 			  <!-- End Plan Details Tab -->
@@ -127,7 +204,7 @@
 				   <div class='columns small-12'>
 					   <dl class="sub-nav">
 							  <dd><a href='' ng-click='plan.tabs[0].active=true'>Plan Details</a></dd>
-							  <dd class="active"><a href=''>Plan Strategies &amp; Tactics</a></dd>
+							  <dd class="active"><a href=''>Plan Stratagem</a></dd>
 							  <dd class="right" ng-hide='plan.planService.strategies.items.length === 0'><a href='' ng-click='plan.clickAddStrategy()'><span class='fi-plus'></span>&nbsp;Add Strategy</a></dd>
 							 </dl>
 				   </div>
@@ -138,7 +215,7 @@
 				   
 				   
 				   <!-- Start No Strategies For Plan Section -->
-				   <div class='row' ng-if='plan.planService.strategies.items.length === 0'> 
+				   <div class='row' ng-if='plan.planService.strategies.existsCount() === 0'> 
 						  <div class='small-12 columns'>
 							  <div class='plan-section'>
 							   <p>This plan doesn't have any strategies yet. Click the button below to start your first strategy!</p>
@@ -149,7 +226,7 @@
 				   <!-- End No Strategies For Plan Section -->
 				   
 				   
-				   <div class='row' ng-if='plan.planService.strategies.items.length > 0'>
+				   <div class='row' ng-if='plan.planService.strategies.existsCount() > 0'>
 					   <div class='columns small-12'>
 
 						   <accordion id='strategy-accordion'>
@@ -157,18 +234,18 @@
           	ng-repeat='(i, strategy) in plan.planService.strategies.items | startFrom: plan.planService.strategies.currentPage * plan.planService.strategies.pageSize  | limitTo:plan.planService.strategies.pageSize track by strategy.id()' 
           	data-is-open='strategy.isOpen' 
           	ng-show='!strategy.removed' 
-          	id='{{strategy.data.__guid}}'>
+          	id='{{::strategy.data.__guid}}'>
           
            <accordion-heading>
-							     <div class='row' ng-click='plan.opened(strategy, $event)' ng-mouseover='plan.over(strategy, true)' ng-mouseout='plan.over(strategy, false)' >
+							     <div class='row' ng-click='plan.opened(strategy, $event)' ng-mouseenter='plan.overStrategy(strategy)' ng-mouseleave='plan.out(strategy)'>
 								     <!-- Start Strategy Title -->
-								     <div class='small-9 large-10 columns'>
+								     <div class='small-9 large-10 columns' >
 								      Strategy {{plan.strategyNum(plan.planService.strategies,i)}}: {{strategy.title(40)}}
 								     </div>
 								     <!-- End Strategy Title -->
 								     <!-- Start Strategy Actions -->
 								     <div class='small-3 large-2 columns'>
-									     <span ng-show='strategy.over' class='right actions'>
+									     <span ng-show='strategy.isOpen || strategy.over' class='right actions'>
 									      <a class='button tiny alert' href='' ng-click='plan.removeObject(strategy)'>
 										      <span class='fi-x'></span>
 										     </a>
@@ -187,7 +264,7 @@
 							     </div>
 							     
 							     <!-- Start Section to Display when no tactics for this strategy -->
-						      <div class='row' ng-hide='plan.planService.tactics[strategy.data.__guid].items.length > 0 || !strategy.tactics_loaded'>
+						      <div class='row' ng-hide='plan.planService.tactics[strategy.data.__guid].existsCount() > 0 || !strategy.tactics_loaded'>
 								     <div class='small-12 columns'>
 											   <p>This strategy doesn't have any tactics yet. Click the button below to start your first tactic for this strategy!</p>
 										    <button class='button radius expand no-margin' ng-click='plan.clickAddTactic(strategy)'>
@@ -208,7 +285,7 @@
 						     </div>
 
 											<!-- Start displaying tactics for this strategy -->
-						     <table role='grid' ng-if='plan.planService.tactics[strategy.data.__guid].items.length > 0 && ( strategy.isOpen || strategy.wasOpened )' >
+						     <table role='grid' ng-if='plan.planService.tactics[strategy.data.__guid].existsCount() > 0 && ( strategy.isOpen || strategy.wasOpened )' >
 							     
 							     <thead>
 								     <tr ng-mouseout='plan.hover=""'>
@@ -254,7 +331,8 @@
 										    </td>
 									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="begin_date"?"sorted":""'>
 										     <span ng-if='tactic.editing'>
-										      <input type='date' ng-model='tactic.begin_date'>
+										      <input type='date' ng-model='tactic.begin_date' placeholder="YYYY-MM-DD">
+										      <!-- <input type="text" ng-model='tactic.begin_date' pick-a-date="date" pick-a-date-options="plan.dateoptions" /> -->
 										     </span>
 										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>
 										      {{tactic.begin_date | date:"MMM d, yyyy"}}
@@ -262,7 +340,8 @@
 										    </td>
 									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="end_date"?"sorted":""'>
 										     <span ng-if='tactic.editing'>
-										      <input type='date' ng-model='tactic.end_date'>
+										      <input type='date' ng-model='tactic.end_date' placeholder="YYYY-MM-DD">
+										      <!-- <input type="text" ng-model='tactic.end_date' pick-a-date="date" pick-a-date-options="plan.dateoptions" /> -->
 										     </span>
 										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>
 										      {{tactic.end_date | date:"MMM d, yyyy"}}
@@ -270,8 +349,8 @@
 										    </td>
 										    <td class='actions text-center' style='width: 110px;'>
 											    <span ng-show='tactic.over && !tactic.editing'>
-											     <a href='' ng-click='tactic.editing=true'>
-												     <span class='fi-pencil'></span>
+											     <a href='' ng-click='tactic.editing=true' >
+												     <span class='fi-pencil' tooltip='Click to edit' tooltip-popup-delay='100' tooltip-animation="false"></span>
 												    </a>
 												   </span>
 											    <span ng-show='tactic.over && !tactic.editing'>
@@ -281,7 +360,7 @@
 												   </span>
 											    <span ng-show='tactic.editing'>
 											     <a href='' ng-click='tactic.editing=false'>
-												     <span class='fi-check'></span>
+												     <span class='fi-check' tooltip='Click to finish editing' tooltip-popup-delay='100' tooltip-animation="false"></span>
 												    </a>
 												   </span>
 										    </td>
@@ -339,5 +418,8 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class='major-actions major-actions-top' ng-include='"partials/plan/actions.html"'></div>
+	
 </form>
 

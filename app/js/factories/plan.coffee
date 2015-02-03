@@ -2,18 +2,19 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
  class plan extends fmRestModel
   
   @submission_requirements = {
-	   product: true,
+	   budget: true,
+	   campaign_title: true,
 	   focus: true,
 	   goals: true,
 	   target: true,
 	   message: true,
 	   key_indicators: true,
 	   begin: true,
-	   end: true
+	   end: true,
+	   year: true
   }
   
   @locked_after_submission = {
-	  product: true,
    focus: true,
    goals: true,
    target: true,
@@ -25,28 +26,28 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    super(data,href,recordID)
    @lastAccessed = Date.now()
    @non_modifiable_properties = [
-	   '__guid', '__created_ts', '__created_an', '__modified_ts', '__modified_an', '_common_one_c', 'staff_full_name_c', 'staff_account_name_c'
+	   '__guid', '__created_ts', '__created_an', '__modified_ts', '__modified_an', '_common_one_c', 'staff_full_name_c', 'staff_account_name_c', 'product', 'portfolio', 'discipline'
    ]
    
    #handle the product for display
-   @product = {
-	   name: @data.product
-	   value: @data.product
-	   portfolio: @data.portfolio
-	   discipline: @data.discipline
-   }
+   # @product = {
+# 	   name: @data.product
+# 	   value: @data.product
+# 	   portfolio: @data.portfolio
+# 	   discipline: @data.discipline
+#    }
    
    #setup the strategies
-   if !strategies?
-    @strategies = []
-   else
-    @strategies = strategies
+   # if !strategies?
+#     @strategies = []
+#    else
+#     @strategies = strategies
    
    #handle the dates for display
    @date_approved = @formatFMDateForJS(@data.date_approved)
    @date_submitted = @formatFMDateForJS(@data.date_submitted) 
    
-   @data.year = parseInt(@data.year)
+   #@data.year = parseInt(@data.year)
   
   
   handleDates: () ->
@@ -56,18 +57,19 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    if @date_submitted?
     @data.date_submitted = @formatDateForFM(@date_submitted)
   
-  handleProduct: () ->
-   @data.portfolio = @product.portfolio
-   @data.discipline = @product.discipline
-   @data.product = @product.value
-  
-  addStrategy: (strategy) ->
-   @strategies.push(strategy)
-  
+  # handleProduct: () ->
+#    if @product?
+#     @data.portfolio = @product.portfolio
+#     @data.discipline = @product.discipline
+#     @data.product = @product.value
+#    else
+#     @data.portfolio = ''
+#     @data.discipline = ''
+#     @data.product = ''
   
   prepForSave: () -> 
    @handleDates()
-   @handleProduct()
+   # @handleProduct()
   
   prepForSubmit: ()->
    @data.status = "Submitted"
@@ -78,31 +80,35 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
    @date_submitted = ''
    @data.date_submitted = ''
   
-  strategyCount: () ->
-   length = @strategies.length
-   if length > 0
-    for x in @strategies
-     if x.removed
-      length = length - 1
-      
-   return length
-      
+  # strategyCount: () ->
+#    length = @strategies.length
+#    if length > 0
+#     for x in @strategies
+#      if x.removed
+#       length = length - 1
+#       
+#    return length
+#       
   
-  removeStrategy: (strategy) ->
-   index = @strategies.indexOf(strategy)
-   if index > -1
-    @strategies.splice(index,1)
+#   addStrategy: (strategy) ->
+#    @strategies.push(strategy)
+
   
-  sortStrategies: () ->
-   #console.log 'sorting strategies'
-   @strategies.sort (a, b) =>
-    keyA = a.date
-    keyB = b.date
-    if keyA < keyB
-     return -1
-    if keyA > keyB
-     return 1
-    return 0
+  # removeStrategy: (strategy) ->
+#    index = @strategies.indexOf(strategy)
+#    if index > -1
+#     @strategies.splice(index,1)
+#   
+#   sortStrategies: () ->
+#    #console.log 'sorting strategies'
+#    @strategies.sort (a, b) =>
+#     keyA = a.date
+#     keyB = b.date
+#     if keyA < keyB
+#      return -1
+#     if keyA > keyB
+#      return 1
+#     return 0
   
   isDisabled: (property) ->
    if @status() == 'Draft'
@@ -114,7 +120,7 @@ angular.module('app').factory 'plan', [ 'fmRestModel', (fmRestModel) ->
   
   readyForSubmission: () ->
    ready = true
-   @handleProduct()
+   # @handleProduct()
    for k, v of plan.submission_requirements
     #console.log k, v
     if v

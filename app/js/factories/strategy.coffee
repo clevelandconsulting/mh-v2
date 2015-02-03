@@ -16,12 +16,16 @@ angular.module('app').factory 'strategy', [ 'fmRestModel', (fmRestModel) ->
   
   title: (length) ->
    if @data.description?
-    if @data.description.length > length
-     return @data.description.substring(0,length-3) + '...'
-    else
-     return @data.description
+    @data.description.shorten(length)
    else
-    return '' 
+    return ''
+   # if @data.description?
+#     if @data.description.length > length
+#      return @data.description.substring(0,length-3) + '...'
+#     else
+#      return @data.description
+#    else
+#     return '' 
   
   setTacticsLoaded: (loaded) ->
    @tactics_loaded = loaded

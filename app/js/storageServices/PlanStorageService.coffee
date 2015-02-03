@@ -1,15 +1,39 @@
-angular.module('app').service 'PlanStorageService', [ 'StorageService', 'ModelStorageService', 'plan', 'strategy', 'tactic', (StorageService, ModelStorageService, plan, strategy, tactic) -> 
+angular.module('app').service 'PlanStorageService', [ 'StorageService', 'ModelStorageService', 'plan', 'strategy', 'tactic', 'planProduct', (StorageService, ModelStorageService, plan, strategy, tactic, planProduct) -> 
  class PlanStorageService extends ModelStorageService
   constructor : -> 
    super(StorageService, 'plans', 2400*60)
    
-  
+   
   strategiesKey: (id) ->
    @getName(id)+'.strategies'
    
   tacticsKey: (plan_id, strategy_id) ->
    @strategiesKey(plan_id) + '.' + strategy_id + '.tactics'
   
+  ppsKey: (id) ->
+   @getName(id)+'.pps'
+  
+    
+  savePPsById: (id, pps) ->
+   @saveByKey(@ppsKey(id),@stripObjects(pps))
+   
+  getPPsById: (id) ->
+   pps = @getByKey(@ppsKey(id))
+   if pps?
+	   result = []
+	   
+	   if pps?
+	    for raw_pp in pps
+	     new_pp = new planProduct raw_pp.data, raw_pp.href, raw_pp.recordID
+	     result.push(new_pp)
+	   
+	   result
+	  else
+	   pps
+   
+  clearPPsById: (id) ->
+   @clearByKey(@ppsKey(id))
+
   saveStrategiesById: (id, strategies) ->
    @saveByKey(@strategiesKey(id),@stripObjects(strategies))
    
@@ -64,12 +88,6 @@ angular.module('app').service 'PlanStorageService', [ 'StorageService', 'ModelSt
    #console.log 'raw',raw
    if raw?
     p = new plan raw.data,raw.href,raw.recordID
-#     for raw_strategy in raw.strategies
-#      s = new strategy raw_strategy.data, raw_strategy.href, raw_strategy.recordID
-#      for raw_tactic in raw_strategy.tactics
-#       t = new tactic raw_tactic.data, raw_tactic.href, raw_tactic.recordID
-#       s.addTactic t
-#      p.addStrategy s
     return p
    else
     return raw

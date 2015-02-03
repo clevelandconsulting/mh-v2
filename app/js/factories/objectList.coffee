@@ -23,14 +23,36 @@ class objectList
  pageArray: () ->
   @getNumberAsArray(@numberOfPages())
  
+ getItem: (index) ->
+  @items[index]
+ 
+ existsCount: () ->
+  cnt = 0
+  if @items.length > 0
+   for item in @items
+    if !item.isRemoved()
+     cnt = cnt+1
+  
+  cnt
+ 
+ exists: (object) ->
+	 index = @findIndex(object)
+	 if index > -1
+	  return !@items[index].isRemoved()
+	 
+	 return false
+
+ 
  add: (object) ->
   if !@items?
    @items = []
   
   @items.push(object)
  
- remove: (object) ->
-  index = @findIndex(object)
+ remove: (object, index) ->
+  if !index?
+   index = @findIndex(object)
+  
   if index > -1
    @items.splice(index,1)
  

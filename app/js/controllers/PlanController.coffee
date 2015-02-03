@@ -1,9 +1,12 @@
-angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'ScrollTo', 'PlanService', 'NotificationService','listManager', 'logger'
+angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$location', '$modal', '$timeout', '$q', '$window', 'ScrollTo', 'PlanService', 'NotificationService','listManager', 'logger', 'SchoolYear',
  class PlanController 
-  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @scrollTo, @planService, @notifications, @listManager, @logger) ->
+  constructor: (@scope, @routeParams, @location, @modal, @timeout, @q, @window, @scrollTo, @planService, @notifications, @listManager, @logger, @schoolYear) ->
    @logger.on()
    @submitted = false
-   
+   @years = @schoolYear.years
+   @dateoptions = {
+    format: 'yyyy-mm-dd'
+   }
    unsaved_message = 'You have unsaved changes. These changes will be lost, are you sure you want to do this?'
    #console.log @planService
    #handle the case where a page change or reload occurs
@@ -32,6 +35,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
 	   {active: true},
 	   {active: false}
    ]
+   @productediting = false
    
    #set up the plan details information
    @details = [
@@ -82,7 +86,10 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
 
    @updateControllerPlan = (plan) ->
     @plan = plan
-    @plan.product = @findProduct(@productList.items,@plan.product)
+    if plan? && plan != undefined
+     @buildMonthDropDown(plan.data.year)
+    #@plan.product = @findProduct(@productList.items,@plan.product)
+    #console.log @planService
 
    
    @monthList = @listManager.months
@@ -97,12 +104,48 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    .then () =>
     @planService.loadPlan(@routeParams.id)
     .then (plan) =>
+     #console.log 'loaded', plan
      @updateControllerPlan(plan)
     .catch (error) =>
      @notifications.error error.reason, "Could Not Retrieve Plan"
 	  
+  #--------------------------------------------------------------------
+  #
+  # PlanProduct functions
+  #
+  #-------------------------------------------------------------------- 
   
+  editProduct: (hide) ->
+   if hide? && !hide 
+    @productediting = hide
+   else
+    if @plan.status() == 'Draft'
+     @productediting = true
+    else
+     @productediting = false
   
+  toggleProduct: (product) ->
+   #console.log 'toggling', product
+   
+   if product?
+	   index = @planService.pps.findIndex(product)
+	   
+	   if index > -1
+	    item = @planService.pps.getItem(index)
+	    if item.isRemoved()
+	     #console.log 'marking unremoved'
+	     item.markRemoved(false)
+	    else
+	     if item.href != ''
+	      item.markRemoved()
+	     else
+  	    @planService.pps.remove(product, index)
+	   else
+	    @planService.addPlanProduct(@plan, product)
+	    
+	   @scope.planForm.$setDirty()
+	   
+	   #console.log 'toggled', product, @planService.pps
   
   
   # strategies: () ->
@@ -127,6 +170,48 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
   strategyNum: (strategies,i) ->
    (i + ( strategies.currentPage * strategies.pageSize ) + 1 )
   
+  yearUpdated: (year) ->
+   #console.log 'year changed', year
+   #not doing anything for now...
+   #@buildMonthDropDown(year)
+   
+  buildMonthDropDown: (year) ->
+   y = parseInt(year)
+   ny = y + 1
+   
+   if !@monthsDD? || @monthsDD == undefined
+    @monthsDD = @listManager.make()
+   else
+    @monthsDD.removeAll()
+
+	  @monthsDD.add('July ' + y.toString())
+	  @monthsDD.add('August ' + y.toString())
+	  @monthsDD.add('September ' + y.toString())
+	  @monthsDD.add('October ' + y.toString())
+	  @monthsDD.add('November ' + y.toString())
+	  @monthsDD.add('December ' + y.toString())
+	  @monthsDD.add('January ' + ny.toString())
+	  @monthsDD.add('February ' + ny.toString())
+	  @monthsDD.add('March ' + ny.toString())
+	  @monthsDD.add('April ' + ny.toString())
+	  @monthsDD.add('May ' + ny.toString())
+	  @monthsDD.add('June ' + ny.toString())
+	  
+	  #@monthsDD = monthsDD
+	  
+	  # console.log 'build month dropdown', @monthsDD, @plan
+# 	  
+# 	  for item in @monthsDD.items
+# 	   if item.value == @plan.data.begin
+# 	    console.log 'updating begin', item, @plan.data
+# 	    @plan.data.begin = item.value
+# 	   if item.value == @plan.data.end
+# 	    console.log 'updating end', item, @plan.data
+# 	    @plan.data.end = item.value
+	  
+	  
+	  #@plan.data.begin = @plan.data.begin
+	  #@plan.data.end = @plan.data.end
   #--------------------------------------------------------------------
   #
   # Form validation
@@ -208,11 +293,16 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
    return false
    
    
-  over: (strategy, isOver) ->
-   strategy.over = isOver
+  overStrategy: (strategy) ->
+   strategy.over = true
    if !strategy.getTacticsLoaded()
     @planService.loadTactics(strategy, @plan.recordID)
     
+   
+  
+  out: (strategy) ->
+   strategy.over = false
+   
   opened: (strategy) ->
    if !strategy.isOpen
 	   #console.log 'isOpen', strategy.isOpen
@@ -224,6 +314,7 @@ angular.module('app').controller 'PlanController', ['$scope', '$routeParams', '$
 	     #console.log 'tactics loaded'
 	     #strategy = data
 	   @goToStrategyId(strategy.id())
+
 	  #else
 	   #@goToTacticId('planContent',55)
    

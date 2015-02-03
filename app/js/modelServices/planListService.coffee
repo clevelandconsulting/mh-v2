@@ -1,6 +1,6 @@
-angular.module('app').service 'PlanListService', ['$q', 'PlanRepository',
+angular.module('app').service 'PlanListService', ['$q', 'PlanRepository', 'SchoolYear',
  class PlanListService
-  constructor: (@q, @PlanRepository) ->
+  constructor: (@q, @PlanRepository, @SchoolYear) ->
    @filter = ''
   
   getByStatus: (status, pagesize) ->
@@ -16,7 +16,7 @@ angular.module('app').service 'PlanListService', ['$q', 'PlanRepository',
    @PlanRepository.getPage(href,pagesize)
    
   add: () ->
-    plan = @PlanRepository.makeNew('Untitled')
+    plan = @PlanRepository.makeNew('Untitled', @SchoolYear.currentYear)
     @PlanRepository.add(plan.data)
    
 ]

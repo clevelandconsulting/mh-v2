@@ -4,8 +4,8 @@
   </div>
   <div class='plan-card-details'>
 	  <div><span>{{::plan.data.staff_full_name_c}}</span></div>
-	  <div><span>{{::plan.data.product}}</span></div>
-	  <div><span>{{::plan.data.portfolio}}</span></div>
+	  <div><span>{{::plan.data.product.shorten(40)}}</span></div>
+	  <div><span>{{::plan.data.portfolio.shorten(40)}}</span></div>
 	  <div>{{::plan.data.begin}}<span ng-show='plan.data.begin !== "" && plan.data.end !== ""'> - </span>{{::plan.data.end}}</div>
   </div>
  
