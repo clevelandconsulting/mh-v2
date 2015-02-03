@@ -15,8 +15,12 @@ module.exports = function(lineman) {
   //Override application configuration here. Common examples follow in the comments.
   return {
 	  
-	  
-	  uglify: {
+	  removeTasks: {
+    dist: ["uglify"]
+   },
+   
+	  /*
+uglify: {
 		   options:{
 			   banner: "<%= meta.banner %>",
 			   ascii_only: true,
@@ -35,6 +39,7 @@ module.exports = function(lineman) {
 			  },
 			  
 			},
+*/
 	  
 	  webfonts: {
       files: {
