@@ -17,6 +17,10 @@ module.exports = function(lineman) {
 	  
 	  
 	  uglify: {
+		   options:{
+			   banner: "<%= meta.banner %>",
+			   ASCIIOnly: true
+		   },
 			  codegen: {
 				   ascii_only: true
 			  }
