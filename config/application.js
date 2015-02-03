@@ -19,14 +19,15 @@ module.exports = function(lineman) {
 	  uglify: {
 		   options:{
 			   banner: "<%= meta.banner %>",
-			   ascii_only: true
+			   ascii_only: true,
+			   beautify : {
+	      ascii_only : true
+	     }
 		   },
 			  codegen: {
 				   ascii_only: true
 			  },
-			  beautify : {
-      ascii_only : true
-     }
+			  
 			},
 	  
 	  webfonts: {
