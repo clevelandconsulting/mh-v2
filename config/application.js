@@ -22,8 +22,14 @@ module.exports = function(lineman) {
 			   ascii_only: true,
 			   beautify : {
 	      ascii_only : true
-	     }
+	     },
+	     output : {
+       ascii_only : true
+      }
 		   },
+		   output : {
+      ascii_only : true
+     },
 			  codegen: {
 				   ascii_only: true
 			  },
