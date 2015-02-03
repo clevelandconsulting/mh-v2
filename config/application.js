@@ -20,11 +20,16 @@ module.exports = function(lineman) {
 			   banner: "<%= meta.banner %>",
 			   ascii_only: true,
 			   asciiOnly: true,
+			   beautify: true,
 			   codegen: {
 				   ascii_only: true,
 				   asciiOnly: true
 			   }
-			  }			  
+			  },
+			  codegen: {
+				   ascii_only: true,
+				   asciiOnly: true
+			  }
 			},
 	  
 	  webfonts: {
