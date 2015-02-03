@@ -38,7 +38,7 @@ module.exports = function(lineman) {
     	    //"vendor/bower/foundation/js/foundation.js",
     	    //"vendor/bower/amplify/lib/amplify.js",
     	    //"vendor/bower/amplify/lib/amplify.store.js",
-         "vendor/bower/angular/angular.js",
+         //"vendor/bower/angular/angular.js",
          "vendor/bower/angular-resource/angular-resource.js",
          "vendor/bower/angular-route/angular-route.js",
          "vendor/bower/angular-animate/angular-animate.js",
