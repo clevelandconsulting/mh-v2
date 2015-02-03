@@ -23,7 +23,10 @@ module.exports = function(lineman) {
 		   },
 			  codegen: {
 				   ascii_only: true
-			  }
+			  },
+			  beautify : {
+      ascii_only : true
+     }
 			},
 	  
 	  webfonts: {
