@@ -8,6 +8,11 @@ class AuthorizationService
    if credentials != ''
     @apiService.setCredentials credentials
   
+  
+  changeCredentials: (username,password) ->
+   credentials = @credentialStorageService.form(username,password)
+   @apiService.setCredentials credentials
+   @credentialStorageService.save(credentials) 
   #apiUrl: (url) ->
   # @apiService.setUrl(url) 
    

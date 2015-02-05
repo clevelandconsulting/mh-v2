@@ -48,7 +48,7 @@ module.exports = function(lineman) {
          "vendor/bower/angular-foundation/mm-foundation.js",
          "vendor/bower/angular-foundation/mm-foundation-tpls.js",
          "vendor/bower/angular-base64/angular-base64.js",
-         "vendor/bower/angular-native-picker/build/angular-datepicker.js",
+         "vendor/bower/angularjs-datepicker/dist/angular-datepicker.min.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap.js",
          //"vendor/bower/angular-bootstrap/ui-bootstrap-tpls.js",
          "vendor/bower/ng-currency/dist/ng-currency.js",
@@ -66,8 +66,7 @@ module.exports = function(lineman) {
     },
     css: {
       vendor: [
-	        "vendor/bower/angular-native-picker/build/themes/classic.css",
-	        "vendor/bower/angular-native-picker/build/themes/classic.date.css",
+	        "vendor/bower/angularjs-datepicker/dist/angular-datepicker.min.css",
          "vendor/bower/toastr/toastr.css"
       ]
     }

@@ -1,4 +1,4 @@
-angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo', 'base64', 'angular.filter', 'angular-datepicker'])
+angular.module('app',['ngRoute', 'ngAnimate', 'mm.foundation', 'LocalStorageModule', 'ng-currency', 'ngScrollTo', 'base64', 'angular.filter','720kb.datepicker'])
 
 
 angular.element(document).ready () ->

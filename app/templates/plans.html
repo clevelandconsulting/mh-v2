@@ -1,4 +1,4 @@
- <div class='row'>
+ <div class='row plan-list'>
 	 <div class='small-12 columns'>
 		 
 		 <div class='row'>
@@ -27,13 +27,39 @@
 	  </div>
 	  <div ng-show='plans.plans!==null && plans.plans !== undefined && plans.load_complete === true'>
 	  
-		  <div class='row' ng-repeat='_plans in plans.plan_groups'>
+		  <!--
+<div class='row' ng-repeat='_plans in plans.plan_groups'>
 			  <div ng-repeat='(i, item) in _plans track by item.data.__guid'>
 				  <div ng-class='_plans.length < plan.cols && i==_plans.length ?"end":""'class='small-{{plans.foundationColsSm}} large-{{plans.foundationColsLg}} medium-{{plans.foundationColsMd}} columns' >
 						 <plan-card plan='item' ng-click='plans.clickPlan(item)'></plan-card>
 						</div>
 			  </div>
 			 </div>
+-->
+
+   <div class='row' ng-repeat='plan in plans.plans.items'>
+	   <div class='columns small-12'>
+		   <div class='plan-list-item' ng-class='"plan-" + plan.status().toLowerCase()' ng-click='plans.clickPlan(plan)'>
+			   
+		    <div class='row'>
+			    <div class='columns small-8 medium-10'>
+  		    <h5>{{::plan.data.campaign_title}} <small>{{::plans.display_plan_creator(plan.data.staff_account_name_c,plan.data.staff_full_name_c)}}</small></h5>
+  		    <p><em>{{::plan.data.begin}}<span ng-show='plan.data.begin !== "" && plan.data.end !== ""'> - </span>{{::plan.data.end}}</em></p>
+			    </div>
+			    <div class='columns small-4 medium-2 text-right'>
+				    <span class='plan-status '>{{::plan.status()}}</span>
+			    </div>
+			   </div>
+			   
+			   <div class='row'>
+				   <div class='columns small-12'>
+					   <p>{{::plan.data.product}}</p>
+				   </div>
+			   </div>
+			   
+		   </div>
+	   </div>
+   </div>
 		  
 		  <div class='row' ng-show='plans.plans.hasPaging()'>
 	    <div class='columns small-4'>

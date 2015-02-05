@@ -37,6 +37,9 @@ angular.module('app').controller 'NavController', ['$scope', '$location', '$time
 	   
 	   @promise
 	 
+	 profile: () ->
+	  @$location.path('profile')
+	 
 	 logout: () ->
 	  @$location.path('logout')
 	 

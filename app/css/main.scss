@@ -264,6 +264,68 @@ body {
 	margin-bottom: 25px;
 }
 
+.plan-list {
+	margin-bottom: 10px;
+}
+
+.plan-list-item {
+	border: 1px solid $base_border_color;
+	padding: rem-calc(15) rem-calc(15) rem-calc(8) rem-calc(15);
+	margin: 0px 0px rem-calc(6) 0px; 
+	background-color: $white;
+	@include block-glowing-effect('hover','300ms',fade-out( darken($base_border_color,40%), .25));
+	@include radius();
+	cursor: pointer; cursor: hand;
+}
+
+.plan-list-item h5 {
+	margin: 0;
+	line-height: 1.25em;
+}
+
+.plan-list-item h5 small {
+	background-color: $color-complement-2;
+	padding: 0 3px;
+	font-size: 65%;
+	color: $white;
+}
+
+.plan-list-item p {
+	font-size: 80%;
+	margin-bottom: rem-calc(5);
+	line-height: 1.25em;
+}
+
+.plan-list-item p em {
+	color: $steel;
+}
+
+.plan-status {
+	display: inline-block;
+	font-size: 85%;
+	padding: rem-calc(5);
+	text-transform: uppercase;
+}
+
+
+
+.plan-draft .plan-status {
+	background-color: $base_border_color;
+	color: darken( $base_border_color, 30% );
+}
+
+.plan-submitted .plan-status {
+	background-color: darken( $base_border_color, 30% );
+	color: lighten( $base_border_color, 30% );
+}
+
+.plan-approved .plan-status {
+	background-color: $success-color;
+	color: $white;
+}
+
+/*
+
 .plan-card {
 	border: 1px solid darken($base_border_color,10%);
 	margin: $column-gutter 0px 0px 0px; 
@@ -310,6 +372,7 @@ body {
 	background-color: $success-color;
 	color: $white;
 }
+*/
 
 .detail-heading .callout {
 	padding: 8px;
@@ -370,31 +433,6 @@ body {
 	color: white;
 }
 
-
-
-/*
-.panel-textarea ul {
-	//float: left;
-}
-
-.panel-textarea ul, .panel-textarea ul li {
-	padding: 0;
-	margin: 0;
-}
-
-.panel-textarea ul li i.fa {
-	font-size: 50%;
-	color: darken($panel-bg, 25%);
-	padding: 0 4px;
-}
-
-.panel-textarea ul, .panel-textarea ul li {
-	//display: inline-block;
-	font-size: $input-font-size;
-}
-*/
-
-
 ul.scrollable {
  max-height: 10em;
  border: 1px solid $input-border-color;
@@ -447,7 +485,6 @@ ul.scrollable li.selected a, ul.scrollable ul li.selected a {
 	min-width: 800px;
 }
 
-
 #plan > .tabs {
 	margin-top: 16px;
 }
@@ -484,6 +521,7 @@ dl.accordion dd > a {
 	border: 1px solid $base_border_color;
 	color: $steel;
 	padding: 0;
+	@include block-glowing-effect('hover','300ms',fade-out( darken($base_border_color,40%), .25));
 }
 
 dl.accordion dd > a div.row {
@@ -499,7 +537,8 @@ dl.accordion dd > a.active {
 	color: $black;
 	@include radius(0);
 	@include border-radius(3px,3px,0,0);
-	border-bottom: 1px solid $white;
+	@include block-glowing-effect('hover','300ms',fade-out(darken($base_border_color,10%), .25));
+	border-bottom: 1px solid $white !important;
 }
 
 dl.accordion dd > a:hover {
@@ -546,7 +585,7 @@ dl.accordion table th.sorted {
 	color: $black;
 }
 
-dl.accordion table td a, dl.accordion table td a:hover, span.actions a, span.actions a:hover {
+dl.accordion table td > a, dl.accordion table td > a:hover, span.actions a, span.actions a:hover {
 	background-color: $table-bg;
 	border: 0 !important;
 }

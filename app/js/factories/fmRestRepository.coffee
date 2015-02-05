@@ -7,6 +7,30 @@ class fmRestRepository
   
   constructor: (@$q, @api, @model, @modelList, @path, @modelName) ->
   
+  fmdict_escape: (value) ->
+   value
+   #value.replace(/=/g,"/=").replace(/:/g,"/:").replace(/>/g,"/>").replace(/</g,"/<")
+  
+  fmdict: (key,value) ->
+   "<:" + @fmdict_escape(key) + ":=" + @fmdict_escape(value) + ":>"
+  
+  makeFMParameter: (args) ->
+   parameter = ""
+   if args?
+    for key, value of args
+     parameter = parameter + @fmdict(key,value)
+   
+   parameter
+  
+  runScript: (name, parameter) ->
+   path = "script/" + encodeURIComponent(name) + '/' + @path.split('/')[1] + '.json'
+   
+   if parameter?
+    path = path + '?' + fmRestRepository.scriptParamKey + '=' + encodeURIComponent(parameter)
+    
+   @api.get(path)
+   
+  
   getByRecordId: (id) ->
    path = @path + '/' + id + '.json'
    return @getAll(path).then (data) =>

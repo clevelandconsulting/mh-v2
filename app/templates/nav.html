@@ -20,7 +20,7 @@
 		      </ul>
 		      
 		      <ul class="right" ng-show='nav.isLoggedIn()'>
-		        <li><a href='' class='disabled'><span class='fi-torso'></span>&nbsp;{{nav.username}}</a></li>
+		        <li><a href='' ng-click='nav.profile()'><span class='fi-torso'></span>&nbsp;{{nav.username}}</a></li>
 										<li><a href='' ng-click='nav.logout()'><span class='fi-power'></span>&nbsp;Logout</a></li>
 		      </ul>
 		    </top-bar-section>

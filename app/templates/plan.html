@@ -331,19 +331,23 @@
 										    </td>
 									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="begin_date"?"sorted":""'>
 										     <span ng-if='tactic.editing'>
-										      <input type='date' ng-model='tactic.begin_date' placeholder="YYYY-MM-DD">
-										      <!-- <input type="text" ng-model='tactic.begin_date' pick-a-date="date" pick-a-date-options="plan.dateoptions" /> -->
+										      <!-- <input type='date' ng-model='tactic.begin_date' placeholder="YYYY-MM-DD"> -->
+										      <datepicker date-format="MM/dd/yyyy" date-set="{{tactic.data.begin_date}}">
+	 									      <input type="text" ng-model='tactic.data.begin_date' />
+										      </datepicker>
 										     </span>
-										     <span ng-show='!tactic.editing && tactic.begin_date !== null && tactic.begin_date !== undefined'>
-										      {{tactic.begin_date | date:"MMM d, yyyy"}}
+										     <span ng-show='!tactic.editing && tactic.data.begin_date !== null && tactic.data.begin_date !== undefined'>
+										      {{ tactic.begin_date | date:"MMM d, yyyy"}}
 										     </span>
 										    </td>
 									     <td ng-class='plan.planService.tactics[strategy.data.__guid].sortKey==="end_date"?"sorted":""'>
 										     <span ng-if='tactic.editing'>
-										      <input type='date' ng-model='tactic.end_date' placeholder="YYYY-MM-DD">
-										      <!-- <input type="text" ng-model='tactic.end_date' pick-a-date="date" pick-a-date-options="plan.dateoptions" /> -->
+										      <!-- <input type='date' ng-model='tactic.end_date' placeholder="YYYY-MM-DD"> -->
+										      <datepicker date-format="MM/dd/yyyy" date-set="{{tactic.data.end_date}}">
+	 									      <input type="text" ng-model='tactic.data.end_date' />
+										      </datepicker>
 										     </span>
-										     <span ng-show='!tactic.editing && tactic.end_date !== null && tactic.end_date !== undefined'>
+										     <span ng-show='!tactic.editing && tactic.data.end_date !== null && tactic.data.end_date !== undefined'>
 										      {{tactic.end_date | date:"MMM d, yyyy"}}
 										     </span>
 										    </td>

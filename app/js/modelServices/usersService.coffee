@@ -1,6 +1,27 @@
-angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageService', '$q',
+angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageService', 'AuthorizationService', '$q',
  class UsersService
-  constructor: (@UserRepository, @UserStorage, @q) ->
+  constructor: (@UserRepository, @UserStorage, @AuthorizationService, @q) ->
+  
+  
+  changePassword: (newpass,oldpass) ->
+   d = @q.defer()
+   
+   userid = @getCurrentUserId()
+   @UserRepository.changePassword(userid, newpass, oldpass)
+   .then (response) =>
+    if response.data?
+     if response.data.data[0]?
+      if response.data.data[0].error_message?
+       d.reject {title: response.data.data[0].error_title, msg: response.data.data[0].error_message }
+       return
+    
+    
+    @AuthorizationService.changeCredentials(@username,newpass)
+    d.resolve response.data.data[0]
+   .catch (error) =>
+    d.reject {title: 'Error: Could Not Change Password', msg: "Unable to change the password. " + error }
+    
+   d.promise
   
   storeUser: (user) ->
    storageResult = @UserStorage.add(user)
@@ -62,7 +83,9 @@ angular.module('app').service 'UsersService', ['UserRepository', 'UserStorageSer
    userid = @getCurrentUserId()
    #console.log 'getting current user', userid
    if userid != '' and userid?
-    @getUserById(userid)
+    @getUserById(userid).then (data) =>
+     @username = data.username
+     return data
    else
     #console.log 'nothing found'
     @d = @q.defer()

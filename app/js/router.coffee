@@ -5,7 +5,9 @@ angular.module('app').config ['$routeProvider', '$locationProvider', (routeProvi
  .when('/login', {controller:'LoginController', controllerAs:'login', templateUrl:'login.html'}) #{template:'<div>Hi login</div>'}) #
  .when('/logout',{controller:'LogoutController', template:'<div>Logging Out...</div>'})
  .when('/addnewplan', {controller:'AddNewPlanController', templateUrl:'addnewplan.html'})
- .when('/myplans',{controller:'MyPlansController', controllerAs:'plans', templateUrl: 'plans.html'}) #{template:'<div>Hi myplans <a href="#/">Test</a></div>'}) 
+ .when('/myplans',{controller:'MyPlansController', controllerAs:'plans', templateUrl: 'plans.html'}) 
+ .when('/profile',{controller:'UserController', controllerAs:'user', templateUrl: 'user.html'}) 
+#{template:'<div>Hi myplans <a href="#/">Test</a></div>'}) 
  .when('/plan/:id',{controller:'PlanController', controllerAs:'plan', templateUrl: 'plan.html'})#{template:'<div>Hi plan</div>'})  #
  #.when('/test', {controller: 'testController', template: '<p>{{ result }}</p>'})
  .otherwise {redirectTo:'/myplans'}

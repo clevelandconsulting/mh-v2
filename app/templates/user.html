@@ -1,0 +1,25 @@
+ <div class='row'>
+	 <div class='columns small-12'>
+		 <h2><span class='fi-torso'></span>&nbsp;{{user.userService.username}}</h2>
+	 </div>
+ </div>
+
+ <div class='row'>
+	 <div class='columns small-12'>
+		 <div class='plan-section'>
+			 <div class='row'>
+			  <div class='columns small-12 medium-6 large-4'>
+				  
+					 <h4>Change Your Password</h4>
+					 <hr />
+					 <label>Old Password <input type='password' ng-model='user.oldpass' /></label>
+					 <label>New Password <input type='password' ng-model='user.newpass' /></label>
+					 <label>Confirm Password <input type='password' ng-model='user.confirmpass' /></label>
+					 <div class='text-center'>
+ 					 <button ng-click='user.changePassword()'>Change</button>
+					 </div>
+			  </div>
+		  </div>
+		 </div>
+	 </div>
+	</div>

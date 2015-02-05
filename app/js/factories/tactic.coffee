@@ -16,13 +16,31 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
    
    @medium.sortKey = () -> 'name'
    
-   @begin_date = @formatFMDateForJS(@data.begin_date)
-   @end_date = @formatFMDateForJS(@data.end_date) 
+   #@begin_date = () ->
+   # @formatFMDateForJS(@data.begin_date)
+   
+   #@begin_date = @formatFMDateForJS(@data.begin_date)
+   #@end_date = @formatFMDateForJS(@data.end_date) 
+   
+   @__defineGetter__ "begin_date", () =>
+    if @_begin_date != @data.begin_date
+     @_begin_date = @data.begin_date
+     @_parsedBeginDate = @formatFMDateForJS(@data.begin_date)
+   
+    @_parsedBeginDate
+   
+   
+   @__defineGetter__ "end_date", () =>
+    if @_end_date != @data.end_date
+     @_end_date = @data.end_date
+     @_parsedEndDate = @formatFMDateForJS(@data.end_date)
+   
+    @_parsedEndDate
    
    @__defineGetter__ "budget", () =>
     #console.log 'called budget getter'
     if @_budget != @data.budget
-     console.log 'parsing float'
+     #console.log 'parsing float'
      @_budget = @data.budget
      if @data.budget == '' || !@data.budget?
       @_parsedBudget = 0
@@ -45,11 +63,11 @@ angular.module('app').factory 'tactic', [ 'fmRestModel', 'listManager', (fmRestM
    @data.medium_type = @medium.value
    
   handleDates: () ->
-   if @begin_date?
-    @data.begin_date = @formatDateForFM(@begin_date)
+   #if @begin_date?
+   # @data.begin_date = @formatDateForFM(@begin_date)
     
-   if @end_date?
-    @data.end_date = @formatDateForFM(@end_date)
+   #if @end_date?
+   # @data.end_date = @formatDateForFM(@end_date)
   
   prepForSave: () ->
    @handleMedium()

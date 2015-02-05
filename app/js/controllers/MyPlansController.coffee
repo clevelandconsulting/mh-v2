@@ -1,14 +1,15 @@
-angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlanListService', 'NotificationService', 'SchoolYear',
+angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'PlanListService', 'NotificationService', 'SchoolYear', 'UsersService'
  class MyPlansController 
-  constructor: (@scope, @location, @planListService, @notifications, @schoolYear) ->
-   @cols = 3
-   @rows = 3
-   @foundationColsSm = 12
-   @foundationColsLg = 12/@cols
-   @foundationColsMd = 12/@cols
-   
-   @pagesize = @cols * @rows
-   
+  constructor: (@scope, @location, @planListService, @notifications, @schoolYear, @userService) ->
+   # @cols = 3
+#    @rows = 3
+#    
+#    @foundationColsSm = 12
+#    @foundationColsLg = 12/@cols
+#    @foundationColsMd = 12/@cols
+#    
+#    @pagesize = @cols * @rows
+#    
    # #load in the years
 #    currentYear = new Date().getFullYear()
 #    @years = []
@@ -19,7 +20,9 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
 #    year = @planListService.year
 #    if !year?
 #     year = currentYear
-    
+   
+   @pagesize = 12
+   
    @scope.year = @schoolYear.year
    @years = @schoolYear.years
    
@@ -37,9 +40,15 @@ angular.module('app').controller 'MyPlansController', ['$scope', '$location', 'P
 	   #console.log @plans
 	   @recordDisplay = 'Plans ' + (@plans.skip + 1).toString() + ' through ' + (@plans.skip+@plans.fetchCount).toString() + ' of ' + @plans.foundSetCount.toString()
 	   
-	   @group_plans(@plans)
+	   #@group_plans(@plans)
    #console.log 'finished loading plans'
    #console.log @plan_groups
+  
+  display_plan_creator: (account, fullname) ->
+   if @userService.username == account
+    "Me"
+   else
+    fullname
   
   group_plans: (plans, filter) ->
    j = 0
